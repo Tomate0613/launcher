@@ -220,6 +220,7 @@ export abstract class Content {
 
       return filename;
     } catch (e) {
+      this.setState(filename, 'REMOVED');
       throw error('Failed to install content', e);
     } finally {
       ctx.stop();
