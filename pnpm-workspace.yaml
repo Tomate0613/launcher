@@ -1,4 +1,7 @@
 onlyBuiltDependencies:
+  - "@doublekekse/find-java"
+  - "tomate-launcher-core"
+  - "tomate-mods"
   - "@swc/core"
   - electron
   - electron-winstaller
