@@ -44,6 +44,7 @@ export async function wrapDownload(
       const tmpPath = storeItemPath + '.tmp';
       await func(tmpPath);
       await fs.rename(tmpPath, storeItemPath);
+      await fs.chmod(storeItemPath, 0o444);
     }
   });
 
