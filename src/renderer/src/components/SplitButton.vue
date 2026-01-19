@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { mdiChevronDown } from '@mdi/js';
 import Icon from './Icon.vue';
-import { ref } from 'vue';
+import { onBeforeUnmount, ref } from 'vue';
 
 defineOptions({
   inheritAttrs: false,
@@ -18,10 +18,15 @@ function openOptions() {
     return;
   }
 
+  cleanup();
   open.value = true;
   requestAnimationFrame(() => {
     document.addEventListener('click', closeOptions);
   });
+}
+
+function toggleOptions() {
+  return open.value ? closeOptions() : openOptions();
 }
 
 function closeOptions() {
@@ -32,6 +37,10 @@ function closeOptions() {
 function cleanup() {
   document.removeEventListener('click', closeOptions);
 }
+
+onBeforeUnmount(() => {
+  cleanup();
+});
 
 defineExpose({
   openOptions,
@@ -47,7 +56,7 @@ defineExpose({
     <button
       ref="dropdown-button"
       class="icon-btn dropdown-button"
-      @click="openOptions"
+      @click="toggleOptions"
       :disabled="disabled"
     >
       <Icon :path="mdiChevronDown" size="16" />
