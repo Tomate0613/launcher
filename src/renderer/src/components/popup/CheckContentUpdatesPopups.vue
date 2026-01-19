@@ -126,8 +126,6 @@ async function update() {
   cleanup();
 }
 
-checkMods();
-
 defineExpose({
   checkMods,
 });
