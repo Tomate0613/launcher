@@ -404,10 +404,13 @@ export abstract class Content {
         });
       }
 
+      let i = 0;
       await Promise.allSettled(
         missingFilenames.map(async (filename) => {
           const filepath = this.getPath(filename);
           const item = await this.itemFromFile(filepath, 'local');
+
+          ctx.progress(++i / missingFilenames.length);
 
           this.items.push(item);
         }),
