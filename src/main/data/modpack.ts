@@ -1,4 +1,4 @@
-import paths from 'path';
+import paths from 'node:path';
 import {
   defaultsPath,
   javaInstallationsPath,
@@ -12,8 +12,12 @@ import {
 } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
 import TomateLoaders, { type LoaderId, ModdedLoaderId } from 'tomate-loaders';
-import { randomUUID } from 'crypto';
-import TLC, { isMinecraftVersionAfter } from 'tomate-launcher-core';
+import { randomUUID } from 'node:crypto';
+import {
+  LaunchOptions,
+  Launcher,
+  isMinecraftVersionAfter,
+} from 'tomate-launcher-core';
 import { findJavaInstallations } from '@doublekekse/find-java';
 import fs from 'fs-extra';
 import {
@@ -114,7 +118,7 @@ export class Modpack extends Serializable implements ModpackData {
   @SerializableProperty
   resourcepacksContent: ResourcepacksContent;
   @SerializableProperty('optional')
-  launchConfig?: Partial<TLC.LaunchOptions> & {
+  launchConfig?: Partial<LaunchOptions> & {
     root: string;
     version: {
       number: string;
@@ -335,7 +339,7 @@ export class Modpack extends Serializable implements ModpackData {
     );
 
     let progressText = '';
-    const launcher = new TLC.Launcher({
+    const launcher = new Launcher({
       ...this.launchConfig,
       root: this.dir,
       downloadManager,
@@ -409,7 +413,7 @@ export class Modpack extends Serializable implements ModpackData {
     return launcher;
   }
 
-  async javaPath(launcher: TLC.Launcher) {
+  async javaPath(launcher: Launcher) {
     this.logger.log('Getting java version');
 
     const javaVersion = await launcher.getJavaVersion();
@@ -436,7 +440,7 @@ export class Modpack extends Serializable implements ModpackData {
     }
   }
 
-  async launch(account: Account, quickPlay?: TLC.LaunchOptions['quickPlay']) {
+  async launch(account: Account, quickPlay?: LaunchOptions['quickPlay']) {
     invoke('progress', 0);
     const ctx = this.process('launch', noop);
 

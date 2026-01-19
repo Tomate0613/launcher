@@ -1,9 +1,8 @@
-import fsSync, { promises as fs } from 'fs';
-import path from 'path';
+import fsSync, { promises as fs } from 'node:fs';
+import path from 'node:path';
 import { tempPaths } from './paths';
 import { app } from 'electron';
 import { downloadManager } from './data/downloads';
-import crypto from 'node:crypto';
 
 export const noop = () => {};
 

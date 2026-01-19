@@ -1,7 +1,7 @@
 import { LoaderId } from 'tomate-loaders';
 import { basePath, settingsPath } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
-import fs from 'fs';
+import fs from 'node:fs';
 import { Modpack } from './modpack';
 
 export type GeneralModpackOptions = {

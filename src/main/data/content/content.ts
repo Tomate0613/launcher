@@ -8,7 +8,7 @@ import type {
 import { SyncedIdSet } from '../../../common/synced/synced-id-set/backend';
 import { identity } from '@vueuse/core';
 import { type EnabledProvider, enabledProviders, tomateMods } from './lib';
-import fs from 'fs';
+import fs from 'node:fs';
 import { Modpack } from '../modpack';
 import {
   deleteDirectoryIfEmpty,

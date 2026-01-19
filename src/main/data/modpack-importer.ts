@@ -1,9 +1,9 @@
 import { EnabledProvider, isProviderEnabled, tomateMods } from './content/lib';
 import { Modpack } from './modpack';
-import path from 'path';
+import path from 'node:path';
 import { modpacks } from '../data';
 import { tempPaths } from '../paths';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import fs from 'fs-extra';
 import AdmZip from 'adm-zip';
 import { log } from '../../common/logging/log';

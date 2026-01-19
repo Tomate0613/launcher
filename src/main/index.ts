@@ -1,6 +1,6 @@
 import { app, BrowserWindow, shell } from 'electron';
 import { hideBin } from 'yargs/helpers';
-import { join } from 'path';
+import { join } from 'node:path';
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
 import icon from '../../assets/icon.png?asset';
 import { getSettings, loadData } from './data';

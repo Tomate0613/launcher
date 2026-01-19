@@ -1,11 +1,11 @@
 import { Auth, Minecraft, Xbox } from 'msmc';
 import { Serializable, SerializableProperty } from './serialization';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { accounts } from '../data';
 import { log } from '../../common/logging/log';
 import path from 'node:path';
 import { skinCachePath } from '../paths';
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import axios from 'axios';
 import crypto from 'node:crypto';
 import { FrontendError } from '../error';
@@ -155,10 +155,7 @@ export class Account extends Serializable {
             .digest('hex');
 
           const filename = `${hash}.png`;
-          await fs.promises.writeFile(
-            path.join(skinCachePath, filename),
-            fileBuffer,
-          );
+          await fs.writeFile(path.join(skinCachePath, filename), fileBuffer);
         } catch {
           logger.warn(`Failed to cache skin ${skin.id}`);
         }

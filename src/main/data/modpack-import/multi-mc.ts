@@ -1,8 +1,8 @@
 import { LoaderInfo, ModpackImporter, ProgressListener } from '.';
 import ConfigParser from 'configparser';
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { Modpack } from '../modpack';
 
 type Component = {

@@ -1,7 +1,7 @@
 import { LoaderInfo, ModpackImporter, ProgressListener } from '.';
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { isProviderEnabled, tomateMods } from '../content/lib';
 import { log } from '../../../common/logging/log';
 import { Modpack } from '../modpack';

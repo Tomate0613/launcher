@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { is } from '@electron-toolkit/utils';
 import { ensureDirectoryExists } from './utils';
 

@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 import { LoaderInfo, ModpackImporter, ProgressListener } from '.';
-import fs from 'fs';
+import fs from 'node:fs';
 import {
   downloadFileFromUrl,
   ensureDirectoryExists,

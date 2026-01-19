@@ -1,7 +1,7 @@
 import { Modpack } from './data/modpack';
 import { Account } from './data/account';
 import { accountsPath, basePath, modpacksPath } from './paths';
-import fs from 'fs';
+import fs from 'node:fs';
 import { Settings } from './data/settings';
 import { writeLog4jConfig } from './static/log4jConfig';
 import { log } from '../common/logging/log';
