@@ -18,11 +18,13 @@ import {
 import { log } from '../../../common/logging/log';
 import paths from 'node:path';
 import { error } from '../../error';
+import { wrapDownload } from './store';
 
 export type ContentType = 'mods' | 'shaderpacks' | 'resourcepacks';
 
 export type ContentVersion = {
   id: string;
+  sha1?: string;
 
   dependencies: Dependency[];
 };
@@ -68,7 +70,7 @@ const logger = log('content');
 
 export abstract class Content {
   items: SyncedIdSet<ContentItem>;
-  private lock: Map<string, Promise<void>> = new Map();
+  private locks: Map<string, Promise<void>> = new Map();
 
   constructor(
     public modpack: Modpack,
@@ -94,13 +96,20 @@ export abstract class Content {
   }
 
   private async locked(key: string, func: () => Promise<void>) {
-    const lock = this.lock.get(key);
+    const lock = this.locks.get(key);
     if (lock) {
       await lock;
     }
 
-    const promise = func();
-    this.lock.set(key, promise);
+    const promise = (async () => {
+      try {
+        await func();
+      } finally {
+        this.locks.delete(key);
+      }
+    })();
+
+    this.locks.set(key, promise);
     return promise;
   }
 
@@ -138,7 +147,11 @@ export abstract class Content {
         this.items.push({
           provider: providerId,
           project,
-          version,
+          version: {
+            id: version.id,
+            dependencies: version.dependencies,
+            sha1: version.files[0].sha1,
+          },
           disabled: false,
           id: filename,
           source,
@@ -201,17 +214,17 @@ export abstract class Content {
             });
         }
 
-        await provider.download(version, path + '.tmp', {
-          onProgress: (progress) => {
-            this.setStateProgress(filename, progress);
-            ctx.progress(progress);
-          },
-          minProgressSize: 256 * 1024,
-        });
-
         await Promise.all(deps);
 
-        await fs.promises.rename(path + '.tmp', path);
+        await wrapDownload(version.files[0].sha1, path, (path) => {
+          return provider.download(version, path, {
+            onProgress: (progress) => {
+              this.setStateProgress(filename, progress);
+              ctx.progress(progress);
+            },
+            minProgressSize: 256 * 1024,
+          });
+        });
 
         this.setStateProgress(filename, undefined);
 
