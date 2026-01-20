@@ -92,4 +92,7 @@ export async function gc() {
   }
 }
 
-gc();
+// TODO
+setTimeout(() => {
+  gc();
+}, 5000);
