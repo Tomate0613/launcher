@@ -44,7 +44,11 @@ function createWindow(): void {
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url);
+    if (details.url.startsWith('https://')) {
+      logger.log('Opening in browser', details.url);
+      shell.openExternal(details.url);
+    }
+
     return { action: 'deny' };
   });
 
