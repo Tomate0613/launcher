@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
-    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "typecheck": "pnpm run typecheck:node && pnpm run typecheck:web",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "vue-tsc --noEmit -p tsconfig.renderer.json --composite false",
     "start": "electron-vite dev -w",
     "dev": "electron-vite dev -w",
-    "build": "npm run typecheck && electron-vite build",
-    "build:win": "npm run build && electron-builder --win --config",
-    "build:mac": "npm run build && electron-builder --mac --config",
-    "build:linux": "npm run build && electron-builder --linux --config"
+    "build": "pnpm run typecheck && electron-vite build",
+    "build:win": "pnpm run build && electron-builder --win --config",
+    "build:mac": "pnpm run build && electron-builder --mac --config",
+    "build:linux": "pnpm run build && electron-builder --linux --config"
   },
   "dependencies": {
     "@doublekekse/find-java": "github:Tomate0613/find-java",
