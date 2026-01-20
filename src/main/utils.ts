@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fsSync, { promises as fs } from 'node:fs';
+import path from 'node:path';
 import { tempPaths } from './paths';
 import { app } from 'electron';
 import { downloadManager } from './data/downloads';
@@ -10,8 +10,8 @@ export const noop = () => {};
  * Ensures that a directory exists, creates it if it doesn't
  */
 export function ensureDirectoryExists(directoryPath: string) {
-  if (!fs.existsSync(directoryPath)) {
-    fs.mkdirSync(directoryPath, { recursive: true });
+  if (!fsSync.existsSync(directoryPath)) {
+    fsSync.mkdirSync(directoryPath, { recursive: true });
   }
 }
 
@@ -19,8 +19,8 @@ export function ensureDirectoryExists(directoryPath: string) {
  * Removes the directory and its contents if it exists
  */
 export function cleanDirectory(directoryPath: string) {
-  if (fs.existsSync(directoryPath)) {
-    fs.rmSync(directoryPath, { recursive: true });
+  if (fsSync.existsSync(directoryPath)) {
+    fsSync.rmSync(directoryPath, { recursive: true });
   }
 }
 
@@ -29,11 +29,11 @@ export function cleanDirectory(directoryPath: string) {
  */
 export function deleteDirectoryIfEmpty(directoryPath: string) {
   if (
-    fs.existsSync(directoryPath) &&
-    fs.statSync(directoryPath).isDirectory() &&
-    fs.readdirSync(directoryPath).length == 0
+    fsSync.existsSync(directoryPath) &&
+    fsSync.statSync(directoryPath).isDirectory() &&
+    fsSync.readdirSync(directoryPath).length == 0
   ) {
-    fs.rmSync(directoryPath, { recursive: true });
+    fsSync.rmSync(directoryPath, { recursive: true });
   }
 }
 
@@ -56,7 +56,7 @@ export function tempPath(name = 'tmp') {
   let prefix = 1;
   let filepath = path.join(tempPaths, name);
 
-  while (fs.existsSync(filepath)) {
+  while (fsSync.existsSync(filepath)) {
     prefix++;
     filepath = path.join(tempPaths, `${prefix}-${name}`);
   }
@@ -84,13 +84,13 @@ export function fileBufferPath(buffer: ArrayBuffer, name = 'tmp') {
   const tempFilePath = tempPath(name);
 
   const nodeBuffer = Buffer.from(buffer);
-  fs.writeFileSync(tempFilePath, nodeBuffer);
+  fsSync.writeFileSync(tempFilePath, nodeBuffer);
 
   return tempFilePath;
 }
 
 export async function pathFileBuffer(filePath: string) {
-  const buffer = await fs.promises.readFile(filePath);
+  const buffer = await fs.readFile(filePath);
   return buffer.buffer.slice(
     buffer.byteOffset,
     buffer.byteOffset + buffer.byteLength,
@@ -103,7 +103,7 @@ export async function imageOrDelete(imgPath: string) {
     return ret;
   }
 
-  await fs.promises.rm(imgPath);
+  await fs.rm(imgPath);
   return undefined;
 }
 
@@ -114,21 +114,21 @@ export function css(imgPath: string) {
 async function file(filePath: string, type: string) {
   if (app.isPackaged) {
     try {
-      const t = (await fs.promises.stat(filePath)).mtime.getTime();
+      const t = (await fs.stat(filePath)).mtime.getTime();
       return `file://${filePath}?${t}`;
     } catch {
       return undefined;
     }
   }
 
-  return fs.promises
+  return fs
     .readFile(filePath)
     .then((a) => `data:${type};base64,${a.toString('base64')}`)
     .catch(() => undefined);
 }
 
 function fileSync(filePath: string, type: string) {
-  if (!fs.existsSync(filePath)) {
+  if (!fsSync.existsSync(filePath)) {
     return undefined;
   }
 
@@ -137,7 +137,7 @@ function fileSync(filePath: string, type: string) {
   }
 
   try {
-    const data = fs.readFileSync(filePath).toString('base64');
+    const data = fsSync.readFileSync(filePath).toString('base64');
     return `data:${type};base64,${data}`;
   } catch {
     return undefined;

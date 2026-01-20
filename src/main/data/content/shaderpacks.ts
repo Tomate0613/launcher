@@ -1,5 +1,5 @@
 import { Content, ContentItem } from './content';
-import path from 'path';
+import path from 'node:path';
 import { Modpack } from '../modpack';
 import { type EnabledProvider, tomateMods } from './lib';
 

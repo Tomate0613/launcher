@@ -8,7 +8,7 @@ import type {
 import { SyncedIdSet } from '../../../common/synced/synced-id-set/backend';
 import { identity } from '@vueuse/core';
 import { type EnabledProvider, enabledProviders, tomateMods } from './lib';
-import fs from 'fs';
+import fs from 'node:fs';
 import { Modpack } from '../modpack';
 import {
   deleteDirectoryIfEmpty,
@@ -233,6 +233,7 @@ export abstract class Content {
 
       return filename;
     } catch (e) {
+      this.setState(filename, 'REMOVED');
       throw error('Failed to install content', e);
     } finally {
       ctx.stop();
@@ -416,12 +417,15 @@ export abstract class Content {
         });
       }
 
+      let i = 0;
       await Promise.allSettled(
         missingFilenames.map(async (filename) => {
           const filepath = this.getPath(filename);
           const item = await this.itemFromFile(filepath, 'local');
 
           registerInStore(filepath);
+          ctx.progress(++i / missingFilenames.length);
+
           this.items.push(item);
         }),
       );

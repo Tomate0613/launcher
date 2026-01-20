@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 import { LogLevel } from '../log';
-import fs, { WriteStream } from 'fs';
+import fs, { WriteStream } from 'node:fs';
 import { logsPath } from '../../../main/paths';
 import { inspect } from 'util';
 import { accounts } from '../../../main/data';
