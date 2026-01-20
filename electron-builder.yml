@@ -1,0 +1,47 @@
+appId: dev.doublekekse.launcher
+productName: Tomate Launcher
+directories:
+  buildResources: build
+files:
+  - "!**/.vscode/*"
+  - "!src/*"
+  - "!{node_modules_win/*,node_modules_lin/*}"
+  - "!electron.vite.config.{js,ts,mjs,cjs}"
+  - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
+  - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
+  - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
+asarUnpack:
+  # - assets/**
+  - "**/*.{node,dll}"
+win:
+  executableName: tomate-launcher
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+mac:
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  notarize: false
+dmg:
+  artifactName: ${name}-${version}.${ext}
+linux:
+  target:
+    - AppImage
+    - snap
+    - flatpak
+    - deb
+  maintainer: doublekekse.dev
+  category: Game
+appImage:
+  artifactName: ${name}-${version}.${ext}
+flatpak:
+  baseVersion: 25.08
+  runtimeVersion: 25.08
+npmRebuild: false
+publish:
+  provider: generic
+  url: https://example.com/auto-updates
