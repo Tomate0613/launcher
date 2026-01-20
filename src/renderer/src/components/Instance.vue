@@ -46,8 +46,10 @@ const iconChooser = useTemplateRef('icon-chooser');
     :name="instance.name"
     :progress="
       instance.processes.length > 0 &&
-      instance.processes.reduce((acc, val) => acc + val.progress, 0) /
-        instance.processes.length
+      instance.processes.reduce(
+        (acc, val) => (acc < val.progress ? acc : val.progress),
+        1,
+      )
     "
     :primary-action-disabled="
       !accountId || instance.processes.some((process) => process.blocking)
