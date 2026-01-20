@@ -8,6 +8,7 @@ import {
 } from '../../utils';
 import { log } from '../../../common/logging/log';
 import { Modpack } from '../modpack';
+import { wrapDownload } from '../content/store';
 
 const logger = log('mrpack-importer');
 
@@ -109,7 +110,11 @@ export class Mrpack implements ModpackImporter {
 
           try {
             ensureDirectoryExists(path.dirname(filePath));
-            await downloadFileFromUrl(downloadUrl, filePath, file.hashes.sha1);
+
+            await wrapDownload(file.hashes.sha1, filePath, async (path) => {
+              await downloadFileFromUrl(downloadUrl, path, file.hashes.sha1);
+            });
+
             downloaded = true;
             break; // Stop trying further URLs for this file
           } catch (error) {
@@ -118,9 +123,10 @@ export class Mrpack implements ModpackImporter {
         }
 
         if (!downloaded) {
-          logger.error(
-            `Failed to download ${file.path}. No working download URL.`,
-          );
+          // TODO: Do we want to throw an actual error here?
+          // The modpack might be old and still work without that mod or internet was unstable for a second and its completely broken
+          // Maybe we just analyze errors and collect them at the end?
+          logger.error(`Failed to download ${file.path}`, file.downloads);
         }
 
         downloadedFiles += 1;
