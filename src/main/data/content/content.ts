@@ -18,7 +18,7 @@ import {
 import { log } from '../../../common/logging/log';
 import paths from 'node:path';
 import { error } from '../../error';
-import { wrapDownload } from './store';
+import { registerInStore, wrapDownload } from './store';
 
 export type ContentType = 'mods' | 'shaderpacks' | 'resourcepacks';
 
@@ -421,6 +421,7 @@ export abstract class Content {
           const filepath = this.getPath(filename);
           const item = await this.itemFromFile(filepath, 'local');
 
+          registerInStore(filepath);
           this.items.push(item);
         }),
       );

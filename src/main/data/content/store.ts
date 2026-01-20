@@ -2,9 +2,15 @@ import fs from 'node:fs/promises';
 import { storePath } from '../../paths';
 import path from 'node:path';
 import { log } from '../../../common/logging/log';
+import crypto from 'node:crypto';
 
 const logger = log('content-store');
 const locks: Map<string, Promise<void>> = new Map();
+
+async function getHash(filePath: string) {
+  const file = await fs.readFile(filePath);
+  return crypto.createHash('sha1').update(file).digest('hex');
+}
 
 async function locked(key: string, func: () => Promise<void>) {
   const lock = locks.get(key);
@@ -50,6 +56,17 @@ export async function wrapDownload(
 
   await fs.rm(targetPath, { force: true });
   return fs.link(path.resolve(storeItemPath), path.resolve(targetPath));
+}
+
+export async function registerInStore(filePath: string) {
+  if ((await fs.stat(filePath)).nlink !== 1) {
+    return;
+  }
+
+  const sha1 = await getHash(filePath);
+  const storeItemPath = path.join(storePath, sha1);
+
+  return fs.link(path.resolve(filePath), path.resolve(storeItemPath));
 }
 
 export async function gc() {
