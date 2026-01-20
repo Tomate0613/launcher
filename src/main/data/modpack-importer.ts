@@ -129,6 +129,15 @@ export async function fromResource(
   const modpack = new Modpack(project.name, version.gameVersions[0], {
     id: 'vanilla',
   });
+
+  if (project.icon) {
+    try {
+      await modpack.setIconFromUrl(project.icon);
+    } catch (e) {
+      logger.warn('Failed to download icon', e);
+    }
+  }
+
   modpacks.push(modpack);
 
   const tempPath = path.join(tempPaths, randomUUID());
@@ -162,6 +171,7 @@ export async function fromResource(
   }
   logger.log('Downloaded');
 
+  // TODO Do not delete icon.png
   await fromFile(path.join(tempPath, 'modpack.zip'), modpack);
 
   modpack.name = project.name;
