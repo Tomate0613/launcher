@@ -66,6 +66,12 @@ export async function registerInStore(filePath: string) {
   const sha1 = await getHash(filePath);
   const storeItemPath = path.join(storePath, sha1);
 
+  try {
+    await fs.access(storeItemPath);
+    await fs.rm(filePath, { force: true });
+    return fs.link(path.resolve(storeItemPath), path.resolve(filePath));
+  } catch {}
+
   return fs.link(path.resolve(filePath), path.resolve(storeItemPath));
 }
 
