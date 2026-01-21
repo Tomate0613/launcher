@@ -2,6 +2,7 @@ appId: dev.doublekekse.launcher
 productName: Tomate Launcher
 directories:
   buildResources: build
+# TODO
 files:
   - "!**/.vscode/*"
   - "!src/*"
