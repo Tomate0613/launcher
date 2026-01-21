@@ -97,6 +97,43 @@
             );
           };
         }
+
+      );
+
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgsFor.${system};
+        in
+        {
+          default = pkgs.stdenv.mkDerivation (finalAttrs: {
+            pname = "tomate-launcher";
+            version = "1.0.0";
+
+            src = ./.;
+
+            nativeBuildInputs = with pkgs; [
+              nodejs
+              pnpmConfigHook
+              pnpm
+            ];
+
+            pnpmDeps = pkgs.fetchPnpmDeps {
+              inherit (finalAttrs) pname version src;
+              pnpm = pkgs.pnpm;
+              fetcherVersion = 3;
+              hash = "sha256-dSFit7aGbkS+ZDl4mbx7Vf8Tx6E1AeK66lvslwzPWhE=";
+            };
+
+            buildPhase = ''
+              runHook preBuild
+
+              pnpm build:linux
+
+              runHook postBuild
+            '';
+          });
+        }
       );
     };
 }
