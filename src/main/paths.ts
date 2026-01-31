@@ -30,10 +30,9 @@ export const basePath = path.join(
   is.dev ? 'tomate-launcher-dev' : 'tomate-launcher',
 );
 
-console.log(basePath);
-
 export const modpacksPath = path.join(basePath, 'modpacks/');
 export const logsPath = path.join(basePath, 'logs/');
+export const storePath = path.join(basePath, 'store/');
 export const stashesPath = path.join(basePath, 'stash/');
 export const tempPaths = path.join(basePath, 'temp/');
 export const minecraftRootPath = path.join(basePath, 'minecraft/');
@@ -57,6 +56,7 @@ export const log4jConfigPath = path.join(basePath, 'log4j.xml');
 
 export function ensureAppDirectoriesExist() {
   ensureDirectoryExists(modpacksPath);
+  ensureDirectoryExists(storePath);
   ensureDirectoryExists(logsPath);
   ensureDirectoryExists(tempPaths);
   ensureDirectoryExists(minecraftRootPath);

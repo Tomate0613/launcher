@@ -36,7 +36,7 @@
     "tomate-loaders": "github:Tomate0613/tomate-loaders",
     "tomate-mods": "github:Tomate0613/tomate-mods",
     "vue": "^3.5.27",
-    "vue-router": "^4.6.4",
+    "vue-router": "^5.0.1",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
