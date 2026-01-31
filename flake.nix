@@ -58,6 +58,7 @@
                 xorg.libXext
                 xorg.libXfixes
                 xorg.libXrandr
+                xorg.libXrender
                 xorg.libxcb
                 expat
                 at-spi2-atk
@@ -122,8 +123,22 @@
               inherit (finalAttrs) pname version src;
               pnpm = pkgs.pnpm;
               fetcherVersion = 3;
-              hash = "sha256-dSFit7aGbkS+ZDl4mbx7Vf8Tx6E1AeK66lvslwzPWhE=";
+              hash = "sha256-rW0U3kwDSiQLewqNMQ5XfGrQR1IxdbNrLMv9slPtaQM=";
             };
+
+            env = {
+              ELECTRON_SKIP_BINARY_DOWNLOAD = 1;
+            };
+
+            preBuild =
+              lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+                cp -r ${pkgs.electron.dist}/Electron.app .
+                chmod -R u+w Electron.app
+              ''
+              + lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
+                cp -r ${pkgs.electron.dist} electron-dist
+                chmod -R u+w electron-dist
+              '';
 
             buildPhase = ''
               runHook preBuild
