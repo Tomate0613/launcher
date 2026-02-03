@@ -2,11 +2,11 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1769461804,
-        "narHash": "sha256-msG8SU5WsBUfVVa/9RPLaymvi5bI8edTavbIq3vRlhI=",
+        "lastModified": 1770115704,
+        "narHash": "sha256-KHFT9UWOF2yRPlAnSXQJh6uVcgNcWlFqqiAZ7OVlHNc=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "bfc1b8a4574108ceef22f02bafcf6611380c100d",
+        "rev": "e6eae2ee2110f3d31110d5c222cd395303343b08",
         "type": "github"
       },
       "original": {
@@ -16,9 +16,26 @@
         "type": "github"
       }
     },
+    "pnpm2nix": {
+      "locked": {
+        "lastModified": 1770154659,
+        "narHash": "sha256-V82x48D8dpzibzLrLfegYpJo4JfN8TbxftEWXy9l9B0=",
+        "owner": "Tomate0613",
+        "repo": "nix-flakes",
+        "rev": "2f314c1659dd53826ecbe1f62b331bbfb89aa05b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Tomate0613",
+        "ref": "pnpm",
+        "repo": "nix-flakes",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "pnpm2nix": "pnpm2nix"
       }
     }
   },

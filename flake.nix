@@ -3,10 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    pnpm2nix.url = "github:Tomate0613/nix-flakes/pnpm";
   };
 
   outputs =
-    { nixpkgs, ... }:
+    { nixpkgs, pnpm2nix, ... }@inputs:
 
     let
       inherit (nixpkgs) lib;
@@ -104,31 +105,36 @@
       packages = forAllSystems (
         system:
         let
-          pkgs = nixpkgsFor.${system};
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ pnpm2nix.overlays.default ];
+
+          };
         in
         {
-          default = pkgs.stdenv.mkDerivation (finalAttrs: {
-            pname = "tomate-launcher";
-            version = "1.0.0";
+          default = pkgs.mkPnpmPackage {
+            pname = (fromJSON (readFile packageJSON)).name;
+            version = (fromJSON (readFile packageJSON)).version;
 
             src = ./.;
+            lockFile = ./pnpm-lock.yaml;
 
             nativeBuildInputs = with pkgs; [
               nodejs
-              pnpmConfigHook
               pnpm
+              makeWrapper
             ];
 
-            pnpmDeps = pkgs.fetchPnpmDeps {
-              inherit (finalAttrs) pname version src;
-              pnpm = pkgs.pnpm;
-              fetcherVersion = 3;
-              hash = "sha256-rW0U3kwDSiQLewqNMQ5XfGrQR1IxdbNrLMv9slPtaQM=";
-            };
+            buildCommand = "build:linux";
 
-            env = {
-              ELECTRON_SKIP_BINARY_DOWNLOAD = 1;
-            };
+            buildDependencies = [
+              "@doublekekse/find-java"
+              "tomate-launcher-core"
+              "tomate-mods"
+              "tomate-loaders"
+            ];
+
+            outDir = "dist";
 
             preBuild =
               lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
@@ -143,11 +149,26 @@
             buildPhase = ''
               runHook preBuild
 
-              pnpm build:linux
+              pnpm build
+              pnpm exec electron-builder \
+                --dir \
+                -c.electronDist=${if pkgs.stdenv.hostPlatform.isDarwin then "." else "electron-dist"} \
+                -c.electronVersion=${pkgs.electron.version}
 
               runHook postBuild
             '';
-          });
+
+            installPhase = ''
+              mkdir -p $out/opt
+              mv dist/*unpacked/resources $out/opt/TomateLauncher
+            '';
+
+            postFixup = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
+              makeWrapper ${pkgs.electron}/bin/electron $out/bin/tomate-launcher \
+                --add-flags $out/opt/TomateLauncher/app.asar \
+                --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}"
+            '';
+          };
         }
       );
     };
