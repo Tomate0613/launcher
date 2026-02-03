@@ -108,13 +108,13 @@
           pkgs = import nixpkgs {
             inherit system;
             overlays = [ pnpm2nix.overlays.default ];
-
           };
+          libs = pkgs.libs;
         in
         {
           default = pkgs.mkPnpmPackage {
-            pname = (fromJSON (readFile packageJSON)).name;
-            version = (fromJSON (readFile packageJSON)).version;
+            pname = (libs.fromJSON (libs.readFile ./package.json)).name;
+            version = (libs.fromJSON (libs.readFile ./package.json)).version;
 
             src = ./.;
             lockFile = ./pnpm-lock.yaml;
