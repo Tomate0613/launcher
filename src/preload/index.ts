@@ -54,6 +54,14 @@ try {
       );
     },
   );
+
+  electronAPI.ipcRenderer.on('show-error', (_e, error) => {
+    window.postMessage({
+      type: 'frontend-error',
+      name: error.name,
+      message: error.message,
+    });
+  });
 } catch (error) {
   console.error(error);
 }

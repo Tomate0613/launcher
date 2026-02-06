@@ -44,7 +44,7 @@ import { ContentType, ResourceSource } from './content/content';
 import { ShaderpacksContent } from './content/shaderpacks';
 import { ResourcepacksContent } from './content/resourcepacks';
 import { downloadManager } from './downloads';
-import { error, FrontendError } from '../error';
+import { error, FrontendError, showError } from '../error';
 import { Process, ProcessContext } from '../process';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
@@ -375,6 +375,13 @@ export class Modpack extends Serializable implements ModpackData {
       }),
     );
 
+    launcher.on(
+      'data-error',
+      TomateLoaders.liner((data) => {
+        this.logger.mcLogError(data);
+      }),
+    );
+
     launcher.on('progress', (e) => {
       const progress = e.current / e.total;
       invoke('progress', progress, progressText, `(${e.current} / ${e.total})`);
@@ -406,6 +413,9 @@ export class Modpack extends Serializable implements ModpackData {
           this.makeStash('Last successful launch', 'successful');
       } else {
         // TODO Error handling
+        showError(
+          new FrontendError(`Minecraft exited with code ${exitCode}`),
+        );
       }
     });
 

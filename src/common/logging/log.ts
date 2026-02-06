@@ -101,6 +101,10 @@ export class Logger {
 
     transportLog('error', 'Minecraft/unknown', 'no-parse', [data]);
   }
+
+  mcLogError(data: string) {
+    transportLog('error', 'Minecraft/unknown', 'error', [data]);
+  }
 }
 
 function transportLog(

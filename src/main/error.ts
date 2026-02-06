@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { log } from '../common/logging/log';
 import { TasksError } from 'tomate-launcher-core';
+import { invoke } from './api';
 
 const logger = log('error');
 
@@ -102,4 +103,8 @@ export function error(context: string, err: unknown): FrontendError {
     default:
       return new NetworkError(context, 'Unexpected network error', err);
   }
+}
+
+export function showError(frontendError: FrontendError) {
+  invoke('show-error', frontendError);
 }
