@@ -280,6 +280,17 @@ const { ignoreUpdates } = watchIgnorable(
   },
 );
 
+function urlFor(item: ContentItem) {
+  if (item.provider === 'modrinth' && item.project) {
+    return `https://modrinth.com/project/${item.project?.id}`;
+  }
+  if (item.provider === 'curseforge' && item.project) {
+    return `https://www.curseforge.com/minecraft/mc-mods/${item.project?.slug}`;
+  }
+
+  return undefined;
+}
+
 watch(installedSearchQuery, (q) => {
   ignoreUpdates(() => {
     const lowercaseQuery = q.toLowerCase();
@@ -362,6 +373,7 @@ watch(installedSearchQuery, (q) => {
         :icon="item.project?.icon"
         :state="item.state"
         :stateProgress="item.stateProgress"
+        :url="urlFor(item)"
         :key="item.id"
       >
         <button
