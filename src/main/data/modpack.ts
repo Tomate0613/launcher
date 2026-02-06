@@ -269,7 +269,6 @@ export class Modpack extends Serializable implements ModpackData {
     fs.copySync(defaultsPath, this.dir, {
       overwrite: false,
       errorOnExist: false,
-      recursive: true,
     });
 
     this.logger.log('Copied over defaults');
