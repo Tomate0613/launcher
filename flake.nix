@@ -109,12 +109,12 @@
             inherit system;
             overlays = [ pnpm2nix.overlays.default ];
           };
-          libs = pkgs.libs;
+          lib = pkgs.lib;
         in
         {
           default = pkgs.mkPnpmPackage {
-            pname = (libs.fromJSON (libs.readFile ./package.json)).name;
-            version = (libs.fromJSON (libs.readFile ./package.json)).version;
+            pname = (lib.fromJSON (lib.readFile ./package.json)).name;
+            version = (lib.fromJSON (lib.readFile ./package.json)).version;
 
             src = ./.;
             lockFile = ./pnpm-lock.yaml;
