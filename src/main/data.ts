@@ -1,6 +1,6 @@
 import { Modpack } from './data/modpack';
 import { Account } from './data/account';
-import { accountsPath, basePath, modpacksPath } from './paths';
+import { accountsPath, modpacksPath } from './paths';
 import fs from 'node:fs';
 import { Settings } from './data/settings';
 import { writeLog4jConfig } from './static/log4jConfig';
@@ -28,9 +28,6 @@ export function loadData() {
 
   isLoaded = true;
   logger.log('Loading data');
-  if (!fs.existsSync(basePath)) {
-    fs.mkdirSync(basePath, { recursive: true });
-  }
 
   writeLog4jConfig();
   writeDefaultThemes();
