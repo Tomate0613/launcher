@@ -66,9 +66,12 @@ export class Settings extends Serializable {
   }
 
   getCachedGameVersions(loaderId: LoaderId) {
-    return Object.keys(this.cachedLaunchConfigs)
+    const all = Object.keys(this.cachedLaunchConfigs)
       .filter((config) => config.startsWith(`${loaderId}:`))
       .map((config) => config.split(':')[2]);
+
+    // Filter out duplicates, we can replace this with something more pretty in the future if necessary
+    return all.filter((a, i) => !all.some((b, d) => a == b && i > d));
   }
 
   getCachedLoaderVersions(loaderId: LoaderId, gameVersion: string) {
