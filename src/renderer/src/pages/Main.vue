@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar.vue';
 import { useDownloadState } from '../composables/downloadState';
 import Popup from '../components/Popup.vue';
 import FrontendErrorPopup from '../components/popup/FrontendErrorPopup.vue';
+import CommandPalette from '../components/command-palette/CommandPalette.vue';
 
 const progress = ref(0);
 
@@ -50,6 +51,7 @@ onBeforeUnmount(() => {
   </Popup>
 
   <FrontendErrorPopup />
+  <CommandPalette />
 </template>
 
 <style scoped>

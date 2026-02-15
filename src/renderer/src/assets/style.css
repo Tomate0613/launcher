@@ -3,7 +3,7 @@
 @import './fonts/Roboto_Mono/style.css';
 
 * {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 
 :root {
@@ -54,7 +54,7 @@ h3 {
   margin-top: 0;
 }
 
-button,
+button:not(.btn-other),
 input,
 .sidebar-item {
   &:focus-visible {
@@ -67,7 +67,7 @@ a.fake-btn {
   text-decoration: none;
 }
 
-button,
+button:not(.btn-other),
 .fake-btn {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
