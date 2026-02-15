@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMagicKeys, whenever } from '@vueuse/core';
 import CommandPaletteContent from './CommandPaletteContent.vue';
-import { onMounted, ref, useTemplateRef } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 
 const commandPalette = useTemplateRef('dialog');
 
@@ -18,9 +18,9 @@ function show() {
   open.value = true;
 }
 
-onMounted(() => {
-  if (!commandPalette.value?.open) show();
-});
+// onMounted(() => {
+//   if (!commandPalette.value?.open) show();
+// });
 </script>
 
 <template>
