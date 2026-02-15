@@ -88,6 +88,15 @@ watch(
             />
           </div>
         </label>
+        <label class="settings-option settings-option-button">
+          <div>Java Executable</div>
+
+          <button disabled>
+            <!-- TODO -->
+            <span>{{ instance.java ?? 'Automatic' }}</span>
+            <Icon :path="mdiArrowRight" />
+          </button>
+        </label>
       </section>
 
       <GeneralInstanceOptions

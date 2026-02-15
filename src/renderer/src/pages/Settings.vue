@@ -245,6 +245,10 @@ watchEffect(() => {
       align-items: center;
       min-width: 0;
 
+      &:disabled {
+        opacity: .5;
+      }
+
       & svg {
         flex: 0 0 auto;
       }
