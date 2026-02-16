@@ -6,7 +6,6 @@ import {
   ComputedRef,
   effectScope,
   type EffectScope,
-  getCurrentInstance,
   onMounted,
   ref,
   useTemplateRef,
@@ -44,6 +43,7 @@ const commandPalettePlaceholder = ref('');
 
 whenever(keys['Ctrl+K'], () => {
   if (!commandPalette.value?.open) {
+    logger.verbose('Opening command palette');
     openInstances();
   }
 });
@@ -64,6 +64,7 @@ function showBasic(placeholder: string, opts: Option[]) {
   showPopup();
 }
 
+/*
 function showComputed(placeholder: string, fn: () => ComputedRef<Option[]>) {
   commandPalettePlaceholder.value = placeholder;
 
@@ -76,6 +77,7 @@ function showComputed(placeholder: string, fn: () => ComputedRef<Option[]>) {
   });
   showPopup();
 }
+*/
 
 function showAsyncComputed(
   placeholder: string,
