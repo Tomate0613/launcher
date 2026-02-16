@@ -7,7 +7,11 @@
   };
 
   outputs =
-    { nixpkgs, pnpm2nix, ... }@inputs:
+    {
+      nixpkgs,
+      pnpm2nix,
+      self,
+    }:
 
     let
       inherit (nixpkgs) lib;
@@ -171,5 +175,9 @@
           };
         }
       );
+
+      overlays.default = final: prev: {
+        tomate-launcher = self.packages.${final.stdenv.hostPlatform.system}.default;
+      };
     };
 }
