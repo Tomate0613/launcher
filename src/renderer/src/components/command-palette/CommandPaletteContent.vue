@@ -334,13 +334,13 @@ input#command-palette-actions-input {
     cursor: pointer;
     padding: 0.75rem 0.5rem;
 
-    &.selected {
-      background: var(--color-ui-layer);
-    }
-
     &:hover,
     &:focus {
       background: var(--color-ui-layer-dim);
+    }
+
+    &.selected {
+      background: var(--color-ui-layer);
     }
 
     & .option-image {
@@ -435,13 +435,13 @@ input#command-palette-actions-input {
     & button {
       cursor: pointer;
 
-      &.selected {
-        background: var(--color-ui-layer);
-      }
-
       &:hover,
       &:focus {
         background: var(--color-ui-layer-dim);
+      }
+
+      &.selected {
+        background: var(--color-ui-layer);
       }
 
       &:disabled {
