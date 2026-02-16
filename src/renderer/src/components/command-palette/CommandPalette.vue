@@ -147,16 +147,16 @@ function openInstances() {
         },
       },
       {
-        name: 'Settings',
-        execute() {
-          router.push(`/${modpack.id}/settings`);
-        },
-      },
-      {
         name: 'Set Icon',
         execute() {
           setModpackIcon(modpack);
           return true;
+        },
+      },
+      {
+        name: 'Settings',
+        execute() {
+          router.push(`/${modpack.id}/settings`);
         },
       },
     ]);
