@@ -356,6 +356,7 @@ input#command-palette-actions-input {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 3rem;
 
   & .actions {
     display: flex;
