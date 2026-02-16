@@ -7,7 +7,11 @@
   };
 
   outputs =
-    { nixpkgs, pnpm2nix, ... }@inputs:
+    {
+      nixpkgs,
+      pnpm2nix,
+      self,
+    }:
 
     let
       inherit (nixpkgs) lib;
@@ -30,7 +34,7 @@
               jdk21
 
               pciutils
-              xorg.xrandr
+              xrandr
               mesa-demos
 
               wineWowPackages.minimal
@@ -53,14 +57,14 @@
                 gtk3
                 pango
                 cairo
-                xorg.libX11
-                xorg.libXcomposite
-                xorg.libXdamage
-                xorg.libXext
-                xorg.libXfixes
-                xorg.libXrandr
-                xorg.libXrender
-                xorg.libxcb
+                libx11
+                libxcomposite
+                libxdamage
+                libxext
+                libxfixes
+                libxrandr
+                libxrender
+                libxcb
                 expat
                 at-spi2-atk
                 libxkbcommon
@@ -80,11 +84,11 @@
 
                 ## glfw
                 libGL
-                xorg.libX11
-                xorg.libXcursor
-                xorg.libXext
-                xorg.libXrandr
-                xorg.libXxf86vm
+                libx11
+                libxcursor
+                libxext
+                libxrandr
+                libxxf86vm
 
                 flite # Text to speech (Otherwise minecraft will log an error every time it launches)
 
@@ -171,5 +175,9 @@
           };
         }
       );
+
+      overlays.default = final: prev: {
+        tomate-launcher = self.packages.${final.stdenv.hostPlatform.system}.default;
+      };
     };
 }
