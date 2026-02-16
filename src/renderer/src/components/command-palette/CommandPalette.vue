@@ -225,7 +225,7 @@ function setModpackIconFromContentType(
   modpackId: string,
   contentType: ContentType,
 ) {
-  showAsyncComputed('Select icon...', () =>
+  showAsyncComputed('Select icon', () =>
     forEachContent(modpackId, contentType, (content) =>
       content.project?.icon
         ? [
@@ -247,7 +247,7 @@ function setModpackIconFromContentType(
 
 function setModpackIcon(modpack: ModpackData) {
   showBasic(
-    'Select content type...',
+    'Select icon source',
     forEachContentType((contentType) =>
       contentType === 'mods' && modpack.loader.id === 'vanilla'
         ? false
