@@ -8,7 +8,7 @@ import Popup from './Popup.vue';
 import {
   mdiArrowRight,
   mdiPlus,
-  mdiTrashCanOutline,
+  mdiDeleteOutline
 } from '@mdi/js';
 import Icon from './Icon.vue';
 
@@ -145,7 +145,7 @@ function isChanged(key: keyof GeneralModpackOptions) {
             )
           "
         >
-          <Icon :path="mdiTrashCanOutline" />
+          <Icon :path="mdiDeleteOutline" />
         </button>
       </div>
       <button class="icon-btn" @click="settings.customLaunchArgs.push('')">

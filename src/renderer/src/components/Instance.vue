@@ -8,11 +8,11 @@ import ChooseIconPopup from './popup/ChooseIconPopup.vue';
 import Icon from './Icon.vue';
 import {
   mdiCogOutline,
+  mdiDeleteOutline,
   mdiFolderOpenOutline,
   mdiLightbulbOnOutline,
   mdiPackageVariantClosed,
   mdiPaletteSwatchOutline,
-  mdiTrashCanOutline,
 } from '@mdi/js';
 
 const { instance, accountId } = defineProps<{
@@ -93,7 +93,7 @@ const iconChooser = useTemplateRef('icon-chooser');
       </RouterLink>
       <hr />
       <button @click="confirmInstanceDelete?.openMenu" class="icon-btn">
-        <Icon :path="mdiTrashCanOutline" />
+        <Icon :path="mdiDeleteOutline" />
         Delete
       </button>
     </template>
