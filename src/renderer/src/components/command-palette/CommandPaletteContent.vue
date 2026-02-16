@@ -5,83 +5,49 @@ import {
   nextTick,
   onMounted,
   ref,
+  toRaw,
   useId,
   useTemplateRef,
   watch,
 } from 'vue';
 import { log } from '../../../../common/logging/log';
-import { useAppState } from '../../composables/appState';
 import Icon from '../Icon.vue';
 import {
   mdiArrowUpBoldOutline,
   mdiChevronUp,
+  mdiHelpCircleOutline,
   mdiMagnify,
-  mdiPackageVariantClosed,
 } from '@mdi/js';
+import ImageIcon from '../ImageIcon.vue';
+import type { Option } from './types';
 
 const logger = log('command-palette');
 
 const input = useTemplateRef('input');
+const actionsInput = useTemplateRef('actions-input');
 const optionRefs = useTemplateRef('option');
 const actionsPopover = useTemplateRef('actions-popover');
 
-const { closeCommandPalette } = defineProps<{
+const { closeCommandPalette, options } = defineProps<{
   closeCommandPalette(): void;
+  options: Option[];
+  placeholder: string;
 }>();
 
-// const options = defineModel<Option[]>();
-
 const searchQuery = ref('');
+const actionsSearchQuery = ref('');
 const selectedIdx = ref(0);
 const selectedActionIdx = ref(0);
 
-const appState = await useAppState();
-
-type Action = {
-  name: string;
-  execute(): void;
-  disabled?: boolean;
-  keepAlive?: boolean;
-};
-
-type Option = {
-  name: string;
-  icon: string;
-  actions: Action[];
-};
-
-const options = computed<Option[]>(() => {
-  return Array.from(appState.modpacks.values())
-    .filter((m) => !m.isDeleted)
-    .sort((a, b) => (b.lastUsed ?? 0) - (a.lastUsed ?? 0))
-    .map((modpack) => ({
-      name: modpack.name,
-      icon: mdiPackageVariantClosed,
-      actions: [
-        {
-          name: 'Launch',
-          execute() {
-            return window.api.invoke(
-              'launchModpack',
-              modpack.id,
-              appState.accountId!,
-            );
-          },
-          disabled: !appState.accountId,
-        },
-        {
-          name: 'Open Folder',
-          execute() {
-            return window.api.invoke('openModpackFolder', modpack.id);
-          },
-        },
-      ],
-    }));
-});
-
 const filteredOptions = computed(() =>
-  options.value.filter((option) =>
+  options.filter((option) =>
     option.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+  ),
+);
+
+const filteredActions = computed(() =>
+  selectedOption.value?.actions.filter((action) =>
+    action.name.toLowerCase().includes(actionsSearchQuery.value.toLowerCase()),
   ),
 );
 
@@ -101,7 +67,7 @@ function moveDown(count: number = 1) {
     selectedIdx.value =
       (selectedIdx.value + count) % filteredOptions.value.length;
   } else {
-    const length = selectedOption.value?.actions.length || 1;
+    const length = filteredActions.value?.length || 1;
     selectedActionIdx.value = (selectedActionIdx.value + count) % length;
   }
 }
@@ -114,7 +80,7 @@ function moveUp(count: number = 1) {
       (selectedIdx.value - count + filteredOptions.value.length) %
       filteredOptions.value.length;
   } else {
-    const length = selectedOption.value?.actions.length || 1;
+    const length = filteredActions.value?.length || 1;
     selectedActionIdx.value =
       (selectedActionIdx.value - count + length) % length;
   }
@@ -123,14 +89,20 @@ function moveUp(count: number = 1) {
 function execute(idx: number, actionIdx: number) {
   const selected = filteredOptions.value[idx];
   if (selected) {
-    logger.log('Selected', selected.name);
-
     const action =
-      actionIdx < selected.actions.length ? selected.actions[actionIdx] : null;
+      actionIdx < (filteredActions.value?.length ?? 0)
+        ? filteredActions.value?.[actionIdx]
+        : null;
+
+    logger.log('Selected', selected.name, action?.name);
 
     if (action && !action.disabled) {
-      action.execute();
-      if (!action.keepAlive) {
+      actionsPopover.value?.hidePopover();
+      actionsSearchQuery.value = '';
+      searchQuery.value = '';
+
+      const keepAliveRet = action.execute();
+      if (!action.keepAlive && !keepAliveRet) {
         closeCommandPalette();
       }
     }
@@ -179,15 +151,18 @@ useEventListener(
         }
       }
 
-      if (e.ctrlKey && e.key === 'b') {
+      if (
+        e.ctrlKey &&
+        e.key === 'b' &&
+        selectedOption.value &&
+        selectedOption.value.actions.length >= 2
+      ) {
         e.preventDefault();
+        actionsSearchQuery.value = '';
         actionsPopover.value?.showPopover();
+        actionsInput.value?.focus();
       }
     } else {
-      if (e.key !== 'Escape') {
-        e.preventDefault();
-      }
-
       if (e.key === 'Enter' && !e.repeat) {
         e.preventDefault();
         if (e.shiftKey) {
@@ -205,6 +180,10 @@ watch(searchQuery, () => {
   selectedIdx.value = 0;
 });
 
+watch(actionsSearchQuery, () => {
+  selectedActionIdx.value = 0;
+});
+
 watch(selectedIdx, async () => {
   await nextTick();
   optionRefs.value?.[selectedIdx.value]?.scrollIntoView({
@@ -213,7 +192,6 @@ watch(selectedIdx, async () => {
 });
 
 onMounted(() => {
-  logger.log(input.value);
   input.value?.focus();
 });
 
@@ -228,7 +206,7 @@ const actionsPopupId = useId();
       ref="input"
       type="text"
       autofocus="true"
-      placeholder="Type a command or search"
+      :placeholder="placeholder"
       v-model="searchQuery"
     />
   </label>
@@ -241,7 +219,13 @@ const actionsPopupId = useId();
       @click="selectedIdx = idx"
       @dblclick="execute(idx, 0)"
     >
-      <Icon :path="option.icon" />
+      <ImageIcon
+        class="option-image"
+        v-if="option.image"
+        :src="option.image === true ? undefined : option.image"
+      />
+      <Icon v-else :path="option.icon ?? mdiHelpCircleOutline" />
+
       {{ option.name }}
     </button>
   </div>
@@ -252,20 +236,31 @@ const actionsPopupId = useId();
     @toggle="selectedActionIdx = 0"
     popover
   >
-    <button
-      v-for="(action, idx) in selectedOption?.actions"
-      class="btn-other"
-      :class="{ selected: idx == selectedActionIdx }"
-      @click="execute(selectedIdx, idx)"
-      :disabled="action.disabled"
-    >
-      {{ action.name }}
-      <code v-if="idx === 0">↵</code>
-      <div class="keycombo" v-if="idx === 1">
-        <code><Icon :path="mdiArrowUpBoldOutline" :size="16" /></code>
-        <code>↵</code>
-      </div>
-    </button>
+    <div class="actions">
+      <button
+        v-if="filteredActions && filteredActions.length"
+        v-for="(action, idx) in filteredActions"
+        class="btn-other"
+        :class="{ selected: idx == selectedActionIdx }"
+        @click="execute(selectedIdx, idx)"
+        :disabled="action.disabled"
+      >
+        {{ action.name }}
+        <code v-if="idx === 0">↵</code>
+        <div class="keycombo" v-if="idx === 1">
+          <code><Icon :path="mdiArrowUpBoldOutline" :size="16" /></code>
+          <code>↵</code>
+        </div>
+      </button>
+      <div v-else class="no-results">No Results</div>
+    </div>
+    <input
+      id="command-palette-actions-input"
+      ref="actions-input"
+      placeholder="Filter actions"
+      type="text"
+      v-model="actionsSearchQuery"
+    />
   </div>
   <div class="footer">
     Command Palette
@@ -305,10 +300,17 @@ const actionsPopupId = useId();
   padding: 1.25rem;
 }
 
-input#command-palette-input {
+input#command-palette-input,
+input#command-palette-actions-input {
   all: unset;
   position: relative;
   width: 100%;
+}
+
+input#command-palette-actions-input {
+  padding: 0.75rem;
+  border: none;
+  border-top: 1px solid var(--color-ui-layer);
 }
 
 .options {
@@ -341,6 +343,11 @@ input#command-palette-input {
     &:focus {
       background: var(--color-ui-layer-dim);
     }
+
+    & .option-image {
+      height: 24px;
+      border-radius: calc(var(--border-radius));
+    }
   }
 }
 
@@ -362,6 +369,11 @@ input#command-palette-input {
       cursor: pointer;
 
       gap: 0.5rem;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
 
     & .other-actions-hint {
@@ -400,26 +412,47 @@ input#command-palette-input {
     display: flex;
   }
 
-  & button {
-    all: unset;
-
-    cursor: pointer;
-    padding: 0.5rem 0.75rem;
-
+  & .actions {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-direction: column;
 
-    border-radius: var(--border-radius);
+    padding-bottom: 0.25rem;
 
-    &.selected {
-      background: var(--color-ui-layer);
+    & button,
+    & .no-results {
+      all: unset;
+
+      padding: 0.5rem 0.75rem;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+
+      border-radius: var(--border-radius);
     }
 
-    &:hover,
-    &:focus {
-      background: var(--color-ui-layer-dim);
+    & button {
+      cursor: pointer;
+
+      &.selected {
+        background: var(--color-ui-layer);
+      }
+
+      &:hover,
+      &:focus {
+        background: var(--color-ui-layer-dim);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    & .no-results {
+      justify-content: center;
+      color: var(--color-text-secondary);
     }
   }
 }

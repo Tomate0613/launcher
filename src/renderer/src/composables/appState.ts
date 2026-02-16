@@ -79,3 +79,5 @@ export const useAppState = createGlobalState(async () => {
     consoleLogLevels,
   });
 });
+
+export type AppState = Awaited<ReturnType<typeof useAppState>>;
