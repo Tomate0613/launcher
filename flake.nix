@@ -53,14 +53,14 @@
                 gtk3
                 pango
                 cairo
-                xorg.libX11
-                xorg.libXcomposite
-                xorg.libXdamage
-                xorg.libXext
-                xorg.libXfixes
-                xorg.libXrandr
-                xorg.libXrender
-                xorg.libxcb
+                libx11
+                libxcomposite
+                libxdamage
+                libxext
+                libxfixes
+                libxrandr
+                libxrender
+                libxcb
                 expat
                 at-spi2-atk
                 libxkbcommon
@@ -80,11 +80,11 @@
 
                 ## glfw
                 libGL
-                xorg.libX11
-                xorg.libXcursor
-                xorg.libXext
-                xorg.libXrandr
-                xorg.libXxf86vm
+                libx11
+                libxcursor
+                libxext
+                libxrandr
+                libxxf86vm
 
                 flite # Text to speech (Otherwise minecraft will log an error every time it launches)
 
