@@ -34,7 +34,7 @@
               jdk21
 
               pciutils
-              xorg.xrandr
+              xrandr
               mesa-demos
 
               wineWowPackages.minimal
