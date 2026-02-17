@@ -119,7 +119,7 @@ watchEffect(() => {
         <div class="extra-buttons">
           <button
             class="icon-btn"
-            @click="setMinecraftDefaultsPopup.value?.openMenu()"
+            @click="setMinecraftDefaultsPopup?.openMenu()"
           >
             <Icon :path="mdiTuneVariant" />
             Set Minecraft Defaults
