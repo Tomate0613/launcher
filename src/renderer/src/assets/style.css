@@ -56,6 +56,7 @@ h3 {
 
 button:not(.btn-other),
 input,
+select,
 .sidebar-item {
   &:focus-visible {
     outline: 2px solid var(--color-accent);

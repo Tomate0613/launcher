@@ -349,7 +349,7 @@ export const routes = {
   getDefaultGeneralModpackOptions() {
     return defaultGeneralModpackOptions;
   },
-  getDefaulltModpackOptions() {
+  getDefaultModpackOptions() {
     return applyDefaults(
       getSettings().modpackDefaultOptions,
       defaultGeneralModpackOptions,

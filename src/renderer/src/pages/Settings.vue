@@ -2,7 +2,7 @@
 import { reactive, ref, watch, watchEffect } from 'vue';
 import { usePageFocus } from '../composables/pageFocus';
 import { clone } from '../../../common/utils';
-import { mdiCursorDefault, mdiFolder, mdiTune, mdiTuneVariant } from '@mdi/js';
+import { mdiFolder, mdiTuneVariant } from '@mdi/js';
 import Versions from '../components/Versions.vue';
 import Icon from '../components/Icon.vue';
 import GeneralInstanceOptions from '../components/GeneralInstanceOptions.vue';
@@ -135,7 +135,7 @@ watchEffect(() => {
 .extra-buttons {
   display: flex;
   flex-direction: column;
-  gap: .25rem;
+  gap: 0.25rem;
 }
 </style>
 
