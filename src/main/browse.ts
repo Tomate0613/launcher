@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { modpacksPath, skinCachePath, themesPath } from './paths';
+import { defaultsPath, modpacksPath, skinCachePath, themesPath } from './paths';
 import fs from 'node:fs/promises';
 import nbt from 'prismarine-nbt';
 import { log } from '../common/logging/log';
@@ -164,4 +164,12 @@ export async function getWorlds() {
     .flat()
     .filter((a) => a != null)
     .sort((a, b) => b.date - a.date);
+}
+
+export function getDefaultFiles() {
+  return fs.readdir(defaultsPath);
+}
+
+export function clearDefaultFile(file: string) {
+  return fs.rm(path.join(defaultsPath, file), { recursive: true });
 }

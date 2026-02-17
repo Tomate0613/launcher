@@ -2,6 +2,10 @@ export function clone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
 
+export function unique<T>(value: T, index: number, array: T[]) {
+  return array.indexOf(value) === index;
+}
+
 export function remap(
   value: number,
   fromLow: number,

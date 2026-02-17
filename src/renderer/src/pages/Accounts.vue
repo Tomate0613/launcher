@@ -6,10 +6,10 @@ import {
   mdiAccountPlus,
   mdiBrushVariant,
   mdiPlus,
-  mdiTrashCanOutline,
   mdiLoading,
   mdiAccountClock,
   mdiAccountLockOpen,
+  mdiDeleteOutline,
 } from '@mdi/js';
 import { IdleAnimation } from 'skinview3d';
 import image from '../assets/pack.png';
@@ -196,7 +196,7 @@ async function deleteSkin() {
               Use
             </button>
             <button class="icon-btn" @click="removeAccount(account.id)">
-              <Icon :path="mdiTrashCanOutline" />
+              <Icon :path="mdiDeleteOutline" />
               Remove
             </button>
           </template>
@@ -230,7 +230,7 @@ async function deleteSkin() {
                 class="icon-btn"
                 @click="openConfirmSkinDeletePopup(skin.id)"
               >
-                <Icon :path="mdiTrashCanOutline" />
+                <Icon :path="mdiDeleteOutline" />
                 Forget Skin
               </button>
             </template>

@@ -2,7 +2,7 @@
 import { reactive, ref, watch, watchEffect } from 'vue';
 import { usePageFocus } from '../composables/pageFocus';
 import { clone } from '../../../common/utils';
-import { mdiFolder } from '@mdi/js';
+import { mdiCursorDefault, mdiFolder, mdiTune, mdiTuneVariant } from '@mdi/js';
 import Versions from '../components/Versions.vue';
 import Icon from '../components/Icon.vue';
 import GeneralInstanceOptions from '../components/GeneralInstanceOptions.vue';
@@ -110,7 +110,11 @@ watchEffect(() => {
 
       <div class="flex-row justify-space-between">
         <Versions />
-        <div>
+        <div class="extra-buttons">
+          <button class="icon-btn" disabled>
+            <Icon :path="mdiTuneVariant" />
+            Set Minecraft Defaults
+          </button>
           <button class="icon-btn" @click="openRootFolder">
             <Icon :path="mdiFolder" />
             Open Launcher Root
@@ -126,6 +130,12 @@ watchEffect(() => {
   max-width: 720px;
   margin-inline: auto;
   gap: 2rem;
+}
+
+.extra-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
 }
 </style>
 
@@ -246,7 +256,7 @@ watchEffect(() => {
       min-width: 0;
 
       &:disabled {
-        opacity: .5;
+        opacity: 0.5;
       }
 
       & svg {

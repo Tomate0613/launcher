@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 0.5rem;
   & span {
-    font-size: .875rem;
+    font-size: 0.875rem;
     text-align: right;
     flex-grow: 1;
   }

@@ -413,9 +413,7 @@ export class Modpack extends Serializable implements ModpackData {
           this.makeStash('Last successful launch', 'successful');
       } else {
         // TODO Error handling
-        showError(
-          new FrontendError(`Minecraft exited with code ${exitCode}`),
-        );
+        showError(new FrontendError(`Minecraft exited with code ${exitCode}`));
       }
     });
 
@@ -737,6 +735,19 @@ export class Modpack extends Serializable implements ModpackData {
     }
 
     this.invalidate();
+  }
+
+  createDefault(file: string) {
+    const source = paths.join(this.dir, file);
+
+    if (!fs.existsSync(source)) {
+      return;
+    }
+
+    return fs.promises.cp(source, paths.join(defaultsPath, file), {
+      force: true,
+      recursive: true,
+    });
   }
 
   toString() {
