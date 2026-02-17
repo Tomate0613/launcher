@@ -264,15 +264,28 @@ function setModpackIcon(modpack: ModpackData) {
   );
 }
 
+function selectModpack(onSelect: (modpack: ModpackData) => void) {
+  return showAsyncComputed('Search Instances...', async () => {
+    const appState = await useAppState();
+
+    return forEachModpack(appState, (modpack) => [
+      {
+        name: 'Select',
+        execute() {
+          onSelect(modpack);
+        },
+      },
+    ]);
+  });
+}
+
 function onClosed() {
   open.value = false;
   scope?.stop();
 }
 
-defineExpose();
-
 onMounted(() => {
-  setCommandPaletteInstance({ setModpackIconFromContentType });
+  setCommandPaletteInstance({ setModpackIconFromContentType, selectModpack });
 });
 </script>
 
