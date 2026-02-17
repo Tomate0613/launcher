@@ -202,6 +202,11 @@ watchEffect(() => {
     );
   }
 
+  &:focus-within {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
   &.settings-option-text {
     display: flex;
     flex-direction: column;
@@ -231,12 +236,19 @@ watchEffect(() => {
       transition: opacity 0.1s;
     }
 
-    &:focus-within {
-      outline: 2px solid var(--color-accent);
-      outline-offset: -2px;
+    &:focus-within .settings-edit-icon {
+      opacity: 0;
+    }
+  }
 
-      & .settings-edit-icon {
-        opacity: 0;
+  & {
+    & select {
+      text-align: right;
+      border: none;
+      background: none;
+
+      &:focus-visible {
+        outline: none;
       }
     }
   }
