@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, useTemplateRef, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import GeneralInstanceOptions from '../components/GeneralInstanceOptions.vue';
 import GameVersionSelect from '../components/select/GameVersionSelect.vue';
@@ -11,38 +11,57 @@ import { mdiArrowRight, mdiPencil } from '@mdi/js';
 import ChooseIconPopup from '../components/popup/ChooseIconPopup.vue';
 import CheckContentUpdatesPopups from '../components/popup/CheckContentUpdatesPopups.vue';
 import { log } from '../../../common/logging/log';
+import { useAppState } from '../composables/appState';
+import { useDebounceFn } from '@vueuse/core';
+import { ModpackData } from '../../../main/data/modpack';
 
 const logger = log('instance-settigns');
 
 const route = useRoute();
-const modpackId = route.params.id as string;
+const modpackId = computed(() => route.params.id as string);
+
+const { modpacks } = await useAppState();
+const instance = computed(() =>
+  clone(modpacks.values().find((modpack) => modpack.id === modpackId.value)!),
+);
+
+const settingsInstance = ref(clone(instance.value));
 
 const iconChooser = useTemplateRef('icon-chooser');
 const checkContentUpdatePopup = useTemplateRef('check-content-update-popup');
 
-const instance = reactive(await window.api.invoke('getModpackData', modpackId));
-
 const instanceDefaultOptions = await window.api.invoke(
-  'getDefaulltModpackOptions',
+  'getDefaultModpackOptions',
 );
 
-let options = reactive(instance.modpackOptions ?? {});
-
-watch(options, async () => {
-  instance.modpackOptions = clone(options);
+const options = computed({
+  get: () => settingsInstance.value.modpackOptions ?? {},
+  set: (val) => {
+    settingsInstance.value.modpackOptions = clone(val);
+  },
 });
 
 watch(instance, async () => {
-  await window.api.invoke('setModpackConfig', clone(instance));
+  settingsInstance.value = clone(instance.value);
 });
 
-watch(
-  () => [instance.loader.id, instance.gameVersion],
-  () => {
-    logger.log('watch');
+const save = useDebounceFn(async (curr: ModpackData) => {
+  if (JSON.stringify(curr) === JSON.stringify(instance.value)) {
+    return;
+  }
+
+  if (
+    curr.loader.id !== instance.value.loader.id ||
+    curr.gameVersion !== instance.value.gameVersion
+  ) {
     checkContentUpdatePopup.value?.checkMods();
-  },
-);
+  }
+
+  logger.log('Updating');
+  await window.api.invoke('setModpackConfig', clone(settingsInstance.value));
+}, 300);
+
+watch(settingsInstance, save, { deep: true });
 </script>
 
 <template>
@@ -52,12 +71,12 @@ watch(
         <h2 class="settings-section-name">General</h2>
         <label class="settings-option settings-option-text">
           <div>Name</div>
-          <input type="text" v-model="instance.name" />
+          <input type="text" v-model="settingsInstance.name" />
           <Icon :path="mdiPencil" class="settings-edit-icon" />
         </label>
         <label class="settings-option settings-option-text">
           <div>Description</div>
-          <input type="text" v-model="instance.description" />
+          <input type="text" v-model="settingsInstance.description" />
           <Icon :path="mdiPencil" class="settings-edit-icon" />
         </label>
         <label class="settings-option settings-option-button">
@@ -68,23 +87,23 @@ watch(
         </label>
         <label class="settings-option">
           <div>Mod Loader</div>
-          <LoaderSelect v-model="instance.loader.id" />
+          <LoaderSelect v-model="settingsInstance.loader.id" />
         </label>
         <label class="settings-option">
           Mod Loader Version
           <LoaderVersionSelect
-            v-if="instance.loader.id !== 'vanilla'"
-            v-model="instance.loader.version"
-            :loader="instance.loader.id"
-            :game-version="instance.gameVersion"
+            v-if="settingsInstance.loader.id !== 'vanilla'"
+            v-model="settingsInstance.loader.version"
+            :loader="settingsInstance.loader.id"
+            :game-version="settingsInstance.gameVersion"
           />
         </label>
         <label class="settings-option">
           <div>Game Version</div>
           <div>
             <GameVersionSelect
-              :loader="instance.loader.id"
-              v-model="instance.gameVersion"
+              :loader="settingsInstance.loader.id"
+              v-model="settingsInstance.gameVersion"
             />
           </div>
         </label>
@@ -93,7 +112,7 @@ watch(
 
           <button disabled>
             <!-- TODO -->
-            <span>{{ instance.java ?? 'Automatic' }}</span>
+            <span>{{ settingsInstance.java ?? 'Automatic' }}</span>
             <Icon :path="mdiArrowRight" />
           </button>
         </label>
@@ -106,12 +125,12 @@ watch(
     </div>
   </div>
 
-  <ChooseIconPopup ref="icon-chooser" :instance="instance" />
+  <ChooseIconPopup ref="icon-chooser" :instance="settingsInstance" />
 
   <CheckContentUpdatesPopups
     ref="check-content-update-popup"
     content-type="mods"
-    :instance-id="instance.id"
+    :instance-id="modpackId"
   />
 </template>
 
