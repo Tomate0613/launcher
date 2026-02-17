@@ -93,7 +93,7 @@ function execute(idx: number, actionIdx: number) {
         ? filteredActions.value?.[actionIdx]
         : null;
 
-    logger.log('Selected', selected.name, action?.name);
+    logger.verbose('Selected', selected.name, action?.name);
 
     if (action && !action.disabled) {
       actionsPopover.value?.hidePopover();
