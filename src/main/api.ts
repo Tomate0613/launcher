@@ -24,8 +24,10 @@ import { basePath, modpacksPath } from './paths';
 import { ContentType } from './data/content/content';
 import { fileBufferPath } from './utils';
 import {
+  clearDefaultFile,
   copyScreenshot,
   deleteSkin,
+  getDefaultFiles,
   getScreenshots,
   getSkins,
   getTheme,
@@ -371,6 +373,13 @@ export const routes = {
     shell.showItemInFolder(
       path.join(modpacksPath, modpack, 'saves', id, 'level.dat'),
     );
+  },
+  getDefaultFiles,
+  applyDefaultFile(_e, modpackId: string, file: string) {
+    return getModpack(modpackId).createDefault(file);
+  },
+  clearDefaultFile(_e, file: string) {
+    return clearDefaultFile(file);
   },
 } satisfies Router;
 
