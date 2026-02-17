@@ -64,10 +64,6 @@ watchEffect(() => {
 watchEffect(() => {
   window.api.settings.setProperty('hideFrame', hideFrame.value);
 });
-
-function o() {
-  setMinecraftDefaultsPopup.value?.openMenu();
-}
 </script>
 
 <template>
@@ -121,7 +117,10 @@ function o() {
       <div class="flex-row justify-space-between">
         <Versions />
         <div class="extra-buttons">
-          <button class="icon-btn" @click="o">
+          <button
+            class="icon-btn"
+            @click="setMinecraftDefaultsPopup.value?.openMenu()"
+          >
             <Icon :path="mdiTuneVariant" />
             Set Minecraft Defaults
           </button>
@@ -150,4 +149,3 @@ function o() {
   gap: 0.25rem;
 }
 </style>
-
