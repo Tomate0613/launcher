@@ -2,18 +2,28 @@
 import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import Popup from '../Popup.vue';
 import { unique } from '../../../../common/utils';
+import { useCommandPalette } from '../../composables/commandPalette';
 
 const popup = useTemplateRef('popup');
 
-const { modpackId } = defineProps<{ modpackId: string }>();
-
-const defaults = ref(await window.api.invoke('getDefaultFiles'));
+const modpackId = ref<string>();
+const defaults = ref<string[]>([]);
 const suggestions = ['options.txt', 'config'];
 
-const keys = computed(() => defaults.value.concat(suggestions).filter(unique));
+onMounted(async () => {
+  defaults.value = await window.api.invoke('getDefaultFiles');
+});
+
+const commandPalette = useCommandPalette();
+
+const keys = computed(() => suggestions.concat(defaults.value).filter(unique));
 
 async function apply(file: string) {
-  await window.api.invoke('applyDefaultFile', modpackId, file);
+  if (!modpackId.value) {
+    return;
+  }
+
+  await window.api.invoke('applyDefaultFile', modpackId.value, file);
   defaults.value = await window.api.invoke('getDefaultFiles');
 }
 
@@ -22,8 +32,23 @@ async function clear(file: string) {
   defaults.value = await window.api.invoke('getDefaultFiles');
 }
 
-onMounted(() => {
+function selectModpack() {
+  commandPalette.value?.selectModpack(
+    (modpack) => (modpackId.value = modpack.id),
+  );
+}
+
+function openMenu() {
   popup.value?.openMenu();
+}
+
+function closeMenu() {
+  popup.value?.closeMenu();
+}
+
+defineExpose({
+  openMenu,
+  closeMenu,
 });
 </script>
 
@@ -38,8 +63,7 @@ onMounted(() => {
       Choose which files/directories to use as defaults
     </div>
 
-    <hr />
-    <div class="files">
+    <div class="files" v-if="modpackId">
       <label v-for="key in keys">
         {{ key }}
         <button v-if="!defaults.includes(key)" @click="apply(key)">
@@ -47,6 +71,10 @@ onMounted(() => {
         </button>
         <button v-else @click="clear(key)">Clear</button>
       </label>
+    </div>
+    <div class="select">
+      Select instance to copy from
+      <button @click="selectModpack">Select</button>
     </div>
 
     <hr />
@@ -58,6 +86,8 @@ onMounted(() => {
 .description {
   align-self: self-start;
   color: var(--color-text-secondary);
+
+  padding-bottom: 2rem;
 }
 
 .files {
@@ -73,5 +103,12 @@ onMounted(() => {
       width: 4rem;
     }
   }
+
+  padding-bottom: 2rem;
+}
+
+.select {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
