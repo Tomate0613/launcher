@@ -53,11 +53,9 @@
   }
 
   &:hover {
-    background-color: color-mix(
-      in oklab,
-      var(--color-ui-layer-dim),
-      white 2.5%
-    );
+    background-color: color-mix(in oklab,
+        var(--color-ui-layer-dim),
+        white 2.5%);
   }
 
   &:focus-within {
@@ -99,21 +97,32 @@
     }
   }
 
-  & {
-    & select {
-      text-align: right;
-      border: none;
-      background: none;
+  & select {
+    border: none;
+    background: none;
+    /* align-items: flex-end; */
+    justify-content: end;
+    /* text-align: right; */
+    flex-grow: 1;
 
-      &:focus-visible {
-        outline: none;
-      }
+    &::picker-icon {
+      margin: 0;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    &:open {
+    flex-grow: 0;
+      width: 120px;
     }
   }
 
   &.settings-option-button {
     gap: 5rem;
-    & > div {
+
+    &>div {
       flex: 0 0 auto;
     }
 
@@ -140,4 +149,5 @@
       }
     }
   }
+
 }
