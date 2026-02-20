@@ -2,6 +2,17 @@
 
 ![Instances Page](./readme/instances.png)
 
+## Features
+### Side-by-Side mod, resourcepack and shaderpack management
+![Mods Page](./readme/mods.png)
+
+### Quicklaunch
+![Worlds Page](./readme/worlds.png)
+
+### File Deduplication
+Deduplicate mods, resourcepacks and shaderpacks to save space by hardlinking the files.
+If a file has already been downloaded this makes adding it extremely fast
+
 ## Development
 ### Setup
 - Install pnpm
