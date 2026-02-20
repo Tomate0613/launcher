@@ -31,6 +31,7 @@ const { closeCommandPalette, options } = defineProps<{
   closeCommandPalette(): void;
   options: Option[];
   placeholder: string;
+  footerText?: string;
 }>();
 
 const searchQuery = ref('');
@@ -262,7 +263,7 @@ const actionsPopupId = useId();
     />
   </div>
   <div class="footer">
-    Command Palette
+    {{ footerText ?? 'Command Palette' }}
     <div class="actions" v-if="selectedOption">
       <button
         class="primary-action btn-other"

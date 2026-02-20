@@ -40,6 +40,7 @@ const open = ref(false);
 let scope: EffectScope | null = null;
 const options = ref<Option[]>([]);
 const commandPalettePlaceholder = ref('');
+const commandPaletteFooterText = ref<string | undefined>(undefined);
 
 whenever(keys['Ctrl+K'], () => {
   if (!commandPalette.value?.open) {
@@ -53,37 +54,25 @@ function showPopup() {
   open.value = true;
 }
 
-function showBasic(placeholder: string, opts: Option[]) {
+function showBasic(opts: Option[], placeholder: string, footerText?: string) {
   if (scope) {
     scope.stop();
   }
 
   commandPalettePlaceholder.value = placeholder;
+  commandPaletteFooterText.value = footerText;
   options.value = opts;
 
   showPopup();
 }
 
-/*
-function showComputed(placeholder: string, fn: () => ComputedRef<Option[]>) {
-  commandPalettePlaceholder.value = placeholder;
-
-  scoped(() => {
-    const computedOptions = fn();
-
-    watchEffect(() => {
-      options.value = computedOptions.value;
-    });
-  });
-  showPopup();
-}
-*/
-
 function showAsyncComputed(
-  placeholder: string,
   fn: () => Promise<ComputedRef<Option[]>>,
+  placeholder: string,
+  footerText?: string,
 ) {
   commandPalettePlaceholder.value = placeholder;
+  commandPaletteFooterText.value = footerText;
 
   scoped(async () => {
     const computedOptions = await fn();
@@ -92,6 +81,7 @@ function showAsyncComputed(
       options.value = computedOptions.value;
     });
   });
+
   showPopup();
 }
 
@@ -106,7 +96,7 @@ function scoped<T>(fn: () => T) {
 type ActionProvider<T> = (item: T) => Action[] | false;
 
 function openInstances() {
-  return showAsyncComputed('Search Instances...', async () => {
+  return showAsyncComputed(async () => {
     const appState = await useAppState();
 
     return forEachModpack(appState, (modpack) => [
@@ -160,7 +150,7 @@ function openInstances() {
         },
       },
     ]);
-  });
+  }, 'Search Instances...');
 }
 
 type PossibleOption = Option | (Omit<Option, 'actions'> & { actions: false });
@@ -225,29 +215,31 @@ function setModpackIconFromContentType(
   modpackId: string,
   contentType: ContentType,
 ) {
-  showAsyncComputed('Select icon', () =>
-    forEachContent(modpackId, contentType, (content) =>
-      content.project?.icon
-        ? [
-            {
-              name: 'Set Icon',
-              execute() {
-                window.api.invoke(
-                  'setModpackIconFromUrl',
-                  modpackId,
-                  content.project?.icon!,
-                );
+  showAsyncComputed(
+    () =>
+      forEachContent(modpackId, contentType, (content) =>
+        content.project?.icon
+          ? [
+              {
+                name: 'Set Icon',
+                execute() {
+                  window.api.invoke(
+                    'setModpackIconFromUrl',
+                    modpackId,
+                    content.project?.icon!,
+                  );
+                },
               },
-            },
-          ]
-        : false,
-    ),
+            ]
+          : false,
+      ),
+    'Search icons...',
+    'Select Icon',
   );
 }
 
 function setModpackIcon(modpack: ModpackData) {
   showBasic(
-    'Select icon source',
     forEachContentType((contentType) =>
       contentType === 'mods' && modpack.loader.id === 'vanilla'
         ? false
@@ -261,22 +253,28 @@ function setModpackIcon(modpack: ModpackData) {
             },
           ],
     ),
+    'Search icon sources...',
+    'Select Icon Source'
   );
 }
 
 function selectModpack(onSelect: (modpack: ModpackData) => void) {
-  return showAsyncComputed('Search Instances...', async () => {
-    const appState = await useAppState();
+  return showAsyncComputed(
+    async () => {
+      const appState = await useAppState();
 
-    return forEachModpack(appState, (modpack) => [
-      {
-        name: 'Select',
-        execute() {
-          onSelect(modpack);
+      return forEachModpack(appState, (modpack) => [
+        {
+          name: 'Select',
+          execute() {
+            onSelect(modpack);
+          },
         },
-      },
-    ]);
-  });
+      ]);
+    },
+    'Search Instances...',
+    'Select Instance',
+  );
 }
 
 function onClosed() {
@@ -296,6 +294,7 @@ onMounted(() => {
       :closeCommandPalette="() => commandPalette?.close()"
       :options="options"
       :placeholder="commandPalettePlaceholder"
+      :footerText="commandPaletteFooterText"
     />
   </dialog>
 </template>
