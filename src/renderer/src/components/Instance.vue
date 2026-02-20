@@ -62,7 +62,7 @@ const iconChooser = useTemplateRef('icon-chooser');
     </template>
 
     <template v-slot:contextmenu>
-      <RouterLink :to="`/${instance.id}/mods`" draggable="false">
+      <RouterLink :to="`/${instance.id}/mods`" draggable="false" v-if="instance.loader.id !== 'vanilla'">
         <button class="icon-btn">
           <Icon :path="mdiPackageVariantClosed" />
           Mods

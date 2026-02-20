@@ -1,5 +1,12 @@
 <script lang="ts" setup>
-import { capitalize, onMounted, ref, useTemplateRef, watch } from 'vue';
+import {
+  capitalize,
+  computed,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import type {
   ContentItem,
@@ -11,7 +18,7 @@ import ContentItemCard from '../components/ContentItemCard.vue';
 import SplitButton from '../components/SplitButton.vue';
 import ContentVersionPicker from '../components/ContentVersionPicker.vue';
 import ContentItemCardShimmer from '../components/ContentItemCardShimmer.vue';
-import { useSyncedIdSet } from '../composables/syncedIdSet';
+import { useSyncedIdSetReactive } from '../composables/syncedIdSet';
 import { useDebounceFn, watchIgnorable } from '@vueuse/core';
 import Icon from '../components/Icon.vue';
 import { mdiFilter, mdiLoading, mdiUpdate } from '@mdi/js';
@@ -20,10 +27,10 @@ import Toggle from '../components/Toggle.vue';
 import { forEachDroppedFile } from '../files';
 
 const route = useRoute();
-const modpackId = route.params.id as string;
-const contentType = route.params.contentType as ContentType;
-const content = await useSyncedIdSet<ContentItem>(
-  `${modpackId}-${contentType}`,
+const modpackId = computed(() => route.params.id as string);
+const contentType = computed(() => route.params.contentType as ContentType);
+const content = useSyncedIdSetReactive<ContentItem>(
+  computed(() => `${modpackId.value}-${contentType.value}`),
 );
 
 const searchResult = ref<SearchResult & { shimmer?: boolean }>({
@@ -36,8 +43,8 @@ const installedSearchQuery = ref('');
 async function install(provider: ImplementedProvider, projectId: string) {
   return window.api.invoke(
     'installContent',
-    modpackId,
-    contentType,
+    modpackId.value,
+    contentType.value,
     provider,
     projectId,
   );
@@ -46,8 +53,8 @@ async function install(provider: ImplementedProvider, projectId: string) {
 async function installVersion(provider: ImplementedProvider, version: Version) {
   return window.api.invoke(
     'installContentVersion',
-    modpackId,
-    contentType,
+    modpackId.value,
+    contentType.value,
     provider,
     version,
   );
@@ -60,8 +67,8 @@ async function changeVersionLatest(
 ) {
   return window.api.invoke(
     'replaceContentVersionLatest',
-    modpackId,
-    contentType,
+    modpackId.value,
+    contentType.value,
     id,
     provider,
     projectId,
@@ -75,8 +82,8 @@ async function changeVersion(
 ) {
   return window.api.invoke(
     'replaceContentVersion',
-    modpackId,
-    contentType,
+    modpackId.value,
+    contentType.value,
     id,
     provider,
     version,
@@ -84,11 +91,21 @@ async function changeVersion(
 }
 
 function remove(id: string) {
-  return window.api.invoke('removeContent', modpackId, contentType, id);
+  return window.api.invoke(
+    'removeContent',
+    modpackId.value,
+    contentType.value,
+    id,
+  );
 }
 
 function toggleDisabled(id: string) {
-  return window.api.invoke('toggleContentDisabled', modpackId, contentType, id);
+  return window.api.invoke(
+    'toggleContentDisabled',
+    modpackId.value,
+    contentType.value,
+    id,
+  );
 }
 
 const input = useTemplateRef('input');
@@ -98,8 +115,8 @@ async function search() {
 
   searchResult.value = await window.api.invoke(
     'searchContent',
-    modpackId,
-    contentType,
+    modpackId.value,
+    contentType.value,
     query,
   );
 }
@@ -108,7 +125,13 @@ const searchDebounced = useDebounceFn(search, 500);
 
 async function onDrop(event: DragEvent) {
   forEachDroppedFile(event, (name, buffer) => {
-    window.api.invoke('importContent', modpackId, contentType, name, buffer);
+    window.api.invoke(
+      'importContent',
+      modpackId.value,
+      contentType.value,
+      name,
+      buffer,
+    );
   });
 }
 
@@ -117,7 +140,7 @@ onMounted(() => {
   window.api.invoke(
     'updateContentFromFiles',
     route.params.id as string,
-    contentType,
+    contentType.value,
   );
 });
 
@@ -149,7 +172,7 @@ async function checkUpdates() {
 
   updateState.value = 'checking';
 
-  const versionPromises = Array.from(content.value.values()).map(
+  const versionPromises = Array.from(content.value?.values() ?? []).map(
     async (mod) => {
       if (
         mod.provider === 'custom' ||
@@ -162,8 +185,8 @@ async function checkUpdates() {
       const versions = await window.api
         .invoke(
           'contentVersions',
-          modpackId,
-          contentType,
+          modpackId.value,
+          contentType.value,
           mod.provider,
           mod.project.id,
         )
@@ -363,7 +386,7 @@ watch(installedSearchQuery, (q) => {
   <div class="page-content" @dragover.prevent.stop @drop.prevent="onDrop">
     <div class="page-scrollable installed-content">
       <ContentItemCard
-        v-for="item in Array.from(content.values()).filter((item) =>
+        v-for="item in Array.from(content?.values() ?? []).filter((item) =>
           installedSearchMatch(item),
         )"
         :disabled="item.disabled"
@@ -442,15 +465,17 @@ watch(installedSearchQuery, (q) => {
           @click="install(mod.provider, mod.id)"
           :disabled="
             installStateDisabled(
-              Array.from(content.values()).find((a) => a.project?.id == mod.id)
-                ?.state,
+              Array.from(content?.values() ?? []).find(
+                (a) => a.project?.id == mod.id,
+              )?.state,
             )
           "
         >
           {{
             installStateString(
-              Array.from(content.values()).find((a) => a.project?.id == mod.id)
-                ?.state,
+              Array.from(content?.values() ?? []).find(
+                (a) => a.project?.id == mod.id,
+              )?.state,
             )
           }}
 

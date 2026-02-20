@@ -741,6 +741,7 @@ export class Modpack extends Serializable implements ModpackData {
     const source = paths.join(this.dir, file);
 
     if (!fs.existsSync(source)) {
+      this.logger.warn(source, 'does not exist');
       return;
     }
 

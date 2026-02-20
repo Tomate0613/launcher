@@ -1,6 +1,6 @@
 import {
   MaybeRefOrGetter,
-  onUnmounted,
+  onScopeDispose,
   ref,
   toValue,
   watch,
@@ -9,13 +9,21 @@ import {
   SyncedIdSet,
   type SyncedItem,
 } from '../../../common/synced/synced-id-set/frontend';
+import { log } from '../../../common/logging/log';
+
+const logger = log('synced-id-set');
 
 export async function useSyncedIdSet<T extends SyncedItem>(id: string) {
-  onUnmounted(() => {
-    set?.value.cleanup();
-  });
+  const set = ref<SyncedIdSet<T> | null>(await SyncedIdSet.ofSynced<T>(id));
 
-  const set = ref(await SyncedIdSet.ofSynced<T>(id));
+  const cleanup = () => {
+    set.value?.cleanup();
+    set.value = null;
+  };
+
+  onScopeDispose(() => {
+    cleanup();
+  });
 
   return set;
 }
@@ -24,7 +32,6 @@ export function useSyncedIdSetReactive<T extends SyncedItem>(
   id: MaybeRefOrGetter<string>,
 ) {
   const set = ref<SyncedIdSet<T> | null>(null);
-
   let disposed = false;
 
   const cleanup = () => {
@@ -34,7 +41,8 @@ export function useSyncedIdSetReactive<T extends SyncedItem>(
 
   watch(
     [id],
-    async ([newId], _oldId, onCleanup) => {
+    async ([newId], _, onCleanup) => {
+      logger.verbose('now tracking', 'previously');
       cleanup();
 
       const current = await SyncedIdSet.ofSynced<T>(toValue(newId));
@@ -53,7 +61,7 @@ export function useSyncedIdSetReactive<T extends SyncedItem>(
     { immediate: true },
   );
 
-  onUnmounted(() => {
+  onScopeDispose(() => {
     disposed = true;
     cleanup();
   });
