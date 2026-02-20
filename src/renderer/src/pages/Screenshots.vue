@@ -7,7 +7,11 @@ import {
 } from '@mdi/js';
 import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import Icon from '../components/Icon.vue';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
+import Popup from '../components/Popup.vue';
+
+const popup = useTemplateRef('popup');
+const popupScreenshot = ref('');
 
 const screenshots = await window.api.invoke('getScreenshots');
 
@@ -17,6 +21,11 @@ function copy(instance: string, screenshot: string) {
 
 function showInFileManager(instance: string, screenshot: string) {
   return window.api.invoke('showScreenshotInFileManager', instance, screenshot);
+}
+
+function openScreenshotPopup(url: string) {
+  popupScreenshot.value = url;
+  popup.value?.openMenu();
 }
 
 const layout = ref<'list' | 'grid'>('grid');
@@ -44,9 +53,12 @@ const layout = ref<'list' | 'grid'>('grid');
     >
       <ContextMenuWrapper v-for="screenshot in screenshots">
         <template v-slot:content>
-          <div>
+          <button
+            class="btn-other"
+            @click="openScreenshotPopup(screenshot.data)"
+          >
             <img :src="screenshot.data" />
-          </div>
+          </button>
         </template>
         <template v-slot:context-menu>
           <button
@@ -69,6 +81,10 @@ const layout = ref<'list' | 'grid'>('grid');
       </ContextMenuWrapper>
     </div>
   </div>
+
+  <Popup ref="popup" class="screenshot-popup">
+    <img :src="popupScreenshot" />
+  </Popup>
 </template>
 
 <style scoped>
@@ -85,15 +101,26 @@ img {
   grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
   grid-auto-rows: min-content;
 
-  & div {
+  & button {
+    all: unset;
+
+    cursor: pointer;
+    padding: 0;
     height: 100%;
     display: flex;
     align-items: center;
     background: var(--color-ui-layer-dim);
+    user-select: none;
 
     & img {
       display: block;
     }
+  }
+}
+
+.screenshot-popup {
+  & img {
+    max-height: 90vh;
   }
 }
 </style>
