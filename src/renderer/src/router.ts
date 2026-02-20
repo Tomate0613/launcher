@@ -24,11 +24,14 @@ export const router = createRouter({
         { path: 'accounts', component: Accounts },
         { path: 'console', component: Console },
         { path: 'settings', component: Settings },
-
         {
           path: ':id',
           children: [
-            { path: 'settings', component: InstanceSettings },
+            {
+              path: 'settings',
+              component: InstanceSettings,
+              props: (route) => ({ key: route.params.id }),
+            },
             { path: ':contentType', component: InstanceContent },
           ],
         },
@@ -36,4 +39,3 @@ export const router = createRouter({
     },
   ],
 });
-

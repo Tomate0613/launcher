@@ -3,7 +3,7 @@
 @import './fonts/Roboto_Mono/style.css';
 
 * {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 
 :root {
@@ -54,7 +54,7 @@ h3 {
   margin-top: 0;
 }
 
-button,
+button:not(.btn-other),
 input,
 select,
 .sidebar-item {
@@ -68,7 +68,7 @@ a.fake-btn {
   text-decoration: none;
 }
 
-button,
+button:not(.btn-other),
 .fake-btn {
   user-select: none;
   padding: 0.25rem 0.5rem;
@@ -172,7 +172,31 @@ input[type='number'] {
   }
 }
 
+select,
+::picker(select) {
+  appearance: base-select;
+}
+
+::picker(select) {
+  border: none;
+  background-color: var(--color-background-light);
+}
+
 select {
+  display: flex;
+  align-items: center;
+
+  &::picker-icon {
+    content: "▼";
+    font-size: 100%;
+    transform: scale(.75);
+  }
+
+  /* &:open::picker-icon { */
+  /*   transform: scale(.75) rotate(-90deg); */
+  /* } */
+
+
   box-sizing: border-box;
   width: 120px;
   height: 2rem;
@@ -188,7 +212,7 @@ select {
 }
 
 select option {
-  background-color: var(--color-background-light);
+  text-align: right;
 }
 
 .settings-option[data-changed='true'] {

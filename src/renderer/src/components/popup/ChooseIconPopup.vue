@@ -9,12 +9,11 @@ import {
 } from '@mdi/js';
 import Icon from '../Icon.vue';
 import Popup from '../Popup.vue';
-import { ref, useTemplateRef } from 'vue';
+import { useTemplateRef } from 'vue';
 import { log } from '../../../../common/logging/log';
-import ChooseFromContentPopup from './ChooseFromContentPopup.vue';
-import type { ContentType } from '../../../../main/data/content/content';
 import type { ModpackFrontendData } from '../../../../main/data/modpack';
 import ImageIcon from '../ImageIcon.vue';
+import { useCommandPalette } from '../../composables/commandPalette';
 
 const { instance } = defineProps<{ instance: ModpackFrontendData }>();
 const popup = useTemplateRef('popup');
@@ -22,9 +21,8 @@ const popup = useTemplateRef('popup');
 const logger = log('choose-item-popup');
 
 const iconFilePicker = useTemplateRef('icon-file-picker');
-const contentPopup = useTemplateRef('content-popup');
-const modIconPopupIsOpen = ref(false);
-const contentType = ref<ContentType>('mods');
+
+const commandPalette = useCommandPalette();
 
 function onChooseIconFile() {
   const files = iconFilePicker.value?.fileInput?.files;
@@ -55,11 +53,6 @@ function onChooseIconFile() {
 
 function setIconSpecial(variant: 'default') {
   return window.api.invoke('setModpackIconSpecial', instance.id, variant);
-}
-
-async function setIconFromUrl(url: string) {
-  await window.api.invoke('setModpackIconFromUrl', instance.id, url);
-  popup.value?.closeMenu();
 }
 
 function openMenu() {
@@ -108,8 +101,7 @@ defineExpose({
       <button
         class="icon-btn"
         @click="
-          contentType = 'mods';
-          contentPopup?.openMenu();
+          commandPalette?.setModpackIconFromContentType(instance.id, 'mods')
         "
         v-if="instance.loader.id !== 'vanilla'"
       >
@@ -119,8 +111,10 @@ defineExpose({
       <button
         class="icon-btn"
         @click="
-          contentType = 'shaderpacks';
-          contentPopup?.openMenu();
+          commandPalette?.setModpackIconFromContentType(
+            instance.id,
+            'shaderpacks',
+          )
         "
       >
         <Icon :path="mdiLightbulbOnOutline" />
@@ -129,8 +123,10 @@ defineExpose({
       <button
         class="icon-btn"
         @click="
-          contentType = 'resourcepacks';
-          contentPopup?.openMenu();
+          commandPalette?.setModpackIconFromContentType(
+            instance.id,
+            'resourcepacks',
+          )
         "
       >
         <Icon :path="mdiPaletteSwatchOutline" />
@@ -138,13 +134,6 @@ defineExpose({
       </button>
     </div>
   </Popup>
-  <ChooseFromContentPopup
-    ref="content-popup"
-    :modpack-id="instance.id"
-    v-model="modIconPopupIsOpen"
-    :content-type="contentType"
-    @choose-item-icon="setIconFromUrl"
-  />
 </template>
 
 <style scoped>
