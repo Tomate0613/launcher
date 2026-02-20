@@ -23,6 +23,7 @@ try {
     },
     on: electronAPI.ipcRenderer.on,
     versions: electronAPI.process.versions,
+    platform: electronAPI.process.platform,
     settings: {
       getProperty(key: string) {
         return electronAPI.ipcRenderer.invoke('getSettingsProperty', key);

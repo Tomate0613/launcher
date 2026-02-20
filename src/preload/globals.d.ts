@@ -12,6 +12,7 @@ declare global {
       ): RouteReturn<Routes[Key]>;
       on: ElectronAPI['ipcRenderer']['on'];
       versions: ElectronAPI['process']['versions'];
+      platform: ElectronAPI['process']['platform'];
       settings: {
         getProperty<Key extends keyof Settings>(
           key: Key,

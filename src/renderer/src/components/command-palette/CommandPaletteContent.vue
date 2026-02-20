@@ -19,6 +19,7 @@ import {
 } from '@mdi/js';
 import ImageIcon from '../ImageIcon.vue';
 import type { Option } from './types';
+import Keybind from '../Keybind.vue';
 
 const logger = log('command-palette');
 
@@ -246,10 +247,10 @@ const actionsPopupId = useId();
         :disabled="action.disabled"
       >
         {{ action.name }}
-        <code v-if="idx === 0">↵</code>
+        <Keybind v-if="idx === 0" keybind="Return" />
         <div class="keycombo" v-if="idx === 1">
-          <code><Icon :path="mdiArrowUpBoldOutline" :size="16" /></code>
-          <code>↵</code>
+          <Keybind keybind="Shift" />
+          <Keybind keybind="Return" />
         </div>
       </button>
       <div v-else class="no-results">No Results</div>
@@ -271,7 +272,8 @@ const actionsPopupId = useId();
         :disabled="primaryAction?.disabled"
         @click="execute(selectedIdx, 0)"
       >
-        {{ primaryAction.name }} <code>↵</code>
+        {{ primaryAction.name }}
+        <Keybind keybind="Return" />
       </button>
       <button
         class="other-actions-hint btn-other"
@@ -280,8 +282,8 @@ const actionsPopupId = useId();
       >
         Actions
         <div class="keycombo">
-          <code><Icon :path="mdiChevronUp" :size="16" /></code>
-          <code>B</code>
+          <Keybind keybind="Ctrl" />
+          <Keybind keybind="B" />
         </div>
       </button>
     </div>
@@ -366,6 +368,9 @@ input#command-palette-actions-input {
 
     & .primary-action {
       all: unset;
+
+      display: flex;
+      align-items: center;
 
       cursor: pointer;
 
@@ -456,20 +461,6 @@ input#command-palette-actions-input {
       color: var(--color-text-secondary);
     }
   }
-}
-
-code {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.75rem;
-  height: 1.75rem;
-  font-size: 0.85rem;
-  line-height: 1;
-  border: 1px solid var(--color-ui-layer);
-  width: 1.25rem;
-  height: 1.5rem;
-  border-radius: var(--border-radius);
 }
 
 .keycombo {
