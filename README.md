@@ -1,13 +1,13 @@
 # Tomate Launcher
 
-![Instances Page](./readme/instances.png)
+![Instances Page](./docs/assets/instances.png)
 
 ## Features
 ### Side-by-Side mod, resourcepack and shaderpack management
-![Mods Page](./readme/mods.png)
+![Mods Page](./docs/assets/mods.png)
 
 ### Quicklaunch
-![Worlds Page](./readme/worlds.png)
+![Worlds Page](./docs/assets/worlds.png)
 
 ### File Deduplication
 Deduplicate mods, resourcepacks and shaderpacks to save space by hardlinking the files.
