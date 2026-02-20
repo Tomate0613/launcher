@@ -55,7 +55,7 @@ const layout = ref<'list' | 'grid'>('grid');
         <template v-slot:content>
           <button
             class="btn-other"
-            @click="openScreenshotPopup(screenshot.data)"
+            @click="openScreenshotPopup(screenshot.data ?? '')"
           >
             <img :src="screenshot.data" />
           </button>
