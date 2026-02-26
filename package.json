@@ -41,26 +41,20 @@
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",
-    "@stylistic/eslint-plugin": "^5.9.0",
     "@swc/core": "^1.15.17",
     "@types/adm-zip": "^0.5.7",
     "@types/cli-progress": "^3.11.6",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.3.2",
     "@types/yargs": "^17.0.35",
-    "@typescript-eslint/eslint-plugin": "^8.56.1",
-    "@typescript-eslint/parser": "^8.56.1",
     "@vitejs/plugin-vue": "^6.0.4",
     "autoprefixer": "^10.4.27",
     "dotenv": "^17.3.1",
     "electron": "^40.6.1",
     "electron-builder": "^26.8.1",
     "electron-vite": "^5.0.0",
-    "eslint": "^9.39.3",
-    "eslint-plugin-vue": "^10.8.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
-    "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.2.5"
   }
 }
