@@ -41,66 +41,72 @@
               flatpak-builder
             ];
 
-            __GL_THREADED_OPTIMIZATIONS = 0;
-            LD_LIBRARY_PATH = lib.makeLibraryPath (
-              with pkgs;
-              [
-                glib
-                libgbm
-                glibc
-                nss
-                nspr
-                dbus
-                alsa-lib
-                atk
-                cups
-                gtk3
-                pango
-                cairo
-                libx11
-                libxcomposite
-                libxdamage
-                libxext
-                libxfixes
-                libxrandr
-                libxrender
-                libxcb
-                expat
-                at-spi2-atk
-                libxkbcommon
-                mesa
-                libGL
+            env = {
+              PKG_CONFIG_PATH = "${pkgs.gtk4}/lib/pkgconfig:${pkgs.json-glib}/lib/pkgconfig";
+              MC_WRAPPER_PATH = "${self.packages.${system}.mc-wrapper}/bin/${
+                self.packages.${system}.mc-wrapper.pname
+              }";
+              __GL_THREADED_OPTIMIZATIONS = 0;
+              LD_LIBRARY_PATH = lib.makeLibraryPath (
+                with pkgs;
+                [
+                  glib
+                  libgbm
+                  glibc
+                  nss
+                  nspr
+                  dbus
+                  alsa-lib
+                  atk
+                  cups
+                  gtk3
+                  pango
+                  cairo
+                  libx11
+                  libxcomposite
+                  libxdamage
+                  libxext
+                  libxfixes
+                  libxrandr
+                  libxrender
+                  libxcb
+                  expat
+                  at-spi2-atk
+                  libxkbcommon
+                  mesa
+                  libGL
 
-                (lib.getLib stdenv.cc.cc)
-                ## native versions
-                glfw3-minecraft
-                openal
+                  (lib.getLib stdenv.cc.cc)
+                  ## native versions
+                  glfw3-minecraft
+                  openal
 
-                ## openal
-                alsa-lib
-                libjack2
-                libpulseaudio
-                pipewire
+                  ## openal
+                  alsa-lib
+                  libjack2
+                  libpulseaudio
+                  pipewire
 
-                ## glfw
-                libGL
-                libx11
-                libxcursor
-                libxext
-                libxrandr
-                libxxf86vm
+                  ## glfw
+                  libGL
+                  libx11
+                  libxcursor
+                  libxext
+                  libxrandr
+                  libxxf86vm
 
-                flite # Text to speech (Otherwise minecraft will log an error every time it launches)
+                  flite # Text to speech (Otherwise minecraft will log an error every time it launches)
 
-                udev # oshi
+                  udev # oshi
 
-                vulkan-loader # VulkanMod's lwjgl
+                  vulkan-loader # VulkanMod's lwjgl
 
-                ocl-icd # OpenCL for c2me
+                  ocl-icd # OpenCL for c2me
 
-                gamemode
-              ]
-            );
+                  gamemode
+                ]
+              );
+            };
           };
         }
 
@@ -170,9 +176,59 @@
             postFixup = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
               makeWrapper ${pkgs.electron}/bin/electron $out/bin/tomate-launcher \
                 --add-flags $out/opt/TomateLauncher/app.asar \
-                --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}"
+                --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
+                --set MC_WRAPPER_PATH ${self.packages.${system}.mc-wrapper}/bin/${
+                  self.packages.${system}.mc-wrapper.pname
+                } \
+                --set ELECTRON_FORCE_IS_PACKAGED=1
             '';
           };
+
+          mc-wrapper =
+            let
+              cargoToml = lib.fromTOML (lib.readFile ./mc-wrapper/Cargo.toml);
+            in
+            pkgs.rustPlatform.buildRustPackage (finalAttrs: {
+              pname = cargoToml.package.name;
+              version = cargoToml.package.version;
+
+              nativeBuildInputs = with pkgs; [
+                pkg-config
+              ];
+
+              buildInputs = with pkgs; [
+                dbus
+              ];
+
+              src = ./mc-wrapper;
+
+              cargoLock = {
+                lockFile = ./mc-wrapper/Cargo.lock;
+              };
+            });
+
+          tray-test =
+            let
+              cargoToml = lib.fromTOML (lib.readFile ./tray-test/Cargo.toml);
+            in
+            pkgs.rustPlatform.buildRustPackage (finalAttrs: {
+              pname = cargoToml.package.name;
+              version = cargoToml.package.version;
+
+              nativeBuildInputs = with pkgs; [
+                pkg-config
+              ];
+
+              buildInputs = with pkgs; [
+                dbus
+              ];
+
+              src = ./tray-test;
+
+              cargoLock = {
+                lockFile = ./tray-test/Cargo.lock;
+              };
+            });
         }
       );
 

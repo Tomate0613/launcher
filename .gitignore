@@ -1,5 +1,6 @@
 node_modules/
 dist/
 out/
+extra-binaries/
 .env
 electron.vite.config.*.mjs

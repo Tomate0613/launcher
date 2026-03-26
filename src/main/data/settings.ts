@@ -39,6 +39,8 @@ export class Settings extends Serializable {
   transparentWindow: boolean = false;
   @SerializableProperty
   hideFrame: boolean = false;
+  @SerializableProperty
+  useWrapper: boolean = false;
 
   getModpackDefaultOption<Key extends keyof GeneralModpackOptions>(key: Key) {
     return this.modpackDefaultOptions[key] ?? defaultGeneralModpackOptions[key];

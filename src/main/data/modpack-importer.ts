@@ -62,7 +62,7 @@ export async function fromFile(file: string, modpack?: Modpack) {
     ctx.cancel();
     throw error('Failed to import modpack', e);
   } finally {
-    ctx.stop();
+    ctx.done();
   }
   return modpack;
 }
@@ -167,7 +167,7 @@ export async function fromResource(
     ctx.cancel();
     throw error('Failed to download modpack', e);
   } finally {
-    ctx.stop();
+    ctx.done();
   }
   logger.log('Downloaded');
 

@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events';
 import { Logger } from '../common/logging/log';
 
 export type Process = {
@@ -14,30 +15,27 @@ export type Processor = {
   invalidate(): void;
 };
 
-export class ProcessContext {
-  constructor(
-    private processor: Processor,
-    private id: string,
-    private cleanUp: () => void,
-  ) {}
+type ProcessEvents = {
+  progress: [number];
 
+  done: [];
+  cancel: [];
+
+  stop: [];
+};
+
+export class ProcessContext extends EventEmitter<ProcessEvents> {
   progress(progress: number) {
-    const process = this.processor.processes.find((p) => p.id === this.id);
-    if (process) {
-      process.progress = progress;
-    }
+    this.emit('progress', progress);
+  }
 
-    this.processor.invalidate();
+  done() {
+    this.emit('done');
+    this.emit('stop');
   }
-  stop() {
-    this.processor.processes = this.processor.processes.filter(
-      (progress) => progress.id !== this.id,
-    );
-    this.processor.logger.log('Stopped process', this.id);
-    this.processor.invalidate();
-  }
+
   cancel() {
-    this.cleanUp();
-    this.stop();
+    this.emit('cancel');
+    this.emit('stop');
   }
 }

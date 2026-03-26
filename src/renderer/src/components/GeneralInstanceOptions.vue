@@ -5,11 +5,7 @@ import Toggle from '../components/Toggle.vue';
 import { log } from '../../../common/logging/log';
 import { applyDefaults, clone } from '../../../common/utils';
 import Popup from './Popup.vue';
-import {
-  mdiArrowRight,
-  mdiPlus,
-  mdiDeleteOutline
-} from '@mdi/js';
+import { mdiArrowRight, mdiPlus, mdiDeleteOutline } from '@mdi/js';
 import Icon from './Icon.vue';
 
 type Props = {
@@ -41,7 +37,8 @@ watch(settings, () => {
         model.value![key] = settings[key];
       }
 
-      previousSettings[key] = settings[key];
+      previousSettings[key] = clone(settings[key]);
+      model.value = clone(model.value);
     }
   }
 });
@@ -50,6 +47,7 @@ function reset(key: keyof GeneralModpackOptions) {
   model.value![key] = undefined as never;
 
   settings[key] = defaultSettings[key] as never;
+  model.value = clone(model.value);
 }
 
 function isChanged(key: keyof GeneralModpackOptions) {

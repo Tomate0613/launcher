@@ -7,6 +7,7 @@ import { writeLog4jConfig } from './static/log4jConfig';
 import { log } from '../common/logging/log';
 import { SyncedIdSet } from '../common/synced/synced-id-set/backend';
 import { writeDefaultThemes } from './static/defaultThemes';
+import { runOnClose } from './utils';
 
 const logger = log('data');
 
@@ -67,12 +68,13 @@ export function loadData() {
     return account;
   });
   accounts = SyncedIdSet.ofClassList('accounts', accountList);
+
   logger.log('Done loading data');
 }
 
 function onClose() {
   logger.log('Closed');
-  modpacks.forEach((modpack) => modpack.onClose());
+  modpacks.forEach((modpack) => modpack.onLauncherClose());
   settings?.save();
 
   const data = accounts.values().map((account) => JSON.stringify(account));
@@ -104,5 +106,4 @@ export function getSettings() {
   return settings;
 }
 
-process.on('SIGTERM', onClose);
-process.on('exit', onClose);
+runOnClose(onClose);

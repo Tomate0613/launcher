@@ -9,6 +9,7 @@ import '../common/logging/logMain';
 import { parseArgs } from './cli';
 import { log } from '../common/logging/log';
 import { ensureAppDirectoriesExist } from './paths';
+import { tryReattachSockets } from './wrapper';
 
 const logger = log('main');
 
@@ -41,6 +42,8 @@ function createWindow(): void {
       mainWindow.minimize();
       hasMinimized = true;
     }
+
+    tryReattachSockets();
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -69,6 +72,10 @@ if (app.requestSingleInstanceLock()) {
 
     logger.log(args);
 
+    if (args.includes('--skip-cli')) {
+      return;
+    }
+
     if (args.some((a) => a.endsWith('dist/electron'))) {
       parseArgs(args.slice(args.findIndex((a) => a === '.') + 1));
     } else {
@@ -85,7 +92,9 @@ if (app.requestSingleInstanceLock()) {
     }
   });
 
-  parseArgs(hideBin(process.argv));
+  if (!process.argv.includes('--skip-cli')) {
+    parseArgs(hideBin(process.argv));
+  }
 } else {
   logger.log('Already open. Exiting');
   app.exit(0);
