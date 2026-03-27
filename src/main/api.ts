@@ -20,7 +20,7 @@ import { defaultGeneralModpackOptions, Settings } from './data/settings';
 import { log } from '../common/logging/log';
 import * as ModpackImporter from './data/modpack-importer';
 import { mainWindow } from './windows';
-import { basePath, modpacksPath } from './paths';
+import { basePath } from './paths';
 import { ContentType } from './data/content/content';
 import { fileBufferPath } from './utils';
 import {
