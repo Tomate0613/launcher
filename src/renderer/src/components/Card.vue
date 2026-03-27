@@ -36,8 +36,11 @@ const slots = useSlots();
       @click="openIconChooser"
     />
     <div class="info">
-      <div class="ellipsis">
-        {{ name }}
+      <div class="first-line ellipsis">
+        <div class="ellipsis">
+          {{ name }}
+        </div>
+        <slot name="top-right" />
       </div>
 
       <slot />
@@ -97,27 +100,36 @@ const slots = useSlots();
     }
   }
 
-  .description {
-    font-size: 0.75rem;
-    opacity: 0.75;
-  }
+  & .info {
+    flex-grow: 1;
 
-  .primary-action,
-  .context-menu-button {
-    position: absolute;
-    bottom: 0.5rem;
-    right: 0.5rem;
+    & .first-line {
+      display: flex;
+      justify-content: space-between;
+    }
 
-    width: 2rem;
-    height: 2rem;
-    padding: 0.25rem;
-    border-radius: 0.5rem;
-  }
+    & .description {
+      font-size: 0.75rem;
+      opacity: 0.75;
+    }
 
-  .context-menu-button {
-    background: none;
-    box-shadow: none;
-    right: 2.75rem;
+    & .primary-action,
+    & .context-menu-button {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+
+      width: 2rem;
+      height: 2rem;
+      padding: 0.25rem;
+      border-radius: 0.5rem;
+    }
+
+    & .context-menu-button {
+      background: none;
+      box-shadow: none;
+      right: 2.75rem;
+    }
   }
 }
 </style>
