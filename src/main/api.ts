@@ -369,9 +369,9 @@ export const routes = {
     return getTheme(theme);
   },
   getWorlds,
-  openWorldFolder(_e, modpack: string, id: string) {
+  openWorldFolder(_e, modpackId: string, id: string) {
     shell.showItemInFolder(
-      path.join(modpacksPath, modpack, 'saves', id, 'level.dat'),
+      path.join(getModpack(modpackId).dir, 'saves', id, 'level.dat'),
     );
   },
   getServers,

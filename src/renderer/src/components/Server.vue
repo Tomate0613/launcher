@@ -2,12 +2,9 @@
 import { onMounted, ref } from 'vue';
 import { useAppState } from '../composables/appState';
 import Card from './Card.vue';
-import { log } from '../../../common/logging/log';
 import Icon from './Icon.vue';
 import {
-  mdiCircle,
   mdiLoading,
-  mdiNetworkOff,
   mdiNetworkStrength1,
   mdiNetworkStrength2,
   mdiNetworkStrength3,
@@ -15,8 +12,6 @@ import {
   mdiNetworkStrengthOff,
 } from '@mdi/js';
 import type { LookupResult } from '../../../main/server';
-
-const logger = log('server');
 
 const { accountId, modpacks } = await useAppState();
 
@@ -37,20 +32,16 @@ onMounted(async () => {
   }
 });
 
-function getModpack(folder: string) {
-  return modpacks.get(modpackId(folder));
+function getModpack(modpack: string) {
+  return modpacks.get(modpack);
 }
 
-function modpackId(folder: string) {
-  return folder.split('-').slice(-5).join('-');
-}
-
-function launch(folder: string, address: string) {
+function launch(modpack: string, address: string) {
   if (!accountId) {
     return;
   }
 
-  window.api.invoke('launchModpack', modpackId(folder), accountId, {
+  window.api.invoke('launchModpack', modpack, accountId, {
     type: 'multiplayer',
     identifier: address,
   });
