@@ -5,6 +5,7 @@ import nbt from 'prismarine-nbt';
 import { log } from '../common/logging/log';
 import { css, image, imageOrDelete, pathFileBuffer } from './utils';
 import { clipboard, nativeImage, shell } from 'electron';
+import serverStatusPinger from 'minecraftstatuspinger';
 
 const logger = log('browse');
 
@@ -164,6 +165,61 @@ export async function getWorlds() {
     .flat()
     .filter((a) => a != null)
     .sort((a, b) => b.date - a.date);
+}
+
+export async function getServers() {
+  const modpacks = await fs.readdir(modpacksPath);
+
+  const servers = await Promise.all(
+    modpacks.map(async (modpack) => {
+      try {
+        const serversPath = path.join(modpacksPath, modpack, 'servers.dat');
+        const buffer = await fs.readFile(serversPath);
+
+        const { parsed } = await nbt.parse(buffer);
+
+        const servers = (
+          parsed.value.servers!.value as never as {
+            value: {
+              modpack: string;
+              name: { value: string };
+              ip: { value: string };
+              icon: { value: string };
+            }[];
+          }
+        ).value;
+
+        return servers.map((server) => {
+          return {
+            modpack,
+            name: server.name?.value ?? 'Minecraft Server',
+            icon: `data:image/png;base64,${server.icon?.value}`,
+            address: server.ip.value,
+          };
+        });
+      } catch (e) {
+        return null;
+      }
+    }),
+  );
+
+  return servers.flat().filter((a) => a != null);
+  // .sort((a, b) => b.date - a.date);
+}
+
+export async function pingServer(_: unknown, address: string) {
+  const [host, port] = address.split(':');
+
+  const result = await serverStatusPinger.lookup({
+    host,
+    port: Number(port) || 25565,
+    ping: true,
+    timeout: 5000,
+    throwOnParseError: true,
+    SRVLookup: true,
+    JSONParse: true,
+  });
+  return { status: result.status, latency: result.latency };
 }
 
 export function getDefaultFiles() {

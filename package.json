@@ -28,6 +28,7 @@
     "cli-progress": "^3.12.0",
     "configparser": "^0.3.10",
     "fs-extra": "^11.3.3",
+    "minecraftstatuspinger": "^1.2.2",
     "msmc": "^5.0.5",
     "pend": "^1.2.0",
     "prismarine-nbt": "^2.8.0",
