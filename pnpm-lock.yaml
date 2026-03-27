@@ -44,6 +44,9 @@ importers:
       fs-extra:
         specifier: ^11.3.3
         version: 11.3.3
+      minecraftstatuspinger:
+        specifier: ^1.2.2
+        version: 1.2.2
       msmc:
         specifier: ^5.0.5
         version: 5.0.5(encoding@0.1.13)
@@ -2075,6 +2078,10 @@ packages:
   mimic-response@3.1.0:
     resolution: {integrity: sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==}
     engines: {node: '>=10'}
+
+  minecraftstatuspinger@1.2.2:
+    resolution: {integrity: sha512-3PDWcifjw6cliGnGqw0+nJVWWPOcpLDyNLh4D84vCNzPD2h9REbN5Ne11I//CMkIu5xJiIuyGwI44gyRYYbpuw==}
+    engines: {node: '>=14.0.0'}
 
   minimatch@10.2.4:
     resolution: {integrity: sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==}
@@ -5161,6 +5168,8 @@ snapshots:
   mimic-response@1.0.1: {}
 
   mimic-response@3.1.0: {}
+
+  minecraftstatuspinger@1.2.2: {}
 
   minimatch@10.2.4:
     dependencies:
