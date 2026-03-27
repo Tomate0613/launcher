@@ -29,16 +29,19 @@ import {
   deleteSkin,
   getDefaultFiles,
   getScreenshots,
+  getServers,
   getSkins,
   getTheme,
   getThemes,
   getWorlds,
+  pingServer,
   showScreenshotInFileManager,
 } from './browse';
 import path from 'node:path';
 import { applyDefaults } from '../common/utils';
 import { FrontendError } from './error';
 import { isProviderEnabled } from './data/content/lib';
+import { LaunchOptions } from 'tomate-launcher-core';
 
 const logger = log('api');
 
@@ -129,15 +132,12 @@ export const routes = {
     _e,
     modpackId: string,
     accountId: string,
-    world?: string,
+    quickPlay?: LaunchOptions['quickPlay'],
   ) {
     const account = getAccount(accountId);
     const modpack = getModpack(modpackId);
 
-    await modpack.launch(
-      account,
-      (world && { type: 'singleplayer', identifier: world }) || undefined,
-    );
+    await modpack.launch(account, quickPlay);
     logger.log(`Launched modpack ${modpack} with account ${account}`);
   },
   async gameVersions(_e, loaderId: LoaderId) {
@@ -374,6 +374,8 @@ export const routes = {
       path.join(modpacksPath, modpack, 'saves', id, 'level.dat'),
     );
   },
+  getServers,
+  pingServer,
   getDefaultFiles,
   applyDefaultFile(_e, modpackId: string, file: string) {
     return getModpack(modpackId).createDefault(file);

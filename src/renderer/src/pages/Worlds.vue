@@ -38,7 +38,10 @@ function launch(folder: string, save: string) {
     return;
   }
 
-  window.api.invoke('launchModpack', modpackId(folder), accountId, save);
+  window.api.invoke('launchModpack', modpackId(folder), accountId, {
+    type: 'singleplayer',
+    identifier: save,
+  });
 }
 </script>
 <template>
