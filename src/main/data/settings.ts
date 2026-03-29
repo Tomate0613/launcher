@@ -12,6 +12,12 @@ export type GeneralModpackOptions = {
   customLaunchArgs: string[];
 };
 
+export type WrapperOptions = {
+  enabled: boolean;
+  reopen: boolean;
+  autoClose: boolean;
+};
+
 export const defaultGeneralModpackOptions: GeneralModpackOptions = {
   minRam: 2500,
   maxRam: 5000,
@@ -23,7 +29,7 @@ export const defaultGeneralModpackOptions: GeneralModpackOptions = {
 };
 
 export class Settings extends Serializable {
-  __version = '1';
+  __version = '2';
   @SerializableProperty
   activeAccountId?: string;
   @SerializableProperty
@@ -40,7 +46,16 @@ export class Settings extends Serializable {
   @SerializableProperty
   hideFrame: boolean = false;
   @SerializableProperty
-  useWrapper: boolean = false;
+  wrapper: WrapperOptions = { enabled: true, reopen: true, autoClose: false };
+
+  _constructor(version: string): void {
+    switch (version) {
+      case '1':
+        this.wrapper = { enabled: true, reopen: true, autoClose: false };
+    }
+
+    this.__version = '2';
+  }
 
   getModpackDefaultOption<Key extends keyof GeneralModpackOptions>(key: Key) {
     return this.modpackDefaultOptions[key] ?? defaultGeneralModpackOptions[key];

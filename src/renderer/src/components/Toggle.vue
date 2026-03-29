@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const model = defineModel();
-const { name } = defineProps<{ name?: string }>();
+defineProps<{ name?: string; disabled?: boolean }>();
 </script>
 
 <template>
-  <div class="toggle">
-    <input type="checkbox" :name v-model="model" />
+  <div class="toggle" :class="{ 'toggle-disabled': disabled }">
+    <input type="checkbox" :name v-model="model" :disabled="disabled" />
   </div>
 </template>
 
@@ -44,16 +44,28 @@ const { name } = defineProps<{ name?: string }>();
     }
   }
 
+  &.toggle-disabled input {
+    cursor: not-allowed;
+  }
+
   &:has(:checked) {
     background-color: var(--color-accent);
   }
 
-  &:has(:active)::before {
+  &:not(.toggle-disabled):has(:active)::before {
     width: 2rem;
   }
 
-  &:has(:checked:not(:active))::before {
-    left: 1rem;
+  &:has(:checked) {
+    &:not(.toggle-disabled) {
+      &:has(:not(:active))::before {
+        left: 1rem;
+      }
+    }
+
+    &.toggle-disabled::before {
+      left: 1rem;
+    }
   }
 }
 </style>
