@@ -3,12 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgsOld.url = "github:nixos/nixpkgs/nixos-unstable";
     pnpm2nix.url = "github:Tomate0613/nix-flakes/pnpm";
   };
 
   outputs =
     {
       nixpkgs,
+      nixpkgsOld,
       pnpm2nix,
       self,
     }:
@@ -18,7 +20,9 @@
       systems = lib.systems.flakeExposed;
 
       forAllSystems = lib.genAttrs systems;
+
       nixpkgsFor = forAllSystems (system: nixpkgs.legacyPackages.${system});
+      nixpkgsOldFor = forAllSystems (system: nixpkgsOld.legacyPackages.${system});
     in
     {
       devShells = forAllSystems (
@@ -119,6 +123,7 @@
             inherit system;
             overlays = [ pnpm2nix.overlays.default ];
           };
+          pkgsOld = nixpkgsOldFor.${system};
           lib = pkgs.lib;
         in
         {
@@ -131,7 +136,7 @@
 
             nativeBuildInputs = with pkgs; [
               nodejs
-              pnpm
+              pkgsOld.pnpm
               makeWrapper
             ];
 
