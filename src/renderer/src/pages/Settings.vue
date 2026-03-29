@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, useTemplateRef, watch, watchEffect } from 'vue';
+import { reactive, ref, toRaw, useTemplateRef, watch, watchEffect } from 'vue';
 import { usePageFocus } from '../composables/pageFocus';
 import { clone } from '../../../common/utils';
 import { mdiFolder, mdiTuneVariant } from '@mdi/js';
@@ -10,6 +10,7 @@ import Toggle from '../components/Toggle.vue';
 import { setTheme } from '../theme';
 import SetMinecraftDefaultsPopup from '../components/popup/SetMinecraftDefaultsPopup.vue';
 import '../assets/settings.css';
+import type { WrapperOptions } from '../../../main/data/settings';
 
 const setMinecraftDefaultsPopup = useTemplateRef(
   'set-minecraft-defaults-popup',
@@ -50,6 +51,9 @@ const transparentWindow = ref(
 const hideFrame = ref(
   (await window.api.invoke('getSettingsProperty', 'hideFrame')) as boolean,
 );
+const wrapper = ref(
+  (await window.api.invoke('getSettingsProperty', 'wrapper')) as WrapperOptions,
+);
 
 watchEffect(() => {
   setTheme(themes.find((t) => t.id == theme.value)?.url);
@@ -64,6 +68,13 @@ watchEffect(() => {
 watchEffect(() => {
   window.api.settings.setProperty('hideFrame', hideFrame.value);
 });
+watch(
+  [wrapper],
+  () => {
+    window.api.settings.setProperty('wrapper', toRaw(wrapper.value));
+  },
+  { deep: true },
+);
 </script>
 
 <template>
@@ -111,6 +122,53 @@ watchEffect(() => {
             <div class="settings-description">Requires a restart to apply</div>
           </div>
           <Toggle v-model="hideFrame" />
+        </label>
+      </section>
+
+      <section class="settings-section">
+        <h2 class="settings-section-name">Wrapper</h2>
+
+        <label
+          class="settings-option"
+          @contextmenu="wrapper.enabled = true"
+          :data-changed="!wrapper.enabled"
+        >
+          <div>
+            Enabled
+            <div class="settings-description">
+              Launch minecraft using wrapper allowing to reconnect to console
+              after launcher closes
+            </div>
+          </div>
+          <Toggle v-model="wrapper.enabled" />
+        </label>
+
+        <label
+          class="settings-option"
+          @contextmenu="wrapper.reopen = true"
+          :data-changed="!wrapper.reopen"
+        >
+          <div>
+            Reopen
+            <div class="settings-description">
+              Reopen and focus launcher when game exits
+            </div>
+          </div>
+          <Toggle v-model="wrapper.reopen" :disabled="!wrapper.enabled" />
+        </label>
+
+        <label
+          class="settings-option"
+          @contextmenu="wrapper.autoClose = false"
+          :data-changed="wrapper.autoClose"
+        >
+          <div>
+            Close in Background
+            <div class="settings-description">
+              Close launcher when game launches
+            </div>
+          </div>
+          <Toggle v-model="wrapper.autoClose" :disabled="!wrapper.enabled" />
         </label>
       </section>
 

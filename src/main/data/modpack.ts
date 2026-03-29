@@ -47,6 +47,7 @@ import { downloadManager } from './downloads';
 import { error, FrontendError, showError } from '../error';
 import { Process, ProcessContext } from '../process';
 import { spawnWrapper } from '../wrapper';
+import { saveClose } from '../close';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
 
@@ -451,8 +452,14 @@ export class Modpack extends Serializable implements ModpackData {
     launchOptions: LaunchOptions & { javaPath: string },
     ctx: ProcessContext,
   ) {
-    if (getSettings().useWrapper || true) {
-      spawnWrapper(launcher, launchOptions, ctx);
+    if (getSettings().wrapper.enabled) {
+      await spawnWrapper(launcher, launchOptions, ctx);
+
+      if (getSettings().wrapper.autoClose) {
+        ctx.on('done', () => {
+          saveClose();
+        });
+      }
     } else {
       await launcher.launch(launchOptions);
     }

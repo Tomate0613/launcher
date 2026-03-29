@@ -10,6 +10,7 @@ import { runOnClose } from './utils';
 import { is } from '@electron-toolkit/utils';
 import { Launcher, LaunchOptions } from 'tomate-launcher-core';
 import { ProcessContext } from './process';
+import { getSettings } from './data';
 
 let socketsState: string[];
 
@@ -97,10 +98,6 @@ export async function spawnWrapper(
   const wrapperArgs = [
     '--instance-id',
     id,
-    '--launcher-executable',
-    process.execPath,
-    '--launcher-args',
-    JSON.stringify(process.argv.slice(1)),
     '--game-executable',
     launchOptions.javaPath,
     '--game-args',
@@ -109,18 +106,22 @@ export async function spawnWrapper(
     launcher.options.root,
   ];
 
-  logger.log(JSON.stringify(wrapperArgs));
+  if (getSettings().wrapper.reopen) {
+    wrapperArgs.push(
+      '--launcher-executable',
+      process.execPath,
+      '--launcher-args',
+      JSON.stringify(process.argv.slice(1)),
+    );
+  }
 
   const wrapper = getWrapperExecutable();
-
-  logger.log(wrapper);
 
   const child = cp.spawn(wrapper, wrapperArgs, {
     detached: true,
     stdio: 'ignore',
   });
 
-  // TODO: This means the wrapper needs to also exit with the code the game exits
   child.on('exit', (code) => {
     launcher.emit('close', code);
   });
