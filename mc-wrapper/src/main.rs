@@ -69,8 +69,7 @@ fn main() {
         .arg(
             Arg::new("launcher-executable")
                 .long("launcher-executable")
-                .num_args(1)
-                .required(true),
+                .num_args(1),
         )
         .arg(Arg::new("launcher-args").long("launcher-args").num_args(1))
         .arg(
@@ -94,10 +93,7 @@ fn main() {
         .get_matches();
 
     let instance_id = matches.get_one::<String>("instance-id").unwrap();
-    let launcher_executable = matches
-        .get_one::<String>("launcher-executable")
-        .unwrap()
-        .clone();
+    let launcher_executable = matches.get_one::<String>("launcher-executable").cloned();
     let launcher_args: Vec<String> =
         serde_json::from_str(matches.get_one::<String>("launcher-args").unwrap())
             .expect("Invalid JSON for launcher-args");
@@ -120,12 +116,14 @@ fn main() {
         Arc::clone(&shared_stream),
         &shared_buffer,
         move || {
-            let _ = Command::new(&launcher_executable)
-                .args(&launcher_args)
-                .arg("--skip-cli")
-                .spawn()
-                .unwrap()
-                .wait();
+            if let Some(launcher_executable) = launcher_executable {
+                let _ = Command::new(&launcher_executable)
+                    .args(&launcher_args)
+                    .arg("--skip-cli")
+                    .spawn()
+                    .unwrap()
+                    .wait();
+            }
         },
     );
 
