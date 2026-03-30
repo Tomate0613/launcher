@@ -138,8 +138,7 @@
                 name = pname;
                 exec = "${pname} %U";
                 desktopName = "Tomate Launcher";
-                icon = pname;
-                comment = "My cool app";
+                icon = "dev.doublekekse.launcher";
                 categories = [ "Game" ];
               };
             in
@@ -195,6 +194,9 @@
 
                 mkdir -p $out/share/applications
                 cp ${desktopItem}/share/applications/* $out/share/applications
+
+                mkdir -p $out/share/icons/hicolor/512x512/apps
+                cp assets/icon.png $out/share/icons/hicolor/512x512/apps/dev.doublekekse.launcher.png
               '';
 
               postFixup = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
