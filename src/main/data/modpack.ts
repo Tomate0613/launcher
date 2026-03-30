@@ -233,6 +233,21 @@ export class Modpack extends Serializable implements ModpackData {
     );
   }
 
+  /**
+  * `${this.dir}/data.json`
+  */
+  get dataPath() {
+    return paths.join(this.dir, 'data.json');
+  }
+
+  /**
+  * `${this.dir}/icon.png`
+  */
+  get iconPath() {
+    return paths.join(this.dir, 'icon.png');
+  }
+
+
   setupContentDirectories() {
     this.modsContent.setupDirectory();
     this.shaderpacksContent.setupDirectory();
@@ -288,10 +303,6 @@ export class Modpack extends Serializable implements ModpackData {
     if (!this.isModded(loader)) {
       throw new VanillaError();
     }
-  }
-
-  get dataPath() {
-    return paths.join(this.dir, 'data.json');
   }
 
   async launcher() {
@@ -583,7 +594,7 @@ export class Modpack extends Serializable implements ModpackData {
 
     this.save();
 
-    shell.showItemInFolder(paths.join(this.dir, 'data.json'));
+    shell.showItemInFolder(this.dataPath);
   }
 
   onLauncherClose() {
@@ -743,26 +754,19 @@ export class Modpack extends Serializable implements ModpackData {
     };
   }
 
-  getIconPath() {
-    return paths.join(this.dir, 'icon.png');
-  }
-
   getIcon() {
-    const iconPath = this.getIconPath();
-    return imageSync(iconPath);
+    return imageSync(this.iconPath);
   }
 
   setIcon(path: string) {
-    const iconPath = this.getIconPath();
-
-    fs.cpSync(path, iconPath);
+    fs.cpSync(path, this.iconPath);
     this.invalidate();
   }
 
   setIconFromUrl(url: string) {
     if (url.startsWith('data:')) {
       const base64 = url.replace(/^data:.+;base64,/, '');
-      fs.writeFileSync(this.getIconPath(), Buffer.from(base64, 'base64'));
+      fs.writeFileSync(this.iconPath, Buffer.from(base64, 'base64'));
       return this.invalidate();
     }
 
@@ -771,7 +775,7 @@ export class Modpack extends Serializable implements ModpackData {
 
   resetIcon() {
     this.logger.log('reset icon');
-    const iconPath = this.getIconPath();
+    const iconPath = this.iconPath;
 
     if (fs.existsSync(iconPath)) {
       fs.rmSync(iconPath);
@@ -781,7 +785,7 @@ export class Modpack extends Serializable implements ModpackData {
 
   async downloadIcon(url: string) {
     try {
-      await downloadFileFromUrl(url, this.getIconPath());
+      await downloadFileFromUrl(url, this.iconPath);
     } catch (e) {
       throw error('Falied to download icon', e);
     }
