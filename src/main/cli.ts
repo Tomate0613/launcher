@@ -10,7 +10,6 @@ import { isProviderEnabled } from './data/content/lib';
 const logger = log('cli');
 
 export function parseArgs(argv: string[]) {
-  logger.log(argv);
   args(yargs(argv)).parse();
 }
 
