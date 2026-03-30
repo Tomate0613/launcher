@@ -11,7 +11,7 @@
 
 ### File Deduplication
 Deduplicate mods, resourcepacks and shaderpacks to save space by hardlinking the files.
-If a file has already been downloaded this makes adding it extremely fast
+If a mod (or any other content) has already been downloaded this makes adding it extremely fast
 
 ## Development
 ### Setup
