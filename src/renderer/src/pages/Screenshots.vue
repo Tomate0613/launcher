@@ -15,11 +15,11 @@ const popupScreenshot = ref('');
 
 const screenshots = await window.api.invoke('getScreenshots');
 
-function copy(instance: string, screenshot: string) {
+function copy(instance: string | null, screenshot: string) {
   window.api.invoke('copyScreenshot', instance, screenshot);
 }
 
-function showInFileManager(instance: string, screenshot: string) {
+function showInFileManager(instance: string | null, screenshot: string) {
   return window.api.invoke('showScreenshotInFileManager', instance, screenshot);
 }
 
