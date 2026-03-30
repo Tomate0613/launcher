@@ -37,7 +37,7 @@ const instanceDefaultOptions = await window.api.invoke(
 const options = computed({
   get: () => settingsInstance.value.modpackOptions ?? {},
   set: (val) => {
-    settingsInstance.value.modpackOptions = clone(val);
+    settingsInstance.value.modpackOptions = val;
   },
 });
 

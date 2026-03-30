@@ -9,6 +9,7 @@ import Settings from './pages/Settings.vue';
 import Screenshots from './pages/Screenshots.vue';
 import Explore from './pages/Explore.vue';
 import Worlds from './pages/Worlds.vue';
+import Servers from './pages/Servers.vue'
 
 export const router = createRouter({
   history: createWebHashHistory(),
@@ -21,6 +22,7 @@ export const router = createRouter({
         { path: 'install', component: Explore },
         { path: 'screenshots', component: Screenshots },
         { path: 'worlds', component: Worlds },
+        { path: 'servers', component: Servers },
         { path: 'accounts', component: Accounts },
         { path: 'console', component: Console },
         { path: 'settings', component: Settings },

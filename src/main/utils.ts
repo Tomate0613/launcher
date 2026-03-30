@@ -161,3 +161,8 @@ export function safeJoin(baseDir: string, unsafePath: string): string {
 
   return targetPath;
 }
+
+export function runOnClose(callback: () => void) {
+  process.on('SIGTERM', callback);
+  process.on('exit', callback);
+}

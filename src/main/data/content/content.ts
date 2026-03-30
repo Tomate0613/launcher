@@ -236,7 +236,7 @@ export abstract class Content {
       this.setState(filename, 'REMOVED');
       throw error('Failed to install content', e);
     } finally {
-      ctx.stop();
+      ctx.done();
     }
   }
 
@@ -432,7 +432,7 @@ export abstract class Content {
 
       logger.log('Update from files done');
     } finally {
-      ctx.stop();
+      ctx.done();
     }
   }
 
