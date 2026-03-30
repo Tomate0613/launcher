@@ -13,6 +13,11 @@
 Deduplicate mods, resourcepacks and shaderpacks to save space by hardlinking the files.
 If a mod (or any other content) has already been downloaded this makes adding it extremely fast
 
+### Wrapper
+(Optionally) close the launcher and only keep a lightweight wrapper around \
+Reopening the launcher still allows for reading live logs \
+If enabled will also reopens the launcher after the game closes
+
 ## Development
 ### Setup
 - Install pnpm
