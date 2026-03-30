@@ -47,7 +47,7 @@ import { downloadManager } from './downloads';
 import { error, FrontendError, showError } from '../error';
 import { Process, ProcessContext } from '../process';
 import { spawnWrapper } from '../wrapper';
-import { saveClose } from '../close';
+import { safeClose } from '../close';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
 
@@ -457,7 +457,7 @@ export class Modpack extends Serializable implements ModpackData {
 
       if (getSettings().wrapper.autoClose) {
         ctx.on('done', () => {
-          saveClose();
+          safeClose();
         });
       }
     } else {

@@ -10,7 +10,7 @@ import { parseArgs } from './cli';
 import { log } from '../common/logging/log';
 import { ensureAppDirectoriesExist } from './paths';
 import { tryReattachSockets } from './wrapper';
-import { saveClose } from './close';
+import { safeClose } from './close';
 
 const logger = log('main');
 
@@ -138,6 +138,6 @@ app.whenReady().then(async () => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    saveClose();
+    safeClose();
   }
 });
