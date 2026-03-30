@@ -23,6 +23,38 @@
 
       nixpkgsFor = forAllSystems (system: nixpkgs.legacyPackages.${system});
       nixpkgsOldFor = forAllSystems (system: nixpkgsOld.legacyPackages.${system});
+
+      runtimeLibs =
+        pkgs: with pkgs; [
+          (lib.getLib stdenv.cc.cc)
+          ## native versions
+          glfw3-minecraft
+          openal
+
+          ## openal
+          alsa-lib
+          libjack2
+          libpulseaudio
+          pipewire
+
+          ## glfw
+          libGL
+          libx11
+          libxcursor
+          libxext
+          libxrandr
+          libxxf86vm
+
+          flite # Text to speech (Otherwise minecraft will log an error every time it launches)
+
+          udev # oshi
+
+          vulkan-loader # VulkanMod's lwjgl
+
+          ocl-icd # OpenCL for c2me
+
+          gamemode
+        ];
     in
     {
       devShells = forAllSystems (
@@ -79,36 +111,8 @@
                   libxkbcommon
                   mesa
                   libGL
-
-                  (lib.getLib stdenv.cc.cc)
-                  ## native versions
-                  glfw3-minecraft
-                  openal
-
-                  ## openal
-                  alsa-lib
-                  libjack2
-                  libpulseaudio
-                  pipewire
-
-                  ## glfw
-                  libGL
-                  libx11
-                  libxcursor
-                  libxext
-                  libxrandr
-                  libxxf86vm
-
-                  flite # Text to speech (Otherwise minecraft will log an error every time it launches)
-
-                  udev # oshi
-
-                  vulkan-loader # VulkanMod's lwjgl
-
-                  ocl-icd # OpenCL for c2me
-
-                  gamemode
                 ]
+                + (runtimeLibs pkgs)
               );
             };
           };
@@ -185,6 +189,7 @@
                 --set MC_WRAPPER_PATH ${self.packages.${system}.mc-wrapper}/bin/${
                   self.packages.${system}.mc-wrapper.pname
                 } \
+                --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
                 --set ELECTRON_FORCE_IS_PACKAGED=1
             '';
           };
