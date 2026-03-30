@@ -166,3 +166,9 @@ export function runOnClose(callback: () => void) {
   process.on('SIGTERM', callback);
   process.on('exit', callback);
 }
+
+export function withPlatformExtension(name: string) {
+  const ext = process.platform === 'win32' ? '.exe' : '';
+
+  return `${name}${ext}`;
+}

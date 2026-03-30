@@ -4,7 +4,7 @@ import { getAccount, getSettings, modpacks } from './data';
 import { Modpack } from './data/modpack';
 import { prepare } from '.';
 import { app } from 'electron';
-import { noop } from './utils';
+import { noop, withPlatformExtension } from './utils';
 import { isProviderEnabled } from './data/content/lib';
 
 const logger = log('cli');
@@ -16,6 +16,7 @@ export function parseArgs(argv: string[]) {
 
 function args(yargs: Argv) {
   return yargs
+    .scriptName(withPlatformExtension('tomate-launcher'))
     .command(
       'launch <modpack-id>',
       'launch a modpack',

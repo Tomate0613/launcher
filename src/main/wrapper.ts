@@ -6,7 +6,7 @@ import { socketsStatePath } from './paths';
 import fs from 'node:fs/promises';
 import fsSync from 'node:fs';
 import path from 'node:path';
-import { runOnClose } from './utils';
+import { runOnClose, withPlatformExtension } from './utils';
 import { is } from '@electron-toolkit/utils';
 import { Launcher, LaunchOptions } from 'tomate-launcher-core';
 import { ProcessContext } from './process';
@@ -21,13 +21,19 @@ function getWrapperExecutable() {
     return process.env.MC_WRAPPER_PATH;
   }
 
-  const ext = process.platform === 'win32' ? '.exe' : '';
-
   if (is.dev) {
-    return path.join(__dirname, '../../extra-binaries', `mc-wrapper${ext}`);
+    return path.join(
+      __dirname,
+      '../../extra-binaries',
+      withPlatformExtension('mc-wrapper'),
+    );
   }
 
-  return path.join(process.resourcesPath, 'bin', `mc-wrapper${ext}`);
+  return path.join(
+    process.resourcesPath,
+    'bin',
+    withPlatformExtension('mc-wrapper'),
+  );
 }
 
 function socketPath(socketId: string) {
