@@ -73,13 +73,14 @@ export function loadData() {
 }
 
 function onClose() {
-  logger.log('Closed');
+  logger.log('Saving');
   modpacks.forEach((modpack) => modpack.onLauncherClose());
   settings?.save();
 
   const data = accounts.values().map((account) => JSON.stringify(account));
 
   fs.writeFileSync(accountsPath, JSON.stringify(Array.from(data)));
+  logger.log('Closed');
 }
 
 export function getModpack(modpackId: string) {
