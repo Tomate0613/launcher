@@ -64,7 +64,7 @@ importers:
         version: https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/ddee5efddcbed82cec68961f78503ebf81b14f91
       tomate-mods:
         specifier: github:Tomate0613/tomate-mods
-        version: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/855f1c899f6acf72596a9bc756adf55900611d9a(yauzl@2.10.0)
+        version: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/39bc05dde586ab1bd27d68b5a43502549a563d97(yauzl@2.10.0)
       vue:
         specifier: ^3.5.31
         version: 3.5.31(typescript@6.0.2)
@@ -2770,8 +2770,8 @@ packages:
     resolution: {tarball: https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/ddee5efddcbed82cec68961f78503ebf81b14f91}
     version: 2.0.2
 
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/855f1c899f6acf72596a9bc756adf55900611d9a:
-    resolution: {tarball: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/855f1c899f6acf72596a9bc756adf55900611d9a}
+  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/39bc05dde586ab1bd27d68b5a43502549a563d97:
+    resolution: {tarball: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/39bc05dde586ab1bd27d68b5a43502549a563d97}
     version: 1.0.0
 
   tr46@0.0.3:
@@ -5738,7 +5738,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/855f1c899f6acf72596a9bc756adf55900611d9a(yauzl@2.10.0):
+  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/39bc05dde586ab1bd27d68b5a43502549a563d97(yauzl@2.10.0):
     dependencies:
       '@xmcl/mod-parser': 3.4.2
       '@xmcl/unzip': 2.1.2(yauzl@2.10.0)

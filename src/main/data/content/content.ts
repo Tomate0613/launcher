@@ -1,5 +1,6 @@
 import type {
   Dependency,
+  ImplementedProvider,
   Project,
   Provider,
   SearchResult,
@@ -7,7 +8,6 @@ import type {
 } from 'tomate-mods';
 import { SyncedIdSet } from '../../../common/synced/synced-id-set/backend';
 import { identity } from '@vueuse/core';
-import { type EnabledProvider, enabledProviders, tomateMods } from './lib';
 import fs from 'node:fs';
 import { Modpack } from '../modpack';
 import {
@@ -19,6 +19,7 @@ import { log } from '../../../common/logging/log';
 import paths from 'node:path';
 import { error } from '../../error';
 import { registerInStore, wrapDownload } from './store';
+import { tomateMods } from './lib';
 
 export type ContentType = 'mods' | 'shaderpacks' | 'resourcepacks';
 
@@ -114,7 +115,7 @@ export abstract class Content {
   }
 
   async install(
-    providerId: EnabledProvider,
+    providerId: ImplementedProvider,
     version: Version,
     source: ResourceSource,
     downloadDependencies?: boolean,
@@ -241,7 +242,7 @@ export abstract class Content {
   }
 
   async installLatest(
-    provider: EnabledProvider,
+    provider: ImplementedProvider,
     id: string,
     source: ResourceSource,
     downloadDependencies?: boolean,
@@ -256,7 +257,7 @@ export abstract class Content {
   }
 
   async replaceLatest(
-    provider: EnabledProvider,
+    provider: ImplementedProvider,
     id: string,
     projectId: string,
     source: ResourceSource,
@@ -278,7 +279,7 @@ export abstract class Content {
   }
 
   async replaceVersion(
-    provider: EnabledProvider,
+    provider: ImplementedProvider,
     id: string,
     version: Version,
     source: ResourceSource,
@@ -312,7 +313,7 @@ export abstract class Content {
     }
   }
 
-  async versions(provider: EnabledProvider, id: string) {
+  async versions(provider: ImplementedProvider, id: string) {
     return tomateMods
       .provider(provider)
       .versions(id, this.versionQueryParams(provider));
@@ -438,13 +439,13 @@ export abstract class Content {
 
   async search(query: string) {
     let searchResults: SearchResult[] = [];
-    const providers = enabledProviders;
+    const providers = tomateMods.providerIds;
 
     for (const provider of providers) {
       try {
         const searchResult = await tomateMods
           .provider(provider)
-          .search(this.searchQueryParams(query, provider));
+          .search(this.searchQueryParams(query, provider as ImplementedProvider));
 
         searchResults.push(searchResult);
       } catch (e) {
@@ -480,7 +481,7 @@ export abstract class Content {
 
     return {
       id: filename,
-      provider,
+      provider: provider as ImplementedProvider,
       project,
       version,
       disabled: false,
@@ -512,8 +513,8 @@ export abstract class Content {
     this.items.invalidate(item);
   }
 
-  abstract searchQueryParams(query: string, provider: EnabledProvider): string;
-  abstract versionQueryParams(provider: EnabledProvider): string;
+  abstract searchQueryParams(query: string, provider: ImplementedProvider): string;
+  abstract versionQueryParams(provider: ImplementedProvider): string;
   abstract getPath(...paths: string[]): string;
   abstract getDisabledPath(...paths: string[]): string;
   abstract isContent(filename: string): boolean;

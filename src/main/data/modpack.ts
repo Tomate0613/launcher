@@ -41,7 +41,7 @@ import { log, type Logger } from '../../common/logging/log';
 import { shell } from 'electron';
 import { ModsContent } from './content/mods';
 import { GeneralModpackOptions } from './settings';
-import { enabledProviders, tomateMods } from './content/lib';
+import { tomateMods } from './content/lib';
 import { ContentType, ResourceSource } from './content/content';
 import { ShaderpacksContent } from './content/shaderpacks';
 import { ResourcepacksContent } from './content/resourcepacks';
@@ -708,8 +708,7 @@ export class Modpack extends Serializable implements ModpackData {
   static async searchModpack(query: string) {
     let searchResults: SearchResult[] = [];
 
-    const providerIds = enabledProviders;
-    for (const providerId of providerIds) {
+    for (const providerId of tomateMods.providerIds) {
       try {
         const provider = tomateMods.provider(providerId);
 

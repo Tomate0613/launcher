@@ -39,9 +39,9 @@ import {
 } from './browse';
 import path from 'node:path';
 import { applyDefaults } from '../common/utils';
-import { FrontendError } from './error';
-import { isProviderEnabled } from './data/content/lib';
+import { FrontendError, ProviderError } from './error';
 import { LaunchOptions } from 'tomate-launcher-core';
+import { tomateMods } from './data/content/lib';
 
 const logger = log('api');
 
@@ -119,8 +119,8 @@ export const routes = {
     return getModpack(modpackId).setIconFromUrl(url);
   },
   async installModpack(_e, provider: ImplementedProvider, id: string) {
-    if (!isProviderEnabled(provider)) {
-      throw new FrontendError(`${provider} is not enabled`);
+    if (!tomateMods.hasProvider(provider)) {
+      throw new ProviderError(provider);
     }
 
     await ModpackImporter.fromResource(provider, id);
@@ -194,7 +194,7 @@ export const routes = {
     provider: ImplementedProvider,
     id: string,
   ) {
-    if (!isProviderEnabled(provider)) {
+    if (!tomateMods.hasProvider(provider)) {
       throw new FrontendError(`${provider} is not enabled`);
     }
 
@@ -208,7 +208,7 @@ export const routes = {
     projectId: string,
     downloadDependencies?: boolean,
   ) {
-    if (!isProviderEnabled(provider)) {
+    if (!tomateMods.hasProvider(provider)) {
       throw new FrontendError(`${provider} is not enabled`);
     }
 
@@ -224,7 +224,7 @@ export const routes = {
     version: Version,
     downloadDependencies?: boolean,
   ) {
-    if (!isProviderEnabled(provider)) {
+    if (!tomateMods.hasProvider(provider)) {
       throw new FrontendError(`${provider} is not enabled`);
     }
 
@@ -241,7 +241,7 @@ export const routes = {
     projectId: string,
     downloadDependencies?: boolean,
   ) {
-    if (!isProviderEnabled(provider)) {
+    if (!tomateMods.hasProvider(provider)) {
       throw new FrontendError(`${provider} is not enabled`);
     }
 
@@ -258,7 +258,7 @@ export const routes = {
     version: Version,
     downloadDependencies?: boolean,
   ) {
-    if (!isProviderEnabled(provider)) {
+    if (!tomateMods.hasProvider(provider)) {
       throw new FrontendError(`${provider} is not enabled`);
     }
 

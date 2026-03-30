@@ -2,14 +2,15 @@ import { Content, ContentItem } from './content';
 import path from 'node:path';
 import { Modpack } from '../modpack';
 import { loader } from 'tomate-loaders';
-import { tomateMods, type EnabledProvider } from './lib';
+import { tomateMods } from './lib';
+import { ImplementedProvider } from 'tomate-mods';
 
 export class ModsContent extends Content {
   constructor(modpack: Modpack, items: ContentItem[]) {
     super(modpack, items, 'mods');
   }
 
-  searchQueryParams(query: string, provider: EnabledProvider): string {
+  searchQueryParams(query: string, provider: ImplementedProvider): string {
     this.modpack.checkModded(this.modpack.loader.id);
     const modLoader = loader(this.modpack.loader.id).tomateModsModLoader;
 
@@ -23,7 +24,7 @@ export class ModsContent extends Content {
       .toString();
   }
 
-  versionQueryParams(provider: EnabledProvider): string {
+  versionQueryParams(provider: ImplementedProvider): string {
     this.modpack.checkModded(this.modpack.loader.id);
     const modLoader = loader(this.modpack.loader.id).tomateModsModLoader;
 
