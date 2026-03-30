@@ -8,6 +8,7 @@ import {
   minecraftRootPath,
   minecraftVersionDirectoryPath,
   modpacksPath,
+  screenshotsPath,
   stashesPath,
 } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
@@ -30,6 +31,7 @@ import { Account } from './account';
 import { invoke } from '../api';
 import { getSettings, modpacks } from '../data';
 import {
+  copyFilesWithRename,
   downloadFileFromUrl,
   ensureDirectoryExists,
   imageSync,
@@ -234,33 +236,32 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   /**
-  * `${this.dir}/data.json`
-  */
+   * `${this.dir}/data.json`
+   */
   get dataPath() {
     return paths.join(this.dir, 'data.json');
   }
 
   /**
-  * `${this.dir}/icon.png`
-  */
+   * `${this.dir}/icon.png`
+   */
   get iconPath() {
     return paths.join(this.dir, 'icon.png');
   }
 
   /**
-  * `${this.dir}/screenshots`
-  */
+   * `${this.dir}/screenshots`
+   */
   get screenshotsPath() {
     return paths.join(this.dir, 'screenshots');
   }
 
   /**
-  * `${this.dir}/saves`
-  */
+   * `${this.dir}/saves`
+   */
   get savesPath() {
     return paths.join(this.dir, 'saves');
   }
-
 
   setupContentDirectories() {
     this.modsContent.setupDirectory();
@@ -621,6 +622,9 @@ export class Modpack extends Serializable implements ModpackData {
 
   write() {
     if (this.isDeleted && fs.existsSync(this.dir)) {
+      // Copy screenshots to global screenshots directory
+      copyFilesWithRename(this.screenshotsPath, screenshotsPath);
+
       fs.rmSync(this.dir, { recursive: true, force: true });
       return;
     }
