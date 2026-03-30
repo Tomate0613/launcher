@@ -131,68 +131,83 @@
           lib = pkgs.lib;
         in
         {
-          default = pkgs.mkPnpmPackage {
-            pname = (lib.fromJSON (lib.readFile ./package.json)).name;
-            version = (lib.fromJSON (lib.readFile ./package.json)).version;
+          default =
+            let
+              pname = (lib.fromJSON (lib.readFile ./package.json)).name;
+              desktopItem = pkgs.makeDesktopItem {
+                name = pname;
+                exec = "${pname} %U";
+                desktopName = "Tomate Launcher";
+                icon = pname;
+                comment = "My cool app";
+                categories = [ "Game" ];
+              };
+            in
+            pkgs.mkPnpmPackage {
+              inherit pname;
+              version = (lib.fromJSON (lib.readFile ./package.json)).version;
 
-            src = ./.;
-            lockFile = ./pnpm-lock.yaml;
+              src = ./.;
+              lockFile = ./pnpm-lock.yaml;
 
-            nativeBuildInputs = with pkgs; [
-              nodejs
-              pkgsOld.pnpm
-              makeWrapper
-            ];
+              nativeBuildInputs = with pkgs; [
+                nodejs
+                pkgsOld.pnpm
+                makeWrapper
+              ];
 
-            buildCommand = "build:linux";
+              buildCommand = "build:linux";
 
-            buildDependencies = [
-              "@doublekekse/find-java"
-              "tomate-launcher-core"
-              "tomate-mods"
-              "tomate-loaders"
-            ];
+              buildDependencies = [
+                "@doublekekse/find-java"
+                "tomate-launcher-core"
+                "tomate-mods"
+                "tomate-loaders"
+              ];
 
-            outDir = "dist";
+              outDir = "dist";
 
-            preBuild =
-              lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-                cp -r ${pkgs.electron.dist}/Electron.app .
-                chmod -R u+w Electron.app
-              ''
-              + lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-                cp -r ${pkgs.electron.dist} electron-dist
-                chmod -R u+w electron-dist
+              preBuild =
+                lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+                  cp -r ${pkgs.electron.dist}/Electron.app .
+                  chmod -R u+w Electron.app
+                ''
+                + lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
+                  cp -r ${pkgs.electron.dist} electron-dist
+                  chmod -R u+w electron-dist
+                '';
+
+              buildPhase = ''
+                runHook preBuild
+
+                pnpm build
+                pnpm exec electron-builder \
+                  --dir \
+                  -c.electronDist=${if pkgs.stdenv.hostPlatform.isDarwin then "." else "electron-dist"} \
+                  -c.electronVersion=${pkgs.electron.version}
+
+                runHook postBuild
               '';
 
-            buildPhase = ''
-              runHook preBuild
+              installPhase = ''
+                mkdir -p $out/opt
+                mv dist/*unpacked/resources $out/opt/TomateLauncher
 
-              pnpm build
-              pnpm exec electron-builder \
-                --dir \
-                -c.electronDist=${if pkgs.stdenv.hostPlatform.isDarwin then "." else "electron-dist"} \
-                -c.electronVersion=${pkgs.electron.version}
+                mkdir -p $out/share/applications
+                cp ${desktopItem}/share/applications/* $out/share/applications
+              '';
 
-              runHook postBuild
-            '';
-
-            installPhase = ''
-              mkdir -p $out/opt
-              mv dist/*unpacked/resources $out/opt/TomateLauncher
-            '';
-
-            postFixup = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-              makeWrapper ${pkgs.electron}/bin/electron $out/bin/tomate-launcher \
-                --add-flags $out/opt/TomateLauncher/app.asar \
-                --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
-                --set MC_WRAPPER_PATH ${self.packages.${system}.mc-wrapper}/bin/${
-                  self.packages.${system}.mc-wrapper.pname
-                } \
-                --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
-                --set ELECTRON_FORCE_IS_PACKAGED=1
-            '';
-          };
+              postFixup = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
+                makeWrapper ${pkgs.electron}/bin/electron $out/bin/tomate-launcher \
+                  --add-flags $out/opt/TomateLauncher/app.asar \
+                  --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
+                  --set MC_WRAPPER_PATH ${self.packages.${system}.mc-wrapper}/bin/${
+                    self.packages.${system}.mc-wrapper.pname
+                  } \
+                  --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
+                  --set ELECTRON_FORCE_IS_PACKAGED=1
+              '';
+            };
 
           mc-wrapper =
             let
