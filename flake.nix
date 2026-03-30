@@ -41,7 +41,7 @@
               xrandr
               mesa-demos
 
-              wineWowPackages.minimal
+              wineWow64Packages.minimal
               flatpak-builder
             ];
 
