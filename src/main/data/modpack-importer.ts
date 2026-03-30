@@ -1,4 +1,4 @@
-import { EnabledProvider, isProviderEnabled, tomateMods } from './content/lib';
+import { tomateMods } from './content/lib';
 import { Modpack } from './modpack';
 import path from 'node:path';
 import { modpacks } from '../data';
@@ -12,7 +12,8 @@ import { MultiMc } from './modpack-import/multi-mc';
 import { ModpackImporter } from './modpack-import';
 import { Cursepack } from './modpack-import/cursepack';
 import { fileBufferPath } from '../utils';
-import { error, FrontendError } from '../error';
+import { error, FrontendError, ProviderError } from '../error';
+import { ImplementedProvider } from 'tomate-mods';
 
 const logger = log('modpack-import');
 
@@ -102,8 +103,8 @@ async function getHandler(filePath: string): Promise<ModpackImporter> {
   }
 
   if (fs.existsSync(path.join(filePath, 'manifest.json'))) {
-    if (!isProviderEnabled('curseforge')) {
-      throw new FrontendError('Curseforge support not enabled');
+    if (!tomateMods.hasProvider('curseforge')) {
+      throw new ProviderError('curseforge');
     }
 
     return new Cursepack(filePath);
@@ -113,9 +114,13 @@ async function getHandler(filePath: string): Promise<ModpackImporter> {
 }
 
 export async function fromResource(
-  provider: EnabledProvider,
+  provider: ImplementedProvider,
   projectId: string,
 ) {
+  if (!tomateMods.hasProvider(provider)) {
+    throw new ProviderError(provider);
+  }
+
   const project = await tomateMods.provider(provider).project(projectId);
   const [version] =
     (await tomateMods.provider(provider).versions(projectId, '')) ?? [];

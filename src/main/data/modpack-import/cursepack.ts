@@ -2,7 +2,7 @@ import { LoaderInfo, ModpackImporter, ProgressListener } from '.';
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { isProviderEnabled, tomateMods } from '../content/lib';
+import { tomateMods } from '../content/lib';
 import { log } from '../../../common/logging/log';
 import { Modpack } from '../modpack';
 
@@ -79,10 +79,6 @@ export class Cursepack implements ModpackImporter {
     onProgress: ProgressListener,
   ): Promise<void> {
     const curseforge = 'curseforge' as const;
-
-    if (!isProviderEnabled(curseforge)) {
-      throw new Error('Curseforge disabled');
-    }
 
     let downloadedFiles = 0;
     await Promise.allSettled(

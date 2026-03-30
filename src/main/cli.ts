@@ -5,7 +5,8 @@ import { Modpack } from './data/modpack';
 import { prepare } from '.';
 import { app } from 'electron';
 import { noop, withPlatformExtension } from './utils';
-import { isProviderEnabled } from './data/content/lib';
+import { tomateMods } from './data/content/lib';
+import { ProviderError } from './error';
 
 const logger = log('cli');
 
@@ -145,8 +146,8 @@ async function create(
   if (cf.length) {
     const curseforge = 'curseforge' as const;
 
-    if (!isProviderEnabled(curseforge)) {
-      throw new Error('Curseforge support is not enabled');
+    if (!tomateMods.hasProvider(curseforge)) {
+      throw new ProviderError(curseforge)
     }
     cfs = cf.map((mod: string) =>
       modpack.modsContent.installLatest(curseforge, mod, 'local'),

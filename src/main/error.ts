@@ -2,6 +2,7 @@ import { AxiosError } from 'axios';
 import { log } from '../common/logging/log';
 import { TasksError } from 'tomate-launcher-core';
 import { invoke } from './api';
+import { ImplementedProvider } from 'tomate-mods';
 
 const logger = log('error');
 
@@ -14,6 +15,12 @@ export class FrontendError extends Error {
     if (this.constructor.name !== 'FrontendError') {
       this.name = this.constructor.name;
     }
+  }
+}
+
+export class ProviderError extends FrontendError {
+  constructor(provider: ImplementedProvider) {
+    super(`${provider} is not enabled`);
   }
 }
 

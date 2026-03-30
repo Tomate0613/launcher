@@ -1,14 +1,15 @@
 import { Content, ContentItem } from './content';
 import path from 'node:path';
 import { Modpack } from '../modpack';
-import { type EnabledProvider, tomateMods } from './lib';
+import { tomateMods } from './lib';
+import type { ImplementedProvider } from 'tomate-mods';
 
 export class ResourcepacksContent extends Content {
   constructor(modpack: Modpack, items: ContentItem[]) {
     super(modpack, items, 'resourcepacks');
   }
 
-  searchQueryParams(query: string, provider: EnabledProvider): string {
+  searchQueryParams(query: string, provider: ImplementedProvider): string {
     return tomateMods
       .provider(provider)
       .searchQueryParamsBuilder()
@@ -18,7 +19,7 @@ export class ResourcepacksContent extends Content {
       .toString();
   }
 
-  versionQueryParams(provider: EnabledProvider): string {
+  versionQueryParams(provider: ImplementedProvider): string {
     return tomateMods
       .provider(provider)
       .versionQueryParamsBuilder()
