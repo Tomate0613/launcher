@@ -112,7 +112,7 @@
                   mesa
                   libGL
                 ]
-                + (runtimeLibs pkgs)
+                ++ (runtimeLibs pkgs)
               );
             };
           };
