@@ -75,7 +75,7 @@ export function deleteSkin(id: string) {
 export async function getScreenshots() {
   const screenshots = await Promise.all(
     getVisibleModpacks().map(async (modpack) => {
-      const screenshotsPath = path.join(modpack.dir, 'screenshots');
+      const screenshotsPath = modpack.screenshotsPath;
       const screenshots = await fs
         .readdir(screenshotsPath)
         .catch(() => [] as string[]);
@@ -98,7 +98,7 @@ export async function getScreenshots() {
 
 export async function copyScreenshot(modpack: string, screenshot: string) {
   const image = nativeImage.createFromPath(
-    path.join(getModpack(modpack).dir, 'screenshots', screenshot),
+    path.join(getModpack(modpack).screenshotsPath, screenshot),
   );
   clipboard.writeImage(image);
 }
@@ -108,7 +108,7 @@ export function showScreenshotInFileManager(
   screenshot: string,
 ) {
   shell.showItemInFolder(
-    path.join(getModpack(modpack).dir, 'screenshots', screenshot),
+    path.join(getModpack(modpack).screenshotsPath, screenshot),
   );
 }
 
@@ -116,7 +116,7 @@ export async function getWorlds() {
   const worlds = await Promise.all(
     getVisibleModpacks()
       .map(async (modpack) => {
-        const savesPath = path.join(modpack.dir, 'saves');
+        const savesPath = modpack.savesPath;
         const saves = await fs.readdir(savesPath).catch(() => [] as string[]);
 
         return (

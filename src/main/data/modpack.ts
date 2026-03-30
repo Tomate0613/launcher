@@ -247,6 +247,20 @@ export class Modpack extends Serializable implements ModpackData {
     return paths.join(this.dir, 'icon.png');
   }
 
+  /**
+  * `${this.dir}/screenshots`
+  */
+  get screenshotsPath() {
+    return paths.join(this.dir, 'screenshots');
+  }
+
+  /**
+  * `${this.dir}/saves`
+  */
+  get savesPath() {
+    return paths.join(this.dir, 'saves');
+  }
+
 
   setupContentDirectories() {
     this.modsContent.setupDirectory();
