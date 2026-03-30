@@ -1,12 +1,17 @@
 import path from 'node:path';
-import { defaultsPath, skinCachePath, themesPath } from './paths';
+import {
+  defaultsPath,
+  screenshotsPath,
+  skinCachePath,
+  themesPath,
+} from './paths';
 import fs from 'node:fs/promises';
 import nbt from 'prismarine-nbt';
 import { log } from '../common/logging/log';
 import { css, image, imageOrDelete, pathFileBuffer } from './utils';
 import { clipboard, nativeImage, shell } from 'electron';
 import serverStatusPinger from 'minecraftstatuspinger';
-import { getModpack, getVisibleModpacks } from './data';
+import { getModpack, getVisibleModpacks, modpacks } from './data';
 
 const logger = log('browse');
 
@@ -72,9 +77,17 @@ export function deleteSkin(id: string) {
   return fs.rm(path.join(skinCachePath, id));
 }
 
+type Screenshot = {
+  modpack: string | null;
+  screenshot: string;
+  data: string | undefined;
+  date: number;
+};
+
 export async function getScreenshots() {
-  const screenshots = await Promise.all(
-    getVisibleModpacks().map(async (modpack) => {
+  const screenshots: Screenshot[][] = await Promise.all(
+    // We do not filter out deleted modpacks since the screenshots only get copied into the global screenshot dir on write
+    modpacks.values().map(async (modpack) => {
       const screenshotsPath = modpack.screenshotsPath;
       const screenshots = await fs
         .readdir(screenshotsPath)
@@ -93,23 +106,47 @@ export async function getScreenshots() {
     }),
   );
 
+  screenshots.push(
+    await Promise.all(
+      (await fs.readdir(screenshotsPath)).map(async (screenshot) => {
+        const screenshotPath = path.join(screenshotsPath, screenshot);
+
+        return {
+          modpack: null,
+          screenshot,
+          data: await image(screenshotPath),
+          date: (await fs.stat(screenshotPath)).mtime.getTime(),
+        };
+      }),
+    ),
+  );
+
   return screenshots.flat().sort((a, b) => b.date - a.date);
 }
 
-export async function copyScreenshot(modpack: string, screenshot: string) {
+function getScreenshotPath(modpack: string | null, screenshot: string) {
+  if (modpack == null) {
+    return path.join(screenshotsPath, screenshot);
+  }
+
+  return path.join(getModpack(modpack).screenshotsPath, screenshot);
+}
+
+export async function copyScreenshot(
+  modpack: string | null,
+  screenshot: string,
+) {
   const image = nativeImage.createFromPath(
-    path.join(getModpack(modpack).screenshotsPath, screenshot),
+    getScreenshotPath(modpack, screenshot),
   );
   clipboard.writeImage(image);
 }
 
 export function showScreenshotInFileManager(
-  modpack: string,
+  modpack: string | null,
   screenshot: string,
 ) {
-  shell.showItemInFolder(
-    path.join(getModpack(modpack).screenshotsPath, screenshot),
-  );
+  shell.showItemInFolder(getScreenshotPath(modpack, screenshot));
 }
 
 export async function getWorlds() {

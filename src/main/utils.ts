@@ -3,6 +3,9 @@ import path from 'node:path';
 import { tempPaths } from './paths';
 import { app } from 'electron';
 import { downloadManager } from './data/downloads';
+import { log } from '../common/logging/log';
+
+const logger = log('utils');
 
 export const noop = () => {};
 
@@ -35,6 +38,39 @@ export function deleteDirectoryIfEmpty(directoryPath: string) {
   ) {
     fsSync.rmSync(directoryPath, { recursive: true });
   }
+}
+
+/**
+ * Copy all files from first directory to second directory
+ * In case of duplicates will be renamed automatically
+ */
+export function copyFilesWithRename(srcDir: string, destDir: string) {
+  ensureDirectoryExists(destDir);
+
+  if (!fsSync.existsSync(srcDir)) {
+    return;
+  }
+
+  const files = fsSync.readdirSync(srcDir);
+
+  files.forEach((file) => {
+    const srcPath = path.join(srcDir, file);
+    let destPath = path.join(destDir, file);
+
+    if (fsSync.existsSync(destPath)) {
+      const ext = path.extname(file);
+      const name = path.basename(file, ext);
+      let counter = 1;
+
+      while (fsSync.existsSync(destPath)) {
+        destPath = path.join(destDir, `${name} (${counter})${ext}`);
+        counter++;
+      }
+    }
+
+    fsSync.copyFileSync(srcPath, destPath);
+    logger.log(`Copied ${srcPath} to ${destPath}`);
+  });
 }
 
 export async function downloadFileFromUrl(

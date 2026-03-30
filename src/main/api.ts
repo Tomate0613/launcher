@@ -356,10 +356,10 @@ export const routes = {
     );
   },
   getScreenshots,
-  copyScreenshot(_e, modpack: string, screenshot: string) {
+  copyScreenshot(_e, modpack: string | null, screenshot: string) {
     copyScreenshot(modpack, screenshot);
   },
-  showScreenshotInFileManager(_e, modpack: string, screenshot: string) {
+  showScreenshotInFileManager(_e, modpack: string | null, screenshot: string) {
     showScreenshotInFileManager(modpack, screenshot);
   },
   getSkins,
