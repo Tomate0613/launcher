@@ -6,7 +6,7 @@ import { log } from '../common/logging/log';
 import { css, image, imageOrDelete, pathFileBuffer } from './utils';
 import { clipboard, nativeImage, shell } from 'electron';
 import serverStatusPinger from 'minecraftstatuspinger';
-import { getModpack, modpacks } from './data';
+import { getModpack, getVisibleModpacks } from './data';
 
 const logger = log('browse');
 
@@ -74,7 +74,7 @@ export function deleteSkin(id: string) {
 
 export async function getScreenshots() {
   const screenshots = await Promise.all(
-    modpacks.values().map(async (modpack) => {
+    getVisibleModpacks().map(async (modpack) => {
       const screenshotsPath = path.join(modpack.dir, 'screenshots');
       const screenshots = await fs
         .readdir(screenshotsPath)
@@ -114,8 +114,7 @@ export function showScreenshotInFileManager(
 
 export async function getWorlds() {
   const worlds = await Promise.all(
-    modpacks
-      .values()
+    getVisibleModpacks()
       .map(async (modpack) => {
         const savesPath = path.join(modpack.dir, 'saves');
         const saves = await fs.readdir(savesPath).catch(() => [] as string[]);
@@ -167,7 +166,7 @@ export async function getWorlds() {
 
 export async function getServers() {
   const servers = await Promise.all(
-    modpacks.values().map(async (modpack) => {
+    getVisibleModpacks().map(async (modpack) => {
       try {
         const serversPath = path.join(modpack.dir, 'servers.dat');
         const buffer = await fs.readFile(serversPath);

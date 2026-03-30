@@ -107,4 +107,8 @@ export function getSettings() {
   return settings;
 }
 
+export function getVisibleModpacks() {
+  return modpacks.values().filter((m) => !m.isDeleted);
+}
+
 runOnClose(onClose);
