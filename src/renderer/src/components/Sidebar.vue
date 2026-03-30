@@ -10,6 +10,7 @@ import {
   mdiEarthBox,
   mdiImage,
   mdiMinecraft,
+  mdiServer,
 } from '@mdi/js';
 import steve from '../assets/steve.png';
 import Icon from './Icon.vue';
@@ -75,6 +76,10 @@ function accountTypeString(accountType: AccountType) {
     <RouterLink class="sidebar-item" to="/screenshots" draggable="false">
       <Icon :path="mdiImage" />
       Screenshots
+    </RouterLink>
+    <RouterLink class="sidebar-item" to="/servers" draggable="false">
+      <Icon :path="mdiServer" />
+      Servers
     </RouterLink>
     <RouterLink class="sidebar-item" to="/install" draggable="false">
       <Icon :path="mdiDownload" />

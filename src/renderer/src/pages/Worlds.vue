@@ -21,24 +21,23 @@ function gameTypeName(type: number) {
   return 'Unknown';
 }
 
-function modpackId(folder: string) {
-  return folder.split('-').slice(-5).join('-');
-}
-
-function getModpack(folder: string) {
-  return modpacks.get(modpackId(folder));
+function getModpack(modpack: string) {
+  return modpacks.get(modpack);
 }
 
 function openFolder(modpack: string, world: string) {
   window.api.invoke('openWorldFolder', modpack, world);
 }
 
-function launch(folder: string, save: string) {
+function launch(modpack: string, save: string) {
   if (!accountId) {
     return;
   }
 
-  window.api.invoke('launchModpack', modpackId(folder), accountId, save);
+  window.api.invoke('launchModpack', modpack, accountId, {
+    type: 'singleplayer',
+    identifier: save,
+  });
 }
 </script>
 <template>

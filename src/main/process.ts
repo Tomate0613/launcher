@@ -1,4 +1,7 @@
+import EventEmitter from 'node:events';
 import { Logger } from '../common/logging/log';
+
+let processes: ProcessContext[] = [];
 
 export type Process = {
   id: string;
@@ -14,30 +17,60 @@ export type Processor = {
   invalidate(): void;
 };
 
-export class ProcessContext {
-  constructor(
-    private processor: Processor,
-    private id: string,
-    private cleanUp: () => void,
-  ) {}
+type ProcessEvents = {
+  progress: [number];
+
+  done: [];
+  cancel: [];
+
+  stop: [];
+};
+
+export class ProcessContext extends EventEmitter<ProcessEvents> {
+  private stopped = false;
+
+  constructor() {
+    super();
+
+    processes.push(this);
+    this.on('stop', () => {
+      processes = processes.filter((process) => process !== this);
+      this.stopped = true;
+    });
+  }
 
   progress(progress: number) {
-    const process = this.processor.processes.find((p) => p.id === this.id);
-    if (process) {
-      process.progress = progress;
-    }
+    this.emit('progress', progress);
+  }
 
-    this.processor.invalidate();
+  private stop() {
+    if (this.stopped) return;
+
+    this.stopped = true;
+    this.emit('stop');
   }
-  stop() {
-    this.processor.processes = this.processor.processes.filter(
-      (progress) => progress.id !== this.id,
-    );
-    this.processor.logger.log('Stopped process', this.id);
-    this.processor.invalidate();
-  }
-  cancel() {
-    this.cleanUp();
+
+  done() {
+    this.emit('done');
     this.stop();
   }
+
+  cancel() {
+    this.emit('cancel');
+    this.stop();
+  }
+
+  wait() {
+    if (this.stopped) {
+      return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve) => {
+      this.once('stop', resolve);
+    });
+  }
+}
+
+export function getAllProcesses() {
+  return processes;
 }

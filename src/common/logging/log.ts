@@ -99,6 +99,14 @@ export class Logger {
       }
     }
 
+    // TODO Figure out neoforged
+    // WARN StatusConsoleListener Advanced terminal features are not available in this environment
+    // They replace our awesome stuff with bs
+    // [00:42:18] [Render thread/WARN] [minecraft/SoundEngine]: Missing sound for event: minecraft:item.goat_horn.play
+    // [00:42:18] [Render thread/WARN] [minecraft/SoundEngine]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
+    // [00:42:18] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device Razer Barracuda X 2.4 Analog Stereo
+    // one thingy more to specify class
+
     transportLog('error', 'Minecraft/unknown', 'no-parse', [data]);
   }
 

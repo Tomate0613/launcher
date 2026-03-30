@@ -54,8 +54,8 @@ const layout = ref<'list' | 'grid'>('grid');
       <ContextMenuWrapper v-for="screenshot in screenshots">
         <template v-slot:content>
           <button
-            class="btn-other"
-            @click="openScreenshotPopup(screenshot.data)"
+            class="btn-other screenshot-btn"
+            @click="openScreenshotPopup(screenshot.data ?? '')"
           >
             <img :src="screenshot.data" />
           </button>
@@ -101,7 +101,7 @@ img {
   grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
   grid-auto-rows: min-content;
 
-  & button {
+  & button.screenshot-btn {
     all: unset;
 
     cursor: pointer;

@@ -11,12 +11,7 @@ import {
 } from 'vue';
 import { log } from '../../../../common/logging/log';
 import Icon from '../Icon.vue';
-import {
-  mdiArrowUpBoldOutline,
-  mdiChevronUp,
-  mdiHelpCircleOutline,
-  mdiMagnify,
-} from '@mdi/js';
+import { mdiHelpCircleOutline, mdiMagnify } from '@mdi/js';
 import ImageIcon from '../ImageIcon.vue';
 import type { Option } from './types';
 import Keybind from '../Keybind.vue';

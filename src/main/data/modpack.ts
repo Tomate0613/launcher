@@ -46,6 +46,8 @@ import { ResourcepacksContent } from './content/resourcepacks';
 import { downloadManager } from './downloads';
 import { error, FrontendError, showError } from '../error';
 import { Process, ProcessContext } from '../process';
+import { spawnWrapper } from '../wrapper';
+import { safeClose } from '../close';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
 
@@ -292,7 +294,7 @@ export class Modpack extends Serializable implements ModpackData {
     return paths.join(this.dir, 'data.json');
   }
 
-  async launcher(ctx: ProcessContext) {
+  async launcher() {
     this.logger.log('Getting launch config');
     const modLoader = TomateLoaders.loader(this.loader.id);
 
@@ -337,7 +339,6 @@ export class Modpack extends Serializable implements ModpackData {
       this.gameVersion,
     );
 
-    let progressText = '';
     const launcher = new Launcher({
       ...this.launchConfig,
       root: this.dir,
@@ -363,60 +364,6 @@ export class Modpack extends Serializable implements ModpackData {
       this.logger.warn(data);
     });
 
-    launcher.on(
-      'data',
-      TomateLoaders.liner((data) => {
-        if (data.includes('Reloading ResourceManager')) {
-          ctx.stop();
-          invoke('progress', 0);
-        }
-
-        this.logger.mcLog(data);
-      }),
-    );
-
-    launcher.on(
-      'data-error',
-      TomateLoaders.liner((data) => {
-        this.logger.mcLogError(data);
-      }),
-    );
-
-    launcher.on('progress', (e) => {
-      const progress = e.current / e.total;
-      invoke('progress', progress, progressText, `(${e.current} / ${e.total})`);
-      ctx.progress(progress);
-    });
-
-    launcher.on('close', (exitCode) => {
-      ctx.stop();
-      invoke('progress', 0);
-
-      this.logger.log(`Minecraft closed with code ${exitCode}`);
-
-      if (exitCode === 0) {
-        const latestStash = this.stashes.find(
-          (stash) => (stash.name = 'Last successful launch'),
-        );
-        if (latestStash) {
-          try {
-            this.removeStash(latestStash.id);
-          } catch (e) {
-            this.logger.warn('Could not delete lsl cache ', e);
-          }
-        }
-
-        if (
-          this.modpackOptions?.stashLastLaunchEnabled ??
-          getSettings().modpackDefaultOptions.stashLastLaunchEnabled
-        )
-          this.makeStash('Last successful launch', 'successful');
-      } else {
-        // TODO Error handling
-        showError(new FrontendError(`Minecraft exited with code ${exitCode}`));
-      }
-    });
-
     return launcher;
   }
 
@@ -440,16 +387,23 @@ export class Modpack extends Serializable implements ModpackData {
     }
 
     try {
-      await launcher.javaTasks(javaInstallationsPath);
-      return undefined;
+      return launcher.javaTasks(javaInstallationsPath);
     } catch (err) {
       throw error('Failed to download java', err);
     }
   }
 
   async launch(account: Account, quickPlay?: LaunchOptions['quickPlay']) {
-    invoke('progress', 0);
     const ctx = this.process('launch', noop);
+    invoke('progress', 0);
+
+    ctx.on('progress', (progress) => {
+      invoke('progress', progress);
+    });
+
+    ctx.on('stop', () => {
+      invoke('progress', 0);
+    });
 
     this.lastUsed = Date.now();
 
@@ -461,13 +415,15 @@ export class Modpack extends Serializable implements ModpackData {
     }
 
     try {
-      const launcher = await this.launcher(ctx);
+      const launcher = await this.launcher();
 
       this.logger.log('Launching the game');
 
-      await launcher.launch({
+      const javaPath = await this.javaPath(launcher);
+
+      const options = {
         authorization: auth as never,
-        javaPath: await this.javaPath(launcher),
+        javaPath,
         memory: {
           min: `${
             this.modpackOptions?.minRam ??
@@ -479,13 +435,89 @@ export class Modpack extends Serializable implements ModpackData {
           }M`,
         },
         quickPlay,
-      });
+      };
+
+      this.launcherEvents(launcher, ctx);
+      await this.spawn(launcher, options, ctx);
 
       return launcher;
     } catch (e) {
-      invoke('progress', 0);
       ctx.cancel();
       throw error('Failed to launch', e);
+    }
+  }
+
+  async spawn(
+    launcher: Launcher,
+    launchOptions: LaunchOptions & { javaPath: string },
+    ctx: ProcessContext,
+  ) {
+    if (getSettings().wrapper.enabled) {
+      await spawnWrapper(launcher, launchOptions, ctx);
+
+      if (getSettings().wrapper.autoClose) {
+        ctx.on('done', () => {
+          safeClose();
+        });
+      }
+    } else {
+      await launcher.launch(launchOptions);
+    }
+  }
+
+  launcherEvents(launcher: Launcher, ctx: ProcessContext) {
+    launcher.on('progress', (e) => {
+      const progress = e.current / e.total;
+      ctx.progress(progress);
+    });
+
+    launcher.on('close', (exitCode) => {
+      ctx.done();
+      this.onGameClose(exitCode);
+    });
+
+    launcher.on(
+      'data',
+      TomateLoaders.liner((data) => {
+        if (data.includes('Reloading ResourceManager')) {
+          ctx.done();
+        }
+
+        this.logger.mcLog(data);
+      }),
+    );
+
+    launcher.on(
+      'data-error',
+      TomateLoaders.liner((data) => {
+        this.logger.mcLogError(data);
+      }),
+    );
+  }
+
+  onGameClose(exitCode: number | null) {
+    this.logger.log(`Minecraft closed with code ${exitCode}`);
+
+    if (exitCode === 0) {
+      const latestStash = this.stashes.find(
+        (stash) => (stash.name = 'Last successful launch'),
+      );
+      if (latestStash) {
+        try {
+          this.removeStash(latestStash.id);
+        } catch (e) {
+          this.logger.warn('Could not delete lsl cache ', e);
+        }
+      }
+
+      if (
+        this.modpackOptions?.stashLastLaunchEnabled ??
+        getSettings().modpackDefaultOptions.stashLastLaunchEnabled
+      )
+        this.makeStash('Last successful launch', 'successful');
+    } else {
+      // TODO Error handling
+      showError(new FrontendError(`Minecraft exited with code ${exitCode}`));
     }
   }
 
@@ -554,7 +586,7 @@ export class Modpack extends Serializable implements ModpackData {
     shell.showItemInFolder(paths.join(this.dir, 'data.json'));
   }
 
-  onClose() {
+  onLauncherClose() {
     for (let process of this.processes) {
       process.cleanUp();
     }
@@ -601,11 +633,31 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   process(id: string, cleanUp: () => void, blocking = true): ProcessContext {
-    this.processes.push({ id, progress: 0, cleanUp, blocking });
+    const process = { id, progress: 0, cleanUp, blocking };
+    this.processes.push(process);
+
     this.logger.log('Started process', id);
     this.invalidate();
 
-    return new ProcessContext(this, id, cleanUp);
+    const ctx = new ProcessContext();
+
+    ctx.on('progress', (progress) => {
+      process.progress = progress;
+
+      this.invalidate();
+    });
+
+    ctx.on('stop', () => {
+      this.processes = this.processes.filter((p) => p !== process);
+      this.logger.log('Stopped process', id);
+      this.invalidate();
+    });
+
+    ctx.on('cancel', () => {
+      cleanUp();
+    });
+
+    return ctx;
   }
 
   content(contentType: ContentType | ProjectType) {

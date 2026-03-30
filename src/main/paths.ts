@@ -46,13 +46,14 @@ export const minecraftVersionDirectoryPath = path.join(
   'versions/',
 );
 export const javaInstallationsPath = path.join(basePath, 'java/');
-export const skinCachePath = path.join(basePath, 'skin-cache/');
+export const skinCachePath = path.join(basePath, 'skin_cache/');
 export const downloadPath = path.join(basePath, 'java/');
 export const defaultsPath = path.join(basePath, 'defaults/');
 export const themesPath = path.join(basePath, 'themes/');
 export const accountsPath = path.join(basePath, 'accounts.json');
 export const settingsPath = path.join(basePath, 'settings.json');
 export const log4jConfigPath = path.join(basePath, 'log4j.xml');
+export const socketsStatePath = path.join(basePath, 'sockets_state.json');
 
 export function ensureAppDirectoriesExist() {
   ensureDirectoryExists(modpacksPath);
