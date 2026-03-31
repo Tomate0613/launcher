@@ -2,7 +2,8 @@
 
 Tomate Launcher has curseforge support, however no curseforge token is provided by default
 
-Compile with `CURSEFORGE_API_KEY` environment variable set to enable curseforge support
+Compile with `CURSEFORGE_API_KEY` environment variable set to enable curseforge support during build
+or specify one in Settings
 
 The key can be acquired at https://console.curseforge.com/#/api-keys
 
