@@ -238,7 +238,7 @@ export async function getServers() {
   // .sort((a, b) => b.date - a.date);
 }
 
-export async function pingServer(_: unknown, address: string) {
+export async function pingServer(address: string) {
   const [host, port] = address.split(':');
 
   const result = await serverStatusPinger.lookup({

@@ -1,4 +1,4 @@
-import { type IpcMainInvokeEvent, ipcMain, shell } from 'electron';
+import { ipcMain, shell } from 'electron';
 import {
   LoaderInfo,
   Modpack,
@@ -10,6 +10,7 @@ import {
   getAccount,
   getModpack,
   getSettings,
+  getTokens,
   modpacks,
 } from './data';
 import { loader, type LoaderId } from 'tomate-loaders';
@@ -46,7 +47,7 @@ import { tomateMods } from './data/content/lib';
 const logger = log('api');
 
 export type Router = {
-  [key: string]: (event: IpcMainInvokeEvent, ...args: any[]) => void;
+  [key: string]: (...args: any[]) => void;
 };
 
 export const routes = {
@@ -67,10 +68,10 @@ export const routes = {
     mainWindow?.restore();
   },
   // Modpacks
-  getModpackData(_e, modpackId: string) {
+  getModpackData(modpackId: string) {
     return getModpack(modpackId).frontendData();
   },
-  setModpackConfig(_e, modpackConfig: ModpackFrontendData) {
+  setModpackConfig(modpackConfig: ModpackFrontendData) {
     const modpack = getModpack(modpackConfig.id);
 
     modpack.name = modpackConfig.name;
@@ -87,49 +88,48 @@ export const routes = {
 
     modpacks.invalidate(modpack);
   },
-  searchModpack(_e, query: string) {
+  searchModpack(query: string) {
     return Modpack.searchModpack(query);
   },
-  deleteModpack(_e, id: string) {
+  deleteModpack(id: string) {
     getModpack(id).delete();
   },
-  openModpackFolder(_e, id: string) {
+  openModpackFolder(id: string) {
     getModpack(id).openExplorer();
   },
-  createModpack(_e, name: string, version: string, loader: LoaderInfo) {
+  createModpack(name: string, version: string, loader: LoaderInfo) {
     logger.log('Created modpack', name, version, loader);
     modpacks.push(new Modpack(name, version, loader));
   },
-  getModpackIcon(_e, modpackId: string) {
+  getModpackIcon(modpackId: string) {
     return getModpack(modpackId).getIcon();
   },
-  setModpackIcon(_e, modpackId: string, iconPath: string) {
+  setModpackIcon(modpackId: string, iconPath: string) {
     return getModpack(modpackId).setIcon(iconPath);
   },
-  setModpackIconFromFile(_e, modpackId: string, buffer: ArrayBuffer) {
+  setModpackIconFromFile(modpackId: string, buffer: ArrayBuffer) {
     return getModpack(modpackId).setIcon(fileBufferPath(buffer));
     //
   },
-  setModpackIconSpecial(_e, modpackId: string, variant: 'default') {
+  setModpackIconSpecial(modpackId: string, variant: 'default') {
     if (variant === 'default') {
       return getModpack(modpackId).resetIcon();
     }
   },
-  setModpackIconFromUrl(_e, modpackId: string, url: string) {
+  setModpackIconFromUrl(modpackId: string, url: string) {
     return getModpack(modpackId).setIconFromUrl(url);
   },
-  async installModpack(_e, provider: ImplementedProvider, id: string) {
+  async installModpack(provider: ImplementedProvider, id: string) {
     if (!tomateMods.hasProvider(provider)) {
       throw new ProviderError(provider);
     }
 
     await ModpackImporter.fromResource(provider, id);
   },
-  async importModpackFromFile(_e, name: string, buffer: ArrayBuffer) {
+  async importModpackFromFile(name: string, buffer: ArrayBuffer) {
     await ModpackImporter.fromFileBuffer(name, buffer);
   },
   async launchModpack(
-    _e,
     modpackId: string,
     accountId: string,
     quickPlay?: LaunchOptions['quickPlay'],
@@ -140,7 +140,7 @@ export const routes = {
     await modpack.launch(account, quickPlay);
     logger.log(`Launched modpack ${modpack} with account ${account}`);
   },
-  async gameVersions(_e, loaderId: LoaderId) {
+  async gameVersions(loaderId: LoaderId) {
     try {
       return await loader(loaderId).listSupportedGameVersions();
     } catch (e) {
@@ -156,7 +156,7 @@ export const routes = {
       }));
     }
   },
-  async loaderVersions(_e, loaderId: LoaderId, gameVersion: string) {
+  async loaderVersions(loaderId: LoaderId, gameVersion: string) {
     if (loaderId == 'vanilla') {
       throw new VanillaError();
     }
@@ -176,19 +176,13 @@ export const routes = {
   },
 
   // Content
-  updateContentFromFiles(_e, modpackId: string, contentType: ContentType) {
+  updateContentFromFiles(modpackId: string, contentType: ContentType) {
     return getModpack(modpackId).content(contentType).updateFromFiles();
   },
-  searchContent(
-    _e,
-    modpackId: string,
-    contentType: ContentType,
-    query: string,
-  ) {
+  searchContent(modpackId: string, contentType: ContentType, query: string) {
     return getModpack(modpackId).content(contentType).search(query);
   },
   contentVersions(
-    _e,
     modpackId: string,
     contentType: ContentType,
     provider: ImplementedProvider,
@@ -201,7 +195,6 @@ export const routes = {
     return getModpack(modpackId).content(contentType).versions(provider, id);
   },
   installContent(
-    _e,
     modpackId: string,
     contentType: ContentType,
     provider: ImplementedProvider,
@@ -217,7 +210,6 @@ export const routes = {
       .installLatest(provider, projectId, 'local', downloadDependencies);
   },
   installContentVersion(
-    _e,
     modpackId: string,
     contentType: ContentType,
     provider: ImplementedProvider,
@@ -233,7 +225,6 @@ export const routes = {
       .install(provider, version, 'local', downloadDependencies);
   },
   replaceContentVersionLatest(
-    _e,
     modpackId: string,
     contentType: ContentType,
     id: string,
@@ -250,7 +241,6 @@ export const routes = {
       .replaceLatest(provider, id, projectId, 'local', downloadDependencies);
   },
   replaceContentVersion(
-    _e,
     modpackId: string,
     contentType: ContentType,
     id: string,
@@ -267,7 +257,6 @@ export const routes = {
       .replaceVersion(provider, id, version, 'local', downloadDependencies);
   },
   importContent(
-    _e,
     modpackId: string,
     contentType: ContentType,
     filename: string,
@@ -277,11 +266,10 @@ export const routes = {
       .content(contentType)
       .import(fileBufferPath(buffer, filename));
   },
-  removeContent(_e, modpackId: string, contentType: ContentType, id: string) {
+  removeContent(modpackId: string, contentType: ContentType, id: string) {
     return getModpack(modpackId).content(contentType).delete(id);
   },
   toggleContentDisabled(
-    _e,
     modpackId: string,
     contentType: ContentType,
     id: string,
@@ -290,7 +278,7 @@ export const routes = {
   },
 
   // Accounts
-  async addMsaAccount(_e) {
+  async addMsaAccount() {
     const settings = getSettings();
     const account = await Account.login();
     accounts.push(account);
@@ -299,7 +287,7 @@ export const routes = {
       settings.activeAccountId = account.id;
     }
   },
-  addOfflineAccount(_e, name: string) {
+  addOfflineAccount(name: string) {
     const settings = getSettings();
     const account = Account.offline(name);
     accounts.push(account);
@@ -308,7 +296,7 @@ export const routes = {
       settings.activeAccountId = account.id;
     }
   },
-  addDemoAccount(_e) {
+  addDemoAccount() {
     const settings = getSettings();
     const account = Account.demo();
     accounts.push(account);
@@ -317,34 +305,36 @@ export const routes = {
       settings.activeAccountId = account.id;
     }
   },
-  removeAccount(_e, accountId: string) {
+  removeAccount(accountId: string) {
     return getAccount(accountId).delete();
   },
-  setAccountCape(_e, accountId: string, id: string) {
+  setAccountCape(accountId: string, id: string) {
     return getAccount(accountId).setCape(id);
   },
-  setSkin(_e, accountId: string, url: string) {
+  setSkin(accountId: string, url: string) {
     return getAccount(accountId).setSkin(url);
   },
-  uploadSkin(_e, accountId: string, buffer: ArrayBuffer) {
+  uploadSkin(accountId: string, buffer: ArrayBuffer) {
     return getAccount(accountId).uploadSkin(buffer);
   },
-  deleteSkin(_e, id: string) {
-    return deleteSkin(id);
-  },
+  deleteSkin,
 
   setSettingsProperty<Key extends keyof Settings>(
-    _e: unknown,
     propertyName: Key,
     propertyValue: Settings[Key],
   ) {
     getSettings()[propertyName] = propertyValue;
   },
   getSettingsProperty<Key extends keyof Settings>(
-    _e: unknown,
     propertyName: Key,
   ): Settings[Key] {
     return getSettings()[propertyName];
+  },
+  setCurseforgeToken(token: string) {
+    return getTokens().setCurseforgeToken(token);
+  },
+  getTokens() {
+    return getTokens().frontendData();
   },
   getDefaultGeneralModpackOptions() {
     return defaultGeneralModpackOptions;
@@ -356,12 +346,8 @@ export const routes = {
     );
   },
   getScreenshots,
-  copyScreenshot(_e, modpack: string | null, screenshot: string) {
-    copyScreenshot(modpack, screenshot);
-  },
-  showScreenshotInFileManager(_e, modpack: string | null, screenshot: string) {
-    showScreenshotInFileManager(modpack, screenshot);
-  },
+  copyScreenshot,
+  showScreenshotInFileManager,
   getSkins,
   getThemes,
   getTheme() {
@@ -369,7 +355,7 @@ export const routes = {
     return getTheme(theme);
   },
   getWorlds,
-  openWorldFolder(_e, modpackId: string, id: string) {
+  openWorldFolder(modpackId: string, id: string) {
     shell.showItemInFolder(
       path.join(getModpack(modpackId).dir, 'saves', id, 'level.dat'),
     );
@@ -377,12 +363,10 @@ export const routes = {
   getServers,
   pingServer,
   getDefaultFiles,
-  applyDefaultFile(_e, modpackId: string, file: string) {
+  applyDefaultFile(modpackId: string, file: string) {
     return getModpack(modpackId).createDefault(file);
   },
-  clearDefaultFile(_e, file: string) {
-    return clearDefaultFile(file);
-  },
+  clearDefaultFile,
 } satisfies Router;
 
 export function invoke(route: string, ...args: unknown[]) {
@@ -398,10 +382,9 @@ export function invoke(route: string, ...args: unknown[]) {
 }
 
 Object.keys(routes).forEach((key) => {
-  ipcMain.handle(key, async (...args: any) => {
+  ipcMain.handle(key, async (_e, ...args: any) => {
     if (is.dev) {
-      const [, ...interestingArgs] = args;
-      logger.verbose('Requested route', key, '(', ...interestingArgs, ')');
+      logger.verbose('Requested route', key, '(', ...args, ')');
     }
 
     try {

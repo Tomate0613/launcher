@@ -53,6 +53,7 @@ export const themesPath = path.join(basePath, 'themes/');
 export const screenshotsPath = path.join(basePath, 'screenshots/');
 export const accountsPath = path.join(basePath, 'accounts.json');
 export const settingsPath = path.join(basePath, 'settings.json');
+export const tokensPath = path.join(basePath, 'tokens.json');
 export const log4jConfigPath = path.join(basePath, 'log4j.xml');
 export const socketsStatePath = path.join(basePath, 'sockets_state.json');
 
