@@ -1,8 +1,9 @@
-import { AxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
 import { log } from '../common/logging/log';
 import { TasksError } from 'tomate-launcher-core';
 import { invoke } from './api';
 import { ImplementedProvider } from 'tomate-mods';
+import { is } from '@electron-toolkit/utils';
 
 const logger = log('error');
 
@@ -15,6 +16,14 @@ export class FrontendError extends Error {
     if (this.constructor.name !== 'FrontendError') {
       this.name = this.constructor.name;
     }
+  }
+
+  toString() {
+    if(is.dev) {
+      return super.toString();
+    }
+
+    return `${this.name}: ${this.message}`;
   }
 }
 
@@ -96,7 +105,7 @@ export function error(context: string, err: unknown): FrontendError {
     );
   }
 
-  if (!(err instanceof AxiosError)) {
+  if (!isAxiosError(err)) {
     return new FrontendError(`${context}. ${String(err)}`, err);
   }
 
