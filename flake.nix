@@ -140,6 +140,7 @@
                 desktopName = "Tomate Launcher";
                 icon = "dev.doublekekse.launcher";
                 categories = [ "Game" ];
+                mimeType = "x-scheme-handler/tomate-launcher";
               };
             in
             pkgs.mkPnpmPackage {

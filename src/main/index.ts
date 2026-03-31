@@ -11,6 +11,7 @@ import { log } from '../common/logging/log';
 import { ensureAppDirectoriesExist } from './paths';
 import { tryReattachSockets } from './wrapper';
 import { safeClose } from './close';
+import './protocol';
 
 const logger = log('main');
 
