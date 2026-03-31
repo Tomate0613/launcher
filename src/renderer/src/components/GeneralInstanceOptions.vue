@@ -162,11 +162,10 @@ function isChanged(key: keyof GeneralModpackOptions) {
 
   & .custom-launch-arg-line {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    gap: 0.375rem;
 
     & input {
-      width: 100%;
+      flex-grow: 1
     }
   }
 
