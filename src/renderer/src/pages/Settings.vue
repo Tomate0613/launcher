@@ -67,7 +67,7 @@ async function applyCurseforgeApiKey() {
   }
 
   await window.api.invoke('setCurseforgeToken', cfKey.value);
-  curseforgeTokenPopup.value.closeMenu();
+  curseforgeTokenPopup.value?.closeMenu();
   tokens.value = await window.api.invoke('getTokens');
 }
 
