@@ -498,7 +498,11 @@ export class Modpack extends Serializable implements ModpackData {
     });
 
     launcher.on('close', (exitCode) => {
-      ctx.done();
+      if (exitCode === 0) {
+        ctx.done();
+      } else {
+        ctx.cancel();
+      }
       this.onGameClose(exitCode);
     });
 
