@@ -68,6 +68,7 @@
               nodejs
               pnpm
               jdk21
+              jdk25
 
               pciutils
               xrandr
