@@ -2,7 +2,7 @@
 import { reactive, ref, toRaw, useTemplateRef, watch, watchEffect } from 'vue';
 import { usePageFocus } from '../composables/pageFocus';
 import { clone } from '../../../common/utils';
-import { mdiArrowRight, mdiDelete, mdiDeleteOutline, mdiFolder, mdiTuneVariant } from '@mdi/js';
+import { mdiArrowRight, mdiDeleteOutline, mdiFolder, mdiTuneVariant } from '@mdi/js';
 import Versions from '../components/Versions.vue';
 import Icon from '../components/Icon.vue';
 import GeneralInstanceOptions from '../components/GeneralInstanceOptions.vue';
