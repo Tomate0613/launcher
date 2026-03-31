@@ -8,6 +8,7 @@ import { log } from '../common/logging/log';
 import { SyncedIdSet } from '../common/synced/synced-id-set/backend';
 import { writeDefaultThemes } from './static/defaultThemes';
 import { runOnClose } from './utils';
+import { Tokens } from './data/tokens';
 
 const logger = log('data');
 
@@ -15,6 +16,7 @@ export let modpacks: SyncedIdSet<Modpack>;
 export let accounts: SyncedIdSet<Account>;
 
 let settings: Settings | undefined;
+let tokens: Tokens | undefined;
 
 function unless<Value>(something: Value | false): something is Value {
   return something !== false;
@@ -53,6 +55,8 @@ export function loadData() {
   }
 
   settings = Settings.load();
+  tokens = Tokens.load();
+  tokens.apply();
 
   const accountData = fs.readFileSync(accountsPath, 'utf8');
   const accountList = JSON.parse(accountData).map((accountJSON: string) => {
@@ -76,6 +80,7 @@ function onClose() {
   logger.log('Saving');
   modpacks.forEach((modpack) => modpack.onLauncherClose());
   settings?.save();
+  tokens?.save();
 
   const data = accounts.values().map((account) => JSON.stringify(account));
 
@@ -105,6 +110,14 @@ export function getSettings() {
   }
 
   return settings;
+}
+
+export function getTokens() {
+  if (!tokens) {
+    throw new Error('Tokens have not been initialized yet');
+  }
+
+  return tokens;
 }
 
 export function getVisibleModpacks() {

@@ -2,7 +2,7 @@
 import { reactive, ref, toRaw, useTemplateRef, watch, watchEffect } from 'vue';
 import { usePageFocus } from '../composables/pageFocus';
 import { clone } from '../../../common/utils';
-import { mdiFolder, mdiTuneVariant } from '@mdi/js';
+import { mdiArrowRight, mdiDelete, mdiDeleteOutline, mdiFolder, mdiTuneVariant } from '@mdi/js';
 import Versions from '../components/Versions.vue';
 import Icon from '../components/Icon.vue';
 import GeneralInstanceOptions from '../components/GeneralInstanceOptions.vue';
@@ -11,10 +11,13 @@ import { setTheme } from '../theme';
 import SetMinecraftDefaultsPopup from '../components/popup/SetMinecraftDefaultsPopup.vue';
 import '../assets/settings.css';
 import type { WrapperOptions } from '../../../main/data/settings';
+import Popup from '../components/Popup.vue';
 
 const setMinecraftDefaultsPopup = useTemplateRef(
   'set-minecraft-defaults-popup',
 );
+
+const curseforgeTokenPopup = useTemplateRef('curseforge-token-popup');
 
 let instanceDefaultOptions = reactive(
   await window.api.settings.getProperty('modpackDefaultOptions'),
@@ -54,6 +57,19 @@ const hideFrame = ref(
 const wrapper = ref(
   (await window.api.invoke('getSettingsProperty', 'wrapper')) as WrapperOptions,
 );
+
+const tokens = ref(await window.api.invoke('getTokens'));
+const cfKey = ref<string>(tokens.value.hasCurseforgeToken ? 'a'.repeat(60) : '');
+
+async function applyCurseforgeApiKey() {
+  if(cfKey.value === 'a'.repeat(60)) {
+    return;
+  }
+
+  await window.api.invoke('setCurseforgeToken', cfKey.value);
+  curseforgeTokenPopup.value.closeMenu();
+  tokens.value = await window.api.invoke('getTokens');
+}
 
 watchEffect(() => {
   setTheme(themes.find((t) => t.id == theme.value)?.url);
@@ -172,6 +188,23 @@ watch(
         </label>
       </section>
 
+      <section>
+        <h2 class="settings-section-name">Providers</h2>
+
+        <label class="settings-option settings-option-button">
+          Modrinth
+          <button>Enabled <Icon :path="mdiArrowRight" /></button>
+        </label>
+
+        <label class="settings-option settings-option-button">
+          Curseforge
+          <button @click="curseforgeTokenPopup?.openMenu()">
+            {{ (tokens.hasCurseforgeToken || tokens.compiledWithCurseforgeToken) ? 'Enabled' : 'Disabled' }}
+            <Icon :path="mdiArrowRight" />
+          </button>
+        </label>
+      </section>
+
       <div class="flex-row justify-space-between">
         <Versions />
         <div class="extra-buttons">
@@ -192,6 +225,34 @@ watch(
   </div>
 
   <SetMinecraftDefaultsPopup ref="set-minecraft-defaults-popup" />
+
+  <Popup ref="curseforge-token-popup" class="curseforge-token-popup">
+    <h2>Curseforge</h2>
+
+    <div class="description">
+      <template v-if="!tokens.compiledWithCurseforgeToken">
+        To be able to use Curseforge features an api key is required
+      </template>
+      <template v-else>
+        Override built-in Curseforge api key
+      </template>
+
+      <br />
+      A key can be acquired at
+      <a href="https://console.curseforge.com/#/api-keys" target="_blank">
+        https://console.curseforge.com/#/api-keys
+      </a>
+    </div>
+
+    <div class="token-row">
+      <input type="password" v-model="cfKey"></input>
+      <button @click="cfKey = ''">
+        <Icon :path="mdiDeleteOutline" />
+      </button>
+    </div>
+    <hr />
+    <button @click="applyCurseforgeApiKey">Done</button>
+  </Popup>
 </template>
 
 <style scoped>
@@ -205,5 +266,22 @@ watch(
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.curseforge-token-popup {
+  & .description {
+    color: var(--color-text-secondary);
+
+    padding-bottom: 1rem;
+  }
+
+  & .token-row {
+    display: flex;
+    gap: 0.375rem;
+
+    & input {
+      flex-grow: 1;
+    }
+  }
 }
 </style>
