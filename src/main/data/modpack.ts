@@ -340,7 +340,7 @@ export class Modpack extends Serializable implements ModpackData {
 
       this.invalidate();
     } catch (e) {
-      this.logger.warn('Failed to fetch launch config', e);
+      this.logger.warn(error('Failed to fetch launch config', e));
 
       if (!this.launchConfig) {
         this.launchConfig = getSettings().getCachedLaunchConfig(

@@ -40,7 +40,7 @@ import {
 } from './browse';
 import path from 'node:path';
 import { applyDefaults } from '../common/utils';
-import { FrontendError, ProviderError } from './error';
+import { error, FrontendError, ProviderError } from './error';
 import { LaunchOptions } from 'tomate-launcher-core';
 import { tomateMods } from './data/content/lib';
 
@@ -145,8 +145,10 @@ export const routes = {
       return await loader(loaderId).listSupportedGameVersions();
     } catch (e) {
       logger.warn(
-        'Failed to fetch supported versions, fallback to offline support',
-        e,
+        error(
+          'Failed to fetch supported versions, fallback to offline support',
+          e,
+        ),
       );
 
       const cachedGameVersions = getSettings().getCachedGameVersions(loaderId);
@@ -165,8 +167,10 @@ export const routes = {
       return await loader(loaderId).listLoaderVersions(gameVersion);
     } catch (e) {
       logger.warn(
-        'Failed to fetch supported versions, fallback to offline support',
-        e,
+        error(
+          'Failed to fetch supported versions, fallback to offline support',
+          e,
+        ),
       );
 
       return getSettings()
