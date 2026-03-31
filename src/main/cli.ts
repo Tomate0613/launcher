@@ -147,7 +147,7 @@ async function create(
     const curseforge = 'curseforge' as const;
 
     if (!tomateMods.hasProvider(curseforge)) {
-      throw new ProviderError(curseforge)
+      throw new ProviderError(curseforge);
     }
     cfs = cf.map((mod: string) =>
       modpack.modsContent.installLatest(curseforge, mod, 'local'),
