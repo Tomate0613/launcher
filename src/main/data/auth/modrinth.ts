@@ -21,22 +21,22 @@ function ModrinthAuth(clientSecret: string) {
   }) satisfies client.ClientAuth;
 }
 
-const config = new client.Configuration(
-  {
-    issuer: ISSUER_URL,
-    authorization_endpoint: AUTHORIZATION_PAGE_URL,
-    token_endpoint: TOKEN_EXCHANGE_URL,
-  },
-  CLIENT_ID,
-  undefined,
-  ModrinthAuth(CLIENT_SECRET),
-);
-
 export class ModrinthOAuth {
   private codeVerifier!: string;
   private state!: string;
 
   private static open: ModrinthOAuth[];
+
+  private config = new client.Configuration(
+    {
+      issuer: ISSUER_URL,
+      authorization_endpoint: AUTHORIZATION_PAGE_URL,
+      token_endpoint: TOKEN_EXCHANGE_URL,
+    },
+    CLIENT_ID,
+    undefined,
+    ModrinthAuth(CLIENT_SECRET),
+  );
 
   private constructor() {}
 
@@ -48,7 +48,7 @@ export class ModrinthOAuth {
     );
     oauth.state = client.randomState();
 
-    const authUrl = client.buildAuthorizationUrl(config, {
+    const authUrl = client.buildAuthorizationUrl(oauth.config, {
       redirect_uri: REDIRECT_URL,
       scope: 'PROJECT_READ VERSION_READ COLLECTION_READ ORGANIZATION_READ',
       code_challenge: codeChallenge,
@@ -74,7 +74,7 @@ export class ModrinthOAuth {
   }
 
   async onCallback(url: URL) {
-    const grant = await client.authorizationCodeGrant(config, url, {
+    const grant = await client.authorizationCodeGrant(this.config, url, {
       pkceCodeVerifier: this.codeVerifier,
       expectedState: this.state,
     });
