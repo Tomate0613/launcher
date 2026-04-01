@@ -12,6 +12,8 @@ import { ensureAppDirectoriesExist } from './paths';
 import { tryReattachSockets } from './wrapper';
 import { safeClose } from './close';
 import './protocol';
+import { handleProtocolUrl, registerProtocolHandler } from './protocol';
+import { openInBrowser } from './utils';
 
 const logger = log('main');
 
@@ -49,10 +51,7 @@ function createWindow(): void {
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    if (details.url.startsWith('https://')) {
-      logger.log('Opening in browser', details.url);
-      shell.openExternal(details.url);
-    }
+    openInBrowser(details.url);
 
     return { action: 'deny' };
   });
@@ -77,6 +76,12 @@ if (app.requestSingleInstanceLock()) {
     if (args.includes('--skip-cli')) {
       return;
     }
+
+    args
+      .filter((arg) => arg.startsWith('tomate-launcher://'))
+      .forEach((arg) => {
+        handleProtocolUrl(arg);
+      });
 
     if (args.some((a) => a.endsWith('dist/electron'))) {
       parseArgs(args.slice(args.findIndex((a) => a === '.') + 1));
@@ -106,6 +111,8 @@ export function prepare() {
   ensureAppDirectoriesExist();
   loadData();
 }
+
+registerProtocolHandler();
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

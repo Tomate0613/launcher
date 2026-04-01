@@ -1,4 +1,4 @@
-import { CurseforgeProvider } from 'tomate-mods';
+import { CurseforgeProvider, ModrinthProvider } from 'tomate-mods';
 import { basePath, tokensPath } from '../paths';
 import { tomateMods, userAgent } from './content/lib';
 import { Serializable, SerializableProperty } from './serialization';
@@ -16,6 +16,12 @@ export class Tokens extends Serializable {
   @SerializableProperty('optional')
   private curseforgeToken?: string;
 
+  @SerializableProperty('optional')
+  private modrinthAuth?: {
+    accessToken: string;
+    expiresAt: number;
+  };
+
   async setCurseforgeToken(token: string) {
     if (!token) {
       this.curseforgeToken = undefined;
@@ -30,6 +36,15 @@ export class Tokens extends Serializable {
     }
 
     this.curseforgeToken = token;
+    this.apply();
+  }
+
+  setModrinthToken(accessToken: string, expiresIn: number) {
+    this.modrinthAuth = {
+      accessToken,
+      expiresAt: Date.now() + expiresIn * 1000,
+    };
+
     this.apply();
   }
 
@@ -51,6 +66,11 @@ export class Tokens extends Serializable {
           this.curseforgeToken || __CURSEFORGE_API_KEY__,
         ),
       );
+    }
+
+    if (this.modrinthAuth && Date.now() < this.modrinthAuth.expiresAt) {
+      const mr = new ModrinthProvider(userAgent, this.modrinthAuth.accessToken);
+      tomateMods.addProvider(mr);
     }
   }
 

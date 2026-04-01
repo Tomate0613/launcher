@@ -29,6 +29,7 @@
     "configparser": "^0.3.10",
     "fs-extra": "^11.3.4",
     "msmc": "^5.0.5",
+    "openid-client": "^6.8.2",
     "pend": "^1.2.0",
     "prismarine-nbt": "^2.8.0",
     "skinview3d": "^3.4.1",

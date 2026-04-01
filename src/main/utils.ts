@@ -1,7 +1,7 @@
 import fsSync, { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { tempPaths } from './paths';
-import { app } from 'electron';
+import { app, shell } from 'electron';
 import { downloadManager } from './data/downloads';
 import { log } from '../common/logging/log';
 
@@ -207,4 +207,18 @@ export function withPlatformExtension(name: string) {
   const ext = process.platform === 'win32' ? '.exe' : '';
 
   return `${name}${ext}`;
+}
+
+/**
+ * Checks for https:// and then opens in browser
+ */
+export function openInBrowser(url: string) {
+  if (url.startsWith('https://')) {
+    logger.log('Opening in browser', url);
+    shell.openExternal(url);
+    return true;
+  }
+
+  logger.error(`Unsupported protocol. Did not open ${url} in browser`);
+  return false;
 }
