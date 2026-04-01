@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { hideBin } from 'yargs/helpers';
 import { join } from 'node:path';
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
