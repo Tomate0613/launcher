@@ -93,7 +93,7 @@ type Stash = {
 const jdksOverriden = !!process.env.TOMATE_LAUNCHER_JDKS;
 const javaInstallations = new FoundJavaInstallations();
 if (jdksOverriden) {
-  checkJavaFinderPath(javaInstallations, process.env.TOMATE_LAUNCHER_JDKS);
+  checkJavaFinderPath(javaInstallations, 'TOMATE_LAUNCHER_JDKS');
 } else {
   checkJavaFinderDefaults(javaInstallations);
 }
