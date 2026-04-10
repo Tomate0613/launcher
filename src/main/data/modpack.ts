@@ -90,8 +90,9 @@ type Stash = {
   id: string;
 };
 
+const jdksOverriden = !!process.env.TOMATE_LAUNCHER_JDKS;
 const javaInstallations = new FoundJavaInstallations();
-if (process.env.TOMATE_LAUNCHER_JDKS) {
+if (jdksOverriden) {
   checkJavaFinderPath(javaInstallations, process.env.TOMATE_LAUNCHER_JDKS);
 } else {
   checkJavaFinderDefaults(javaInstallations);
@@ -419,6 +420,10 @@ export class Modpack extends Serializable implements ModpackData {
       }
 
       return java;
+    }
+
+    if(jdksOverriden) {
+      throw new FrontendError(`Missing jdk ${javaVersion.majorVersion}`)
     }
 
     try {
