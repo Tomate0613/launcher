@@ -19,7 +19,11 @@ import {
   Launcher,
   isMinecraftVersionAfter,
 } from 'tomate-launcher-core';
-import { findJavaInstallations } from '@doublekekse/find-java';
+import {
+  checkDefaults as checkJavaFinderDefaults,
+  checkPath as checkJavaFinderPath,
+  FoundJavaInstallations,
+} from '@doublekekse/find-java';
 import fs from 'fs-extra';
 import {
   type Provider,
@@ -86,7 +90,12 @@ type Stash = {
   id: string;
 };
 
-const javaInstallations = findJavaInstallations();
+const javaInstallations = new FoundJavaInstallations();
+if (process.env.TOMATE_LAUNCHER_JDKS) {
+  checkJavaFinderPath(javaInstallations, process.env.TOMATE_LAUNCHER_JDKS);
+} else {
+  checkJavaFinderDefaults(javaInstallations);
+}
 
 export class VanillaError extends Error {
   constructor() {
