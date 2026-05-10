@@ -401,19 +401,25 @@ export abstract class Content {
         .filter((mod) => filenames.includes(mod.id) && mod.state === 'REMOVED');
 
       for (const removedMod of removedMods) {
-        this.setState(removedMod.id, 'REMOVED');
+        if (removedMod.source === 'local') {
+          this.setState(removedMod.id, 'REMOVED');
+        } else {
+          this.items.remove(removedMod.id);
+        }
       }
 
       for (const removedMod of previouslyRemovedMods) {
         this.setState(removedMod.id, 'INSTALLED');
       }
 
+      const source = this.modpack.externallyManaged ? 'origin' : 'local';
+
       for (const filename of missingFilenames) {
         this.items.push({
           provider: 'unknown',
           id: filename,
           disabled: false,
-          source: 'local',
+          source,
           state: 'CHECKING',
         });
       }
@@ -422,7 +428,7 @@ export abstract class Content {
       await Promise.allSettled(
         missingFilenames.map(async (filename) => {
           const filepath = this.getPath(filename);
-          const item = await this.itemFromFile(filepath, 'local');
+          const item = await this.itemFromFile(filepath, source);
 
           registerInStore(filepath);
           ctx.progress(++i / missingFilenames.length);
@@ -445,7 +451,9 @@ export abstract class Content {
       try {
         const searchResult = await tomateMods
           .provider(provider)
-          .search(this.searchQueryParams(query, provider as ImplementedProvider));
+          .search(
+            this.searchQueryParams(query, provider as ImplementedProvider),
+          );
 
         searchResults.push(searchResult);
       } catch (e) {
@@ -513,7 +521,10 @@ export abstract class Content {
     this.items.invalidate(item);
   }
 
-  abstract searchQueryParams(query: string, provider: ImplementedProvider): string;
+  abstract searchQueryParams(
+    query: string,
+    provider: ImplementedProvider,
+  ): string;
   abstract versionQueryParams(provider: ImplementedProvider): string;
   abstract getPath(...paths: string[]): string;
   abstract getDisabledPath(...paths: string[]): string;

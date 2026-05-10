@@ -141,6 +141,8 @@ export class Modpack extends Serializable implements ModpackData {
   };
   @SerializableProperty('optional')
   resource?: { provider: ImplementedProvider; id: string; version: string };
+  @SerializableProperty
+  externallyManaged = false;
   @SerializableProperty('optional')
   modpackOptions?: Partial<GeneralModpackOptions>;
   processes: Process[] = [];
@@ -227,6 +229,11 @@ export class Modpack extends Serializable implements ModpackData {
           this.java = undefined;
         }
         this['__version'] = '6';
+      }
+      case '6': {
+        if (this.externallyManaged === undefined) {
+          this.externallyManaged = false;
+        }
       }
     }
 
@@ -422,8 +429,8 @@ export class Modpack extends Serializable implements ModpackData {
       return java;
     }
 
-    if(jdksOverriden) {
-      throw new FrontendError(`Missing jdk ${javaVersion.majorVersion}`)
+    if (jdksOverriden) {
+      throw new FrontendError(`Missing jdk ${javaVersion.majorVersion}`);
     }
 
     try {
