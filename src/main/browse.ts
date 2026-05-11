@@ -85,7 +85,7 @@ type Screenshot = {
 };
 
 export async function getScreenshots() {
-  const screenshots: Screenshot[][] = await Promise.all(
+  const screenshots: (Screenshot | null)[][] = await Promise.all(
     // We do not filter out deleted modpacks since the screenshots only get copied into the global screenshot dir on write
     modpacks.values().map(async (modpack) => {
       const screenshotsPath = modpack.screenshotsPath;
@@ -95,11 +95,17 @@ export async function getScreenshots() {
       return Promise.all(
         screenshots.map(async (screenshot) => {
           const screenshotPath = path.join(screenshotsPath, screenshot);
+          const stat = await fs.stat(screenshotPath);
+
+          if (!stat.isFile()) {
+            return null;
+          }
+
           return {
             modpack: modpack.id,
             screenshot,
             data: await image(screenshotPath),
-            date: (await fs.stat(screenshotPath)).mtime.getTime(),
+            date: stat.mtime.getTime(),
           };
         }),
       );
@@ -110,18 +116,26 @@ export async function getScreenshots() {
     await Promise.all(
       (await fs.readdir(screenshotsPath)).map(async (screenshot) => {
         const screenshotPath = path.join(screenshotsPath, screenshot);
+        const stat = await fs.stat(screenshotPath);
+
+        if (!stat.isFile()) {
+          return null;
+        }
 
         return {
           modpack: null,
           screenshot,
           data: await image(screenshotPath),
-          date: (await fs.stat(screenshotPath)).mtime.getTime(),
+          date: stat.mtime.getTime(),
         };
       }),
     ),
   );
 
-  return screenshots.flat().sort((a, b) => b.date - a.date);
+  return screenshots
+    .flat()
+    .filter((a) => a !== null)
+    .sort((a, b) => b.date - a.date);
 }
 
 function getScreenshotPath(modpack: string | null, screenshot: string) {
