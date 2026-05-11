@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@doublekekse/find-java':
         specifier: github:Tomate0613/find-java
-        version: https://codeload.github.com/Tomate0613/find-java/tar.gz/edcd7f49d8cbb22acf3eb55382cd36d85cc1237a(@swc/core@1.15.24)(jiti@2.6.1)(postcss@8.5.9)(typescript@6.0.2)(yaml@2.8.2)
+        version: https://codeload.github.com/Tomate0613/find-java/tar.gz/838256f27a57051316ce334edb4396f9147cc7c7(@swc/core@1.15.24)(jiti@2.6.1)(postcss@8.5.9)(typescript@6.0.2)(yaml@2.8.2)
       '@electron-toolkit/preload':
         specifier: ^3.0.2
         version: 3.0.2(electron@41.2.0)
@@ -215,8 +215,8 @@ packages:
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
     engines: {node: '>= 8.9.0'}
 
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/edcd7f49d8cbb22acf3eb55382cd36d85cc1237a':
-    resolution: {tarball: https://codeload.github.com/Tomate0613/find-java/tar.gz/edcd7f49d8cbb22acf3eb55382cd36d85cc1237a}
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/838256f27a57051316ce334edb4396f9147cc7c7':
+    resolution: {tarball: https://codeload.github.com/Tomate0613/find-java/tar.gz/838256f27a57051316ce334edb4396f9147cc7c7}
     version: 1.0.0
 
   '@electron-toolkit/preload@3.0.2':
@@ -3191,7 +3191,7 @@ snapshots:
       ajv: 6.14.0
       ajv-keywords: 3.5.2(ajv@6.14.0)
 
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/edcd7f49d8cbb22acf3eb55382cd36d85cc1237a(@swc/core@1.15.24)(jiti@2.6.1)(postcss@8.5.9)(typescript@6.0.2)(yaml@2.8.2)':
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/838256f27a57051316ce334edb4396f9147cc7c7(@swc/core@1.15.24)(jiti@2.6.1)(postcss@8.5.9)(typescript@6.0.2)(yaml@2.8.2)':
     dependencies:
       node-fetch: 3.3.2
       tsup: 8.5.1(@swc/core@1.15.24)(jiti@2.6.1)(postcss@8.5.9)(typescript@6.0.2)(yaml@2.8.2)
