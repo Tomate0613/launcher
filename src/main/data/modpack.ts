@@ -141,16 +141,20 @@ export class Modpack extends Serializable implements ModpackData {
   };
   @SerializableProperty('optional')
   resource?: { provider: ImplementedProvider; id: string; version: string };
-  @SerializableProperty
-  externallyManaged = false;
   @SerializableProperty('optional')
   modpackOptions?: Partial<GeneralModpackOptions>;
+  @SerializableProperty('optional')
+  sync?: { type: 'external' };
   processes: Process[] = [];
   @SerializableProperty
   lastUsed: number;
   @SerializableProperty('optional')
   java?: string;
   logger: Logger;
+
+  get externallyManaged() {
+    return this.sync && this.sync.type === 'external';
+  }
 
   constructor(name: string, gameVersion: string, loader: LoaderInfo) {
     super();
@@ -231,8 +235,8 @@ export class Modpack extends Serializable implements ModpackData {
         this['__version'] = '6';
       }
       case '6': {
-        if (this.externallyManaged === undefined) {
-          this.externallyManaged = false;
+        if (this.externallyManaged) {
+          this.sync = { type: 'external' };
         }
       }
     }
