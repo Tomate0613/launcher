@@ -54,6 +54,7 @@ import { error, FrontendError, showError } from '../error';
 import { Process, ProcessContext } from '../process';
 import { spawnWrapper } from '../wrapper';
 import { safeClose } from '../close';
+import { InstanceSyncOptions } from './sync';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
 
@@ -70,6 +71,7 @@ export type ModpackFrontendData = {
   lastUsed: number;
   modpackOptions?: Partial<GeneralModpackOptions>;
   icon?: string;
+  sync?: InstanceSyncOptions;
   isDeleted: boolean;
 };
 
@@ -144,7 +146,7 @@ export class Modpack extends Serializable implements ModpackData {
   @SerializableProperty('optional')
   modpackOptions?: Partial<GeneralModpackOptions>;
   @SerializableProperty('optional')
-  sync?: { type: 'external' };
+  sync?: InstanceSyncOptions;
   processes: Process[] = [];
   @SerializableProperty
   lastUsed: number;
@@ -787,6 +789,7 @@ export class Modpack extends Serializable implements ModpackData {
       lastUsed: this.lastUsed,
       icon: this.getIcon(),
       isDeleted: this.isDeleted,
+      sync: this.sync,
 
       readyForOfflineUse:
         !!this.launchConfig ||

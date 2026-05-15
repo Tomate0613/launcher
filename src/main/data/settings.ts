@@ -10,6 +10,7 @@ export type GeneralModpackOptions = {
   stashLastLaunchEnabled: boolean;
   stashComplete: boolean;
   customLaunchArgs: string[];
+  customJvmArgs: string[];
 };
 
 export type WrapperOptions = {
@@ -26,6 +27,10 @@ export const defaultGeneralModpackOptions: GeneralModpackOptions = {
   stashComplete: false,
 
   customLaunchArgs: [],
+  /**
+   * TODO
+   */
+  customJvmArgs: [],
 };
 
 export class Settings extends Serializable {
