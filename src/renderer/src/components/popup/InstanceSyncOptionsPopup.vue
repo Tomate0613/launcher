@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { ref, useTemplateRef, watch } from 'vue';
 import Popup from '../Popup.vue';
 import type { InstanceSyncOptions } from '../../../../main/data/sync';
 
