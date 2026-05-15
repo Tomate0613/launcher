@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { capitalize, computed, ref, useTemplateRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import GeneralInstanceOptions from '../components/GeneralInstanceOptions.vue';
 import GameVersionSelect from '../components/select/GameVersionSelect.vue';
@@ -10,6 +10,7 @@ import Icon from '../components/Icon.vue';
 import { mdiArrowRight, mdiPencil } from '@mdi/js';
 import ChooseIconPopup from '../components/popup/ChooseIconPopup.vue';
 import CheckContentUpdatesPopups from '../components/popup/CheckContentUpdatesPopups.vue';
+import InstanceSyncOptionsPopup from '../components/popup/InstanceSyncOptionsPopup.vue';
 import { log } from '../../../common/logging/log';
 import { useAppState } from '../composables/appState';
 import { useDebounceFn } from '@vueuse/core';
@@ -29,6 +30,7 @@ const settingsInstance = ref(clone(instance.value));
 
 const iconChooser = useTemplateRef('icon-chooser');
 const checkContentUpdatePopup = useTemplateRef('check-content-update-popup');
+const instanceSyncOptionsPopup = useTemplateRef('instance-sync-options-popup');
 
 const instanceDefaultOptions = await window.api.invoke(
   'getDefaultModpackOptions',
@@ -116,6 +118,17 @@ watch(settingsInstance, save, { deep: true });
             <Icon :path="mdiArrowRight" />
           </button>
         </label>
+
+        <label class="settings-option settings-option-button">
+          Sync
+
+          <button @click="instanceSyncOptionsPopup?.openMenu()">
+            <span>{{
+              capitalize(settingsInstance.sync?.type ?? 'Disabled')
+            }}</span>
+            <Icon :path="mdiArrowRight" />
+          </button>
+        </label>
       </section>
 
       <GeneralInstanceOptions
@@ -132,6 +145,8 @@ watch(settingsInstance, save, { deep: true });
     content-type="mods"
     :instance-id="modpackId"
   />
+
+  <InstanceSyncOptionsPopup ref="instance-sync-options-popup" :options="settingsInstance.sync"/>
 </template>
 
 <style scoped>
