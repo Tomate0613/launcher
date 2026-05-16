@@ -438,6 +438,7 @@ watch(installedSearchQuery, (q) => {
               :providerId="item.provider"
               :content-type="contentType"
               :projectId="item.project.id"
+              :currentVersionId="item.version?.id"
               @choose-latest="
                 changeVersionLatest(item.id, item.provider, item.project.id)
               "
