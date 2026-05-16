@@ -76,6 +76,10 @@
 
               wineWow64Packages.minimal
               flatpak-builder
+
+              typescript-language-server
+              vtsls
+              vue-language-server
             ];
 
             env = {
