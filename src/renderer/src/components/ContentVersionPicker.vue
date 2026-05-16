@@ -14,6 +14,7 @@ const { modpackId, contentType, providerId, projectId } = defineProps<{
   contentType: ContentType;
   providerId: ImplementedProvider;
   projectId: string;
+  currentVersionId?: string;
 }>();
 
 const versions = tryMountInvoke(
@@ -30,7 +31,14 @@ const versions = tryMountInvoke(
   <button
     v-for="version of versions"
     @click="emit('chooseVersion', toRaw(version))"
+    :class="{ current: currentVersionId === version.id }"
   >
     {{ version.name }}
   </button>
 </template>
+
+<style scoped>
+.current {
+  background: var(--color-ui-layer) !important;
+}
+</style>
