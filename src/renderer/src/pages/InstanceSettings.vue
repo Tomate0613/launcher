@@ -16,7 +16,7 @@ import { useAppState } from '../composables/appState';
 import { useDebounceFn } from '@vueuse/core';
 import { ModpackData } from '../../../main/data/modpack';
 
-const logger = log('instance-settigns');
+const logger = log('instance-settings');
 
 const route = useRoute();
 const modpackId = computed(() => route.params.id as string);
@@ -59,7 +59,8 @@ const save = useDebounceFn(async (curr: ModpackData) => {
     checkContentUpdatePopup.value?.checkMods();
   }
 
-  logger.log('Updating');
+  logger.log('Updating instance settings');
+  // logger.log('Updating', toRaw(unref(settingsInstance)));
   await window.api.invoke('setModpackConfig', clone(settingsInstance.value));
 }, 300);
 
@@ -146,7 +147,10 @@ watch(settingsInstance, save, { deep: true });
     :instance-id="modpackId"
   />
 
-  <InstanceSyncOptionsPopup ref="instance-sync-options-popup" :options="settingsInstance.sync"/>
+  <InstanceSyncOptionsPopup
+    ref="instance-sync-options-popup"
+    v-model="settingsInstance.sync"
+  />
 </template>
 
 <style scoped>

@@ -78,6 +78,7 @@ export const routes = {
     modpack.description = modpackConfig.description;
     modpack.gameVersion = modpackConfig.gameVersion;
     modpack.modpackOptions = modpackConfig.modpackOptions;
+    modpack.sync = modpackConfig.sync;
 
     if (
       JSON.stringify(modpack.loader) != JSON.stringify(modpackConfig.loader)
