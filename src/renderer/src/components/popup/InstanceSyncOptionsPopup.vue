@@ -5,18 +5,28 @@ import type { InstanceSyncOptions } from '../../../../main/data/sync';
 
 const popup = useTemplateRef('popup');
 
-const { options } = defineProps<{
-  options: InstanceSyncOptions | undefined;
-}>();
+const options = defineModel<InstanceSyncOptions | undefined>();
 
-const type = ref(options?.type ?? "disabled");
+const type = ref<InstanceSyncOptions['type'] | 'disabled'>(
+  options.value?.type ?? 'disabled',
+);
 
-watch(() => options, () => {
-  type.value = options?.type ?? "disabled";
-});
+watch(
+  () => options,
+  () => {
+    type.value = options.value?.type ?? 'disabled';
+  },
+);
 
 watch(type, () => {
+  if (type.value === 'disabled') {
+    options.value = undefined;
+    return;
+  }
 
+  options.value = {
+    type: type.value,
+  };
 });
 
 function openMenu() {
