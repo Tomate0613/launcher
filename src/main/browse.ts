@@ -237,6 +237,7 @@ export async function getServers() {
         return servers.map((server) => {
           return {
             modpack: modpack.id,
+            modpackLastUsed: modpack.lastUsed,
             name: server.name?.value ?? 'Minecraft Server',
             icon: `data:image/png;base64,${server.icon?.value}`,
             address: server.ip.value,
@@ -248,8 +249,10 @@ export async function getServers() {
     }),
   );
 
-  return servers.flat().filter((a) => a != null);
-  // .sort((a, b) => b.date - a.date);
+  return servers
+    .flat()
+    .filter((a) => a != null)
+    .sort((a, b) => b.modpackLastUsed - a.modpackLastUsed);
 }
 
 export async function pingServer(address: string) {
