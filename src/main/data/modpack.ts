@@ -506,7 +506,12 @@ export class Modpack extends Serializable implements ModpackData {
     ctx: ProcessContext,
   ) {
     if (getSettings().wrapper.enabled) {
-      await spawnWrapper(launcher, launchOptions, ctx);
+      try {
+        await spawnWrapper(launcher, launchOptions, ctx);
+      } catch (e) {
+        ctx.cancel();
+        throw error('Failed to launch wrapper', e);
+      }
 
       if (getSettings().wrapper.autoClose) {
         ctx.on('done', () => {
