@@ -19,11 +19,21 @@ export async function safeClose() {
 
   const processes = getAllProcesses();
 
+  setTimeout(() => {
+    logger.log('Reached timeout. Force quitting');
+
+    for (const process of processes) {
+      logger.log('Cancelling process', process);
+      process.cancel();
+    }
+
+    app.quit();
+  }, 60000);
+
   for (const process of processes) {
-    logger.log(`Waiting for process ${process}`);
+    logger.log('Waiting for process', process);
     await process.wait();
   }
 
   app.quit();
 }
-
