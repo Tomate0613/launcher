@@ -71,7 +71,12 @@ fn main() {
                 .long("launcher-executable")
                 .num_args(1),
         )
-        .arg(Arg::new("launcher-args").long("launcher-args").num_args(1))
+        .arg(
+            Arg::new("launcher-args")
+                .long("launcher-args")
+                .num_args(1)
+                .required(true),
+        )
         .arg(
             Arg::new("game-executable")
                 .long("game-executable")
@@ -107,8 +112,6 @@ fn main() {
     let shared_buffer: SharedBuffer = Arc::new(Mutex::new(VecDeque::with_capacity(MAX_LINES)));
     let shared_stream: SharedStream = Arc::new(Mutex::new(None));
 
-    println!("{:?}", launcher_args);
-
     spawn_game(
         game_executable,
         &game_args,
@@ -127,7 +130,8 @@ fn main() {
         },
     );
 
-    create_socket(shared_buffer, shared_stream, instance_id).expect("Failed to create socket");
+    create_socket(shared_buffer, shared_stream, instance_id)
+        .expect("Failed to create socket");
 }
 
 fn create_socket(
@@ -143,7 +147,8 @@ fn create_socket(
 
     #[cfg(unix)]
     let pipe_name = format!(
-        "/tmp/tomate-launcher-minecraft-wrapper-{}.sock",
+        "{}/tomate-launcher-minecraft-wrapper-{}.sock",
+        std::env::var("XDG_RUNTIME_DIR").unwrap_or_else(|_| "/tmp".to_string()),
         instance_id
     );
 

@@ -40,7 +40,7 @@ function socketPath(socketId: string) {
   if (process.platform === 'win32') {
     return `\\\\.\\pipe\\tomate-launcher-minecraft-wrapper-${socketId}.sock`;
   } else {
-    return `/tmp/tomate-launcher-minecraft-wrapper-${socketId}.sock`;
+    return `${process.env.XDG_RUNTIME_DIR ?? "/tmp"}/tomate-launcher-minecraft-wrapper-${socketId}.sock`;
   }
 }
 
@@ -109,7 +109,7 @@ export async function spawnWrapper(
     '--game-args',
     JSON.stringify(await launcher.getLaunchArguments(launchOptions)),
     '--game-cwd',
-    launcher.options.root,
+    launcher.options.root
   ];
 
   if (getSettings().wrapper.reopen) {
@@ -125,10 +125,15 @@ export async function spawnWrapper(
 
   const child = cp.spawn(wrapper, wrapperArgs, {
     detached: true,
-    stdio: 'ignore',
+    // stdio: 'ignore',
+    stdio: 'pipe',
   });
 
+  child.stdout.on('data', (m) => logger.log(m.toString('utf8')));
+  child.stderr.on('data', (m) => logger.error(m.toString('utf8')));
+
   child.on('exit', (code) => {
+    logger.log('Wrapper exited', code);
     launcher.emit('close', code);
   });
 
@@ -136,8 +141,6 @@ export async function spawnWrapper(
 
   logger.log(process.execPath, JSON.stringify(process.argv.slice(1)));
   logger.log(child);
-
-  child.exitCode;
 
   socketsState.push(id);
 
