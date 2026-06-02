@@ -1,9 +1,9 @@
-onlyBuiltDependencies:
-  - "@doublekekse/find-java"
-  - "tomate-launcher-core"
-  - "tomate-mods"
-  - tomate-loaders
-  - "@swc/core"
-  - electron
-  - electron-winstaller
-  - esbuild
+allowBuilds:
+  "@doublekekse/find-java": true
+  "tomate-launcher-core": true
+  "tomate-mods": true
+  tomate-loaders: true
+  "@swc/core": true
+  electron: true
+  electron-winstaller: true
+  esbuild: true
