@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgsOld,
   lib,
   mc-wrapper,
   runtimeLibs,
@@ -26,7 +25,7 @@ pkgs.mkPnpmPackage {
 
   nativeBuildInputs = with pkgs; [
     nodejs
-    pkgsOld.pnpm
+    pnpm
     makeWrapper
   ];
 
