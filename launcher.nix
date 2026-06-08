@@ -3,7 +3,10 @@
   lib,
   mc-wrapper,
   runtimeLibs,
-  jdks ? with pkgs; [ jdk21 jdk25 ],
+  jdks ? with pkgs; [
+    jdk21
+    jdk25
+  ],
 }:
 let
   pname = (lib.fromJSON (lib.readFile ./package.json)).name;
@@ -22,6 +25,10 @@ pkgs.mkPnpmPackage {
 
   src = ./.;
   lockFile = ./pnpm-lock.yaml;
+
+  env = {
+    ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
+  };
 
   nativeBuildInputs = with pkgs; [
     nodejs
