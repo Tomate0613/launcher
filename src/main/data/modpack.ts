@@ -392,9 +392,6 @@ export class Modpack extends Serializable implements ModpackData {
       ...this.launchConfig,
       root: this.dir,
       downloadManager,
-      customArgs:
-        this.modpackOptions?.customLaunchArgs ??
-        getSettings().getModpackDefaultOption('customLaunchArgs'),
 
       log4jConfigurationFile: supportLog4jConfigurationFile
         ? paths.resolve(log4jConfigPath)
@@ -474,7 +471,8 @@ export class Modpack extends Serializable implements ModpackData {
 
       const javaPath = await this.javaPath(launcher);
 
-      const options = {
+      this.launcherEvents(launcher, ctx);
+      await this.spawn(launcher, {
         authorization: auth as never,
         javaPath,
         memory: {
@@ -487,11 +485,14 @@ export class Modpack extends Serializable implements ModpackData {
             getSettings().getModpackDefaultOption('maxRam')
           }M`,
         },
+        customLaunchArgs:
+          this.modpackOptions?.customLaunchArgs ??
+          getSettings().getModpackDefaultOption('customLaunchArgs'),
+        customJvmArgs:
+          this.modpackOptions?.customJvmArgs ??
+          getSettings().getModpackDefaultOption('customJvmArgs'),
         quickPlay,
-      };
-
-      this.launcherEvents(launcher, ctx);
-      await this.spawn(launcher, options, ctx);
+      }, ctx);
 
       return launcher;
     } catch (e) {
