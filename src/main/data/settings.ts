@@ -27,9 +27,6 @@ export const defaultGeneralModpackOptions: GeneralModpackOptions = {
   stashComplete: false,
 
   customLaunchArgs: [],
-  /**
-   * TODO
-   */
   customJvmArgs: [],
 };
 

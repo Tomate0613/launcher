@@ -4,9 +4,9 @@ import { GeneralModpackOptions } from '../../../main/data/settings';
 import Toggle from '../components/Toggle.vue';
 import { log } from '../../../common/logging/log';
 import { applyDefaults, clone } from '../../../common/utils';
-import Popup from './Popup.vue';
-import { mdiArrowRight, mdiPlus, mdiDeleteOutline } from '@mdi/js';
+import { mdiArrowRight } from '@mdi/js';
 import Icon from './Icon.vue';
+import ArgumentsPopup from './popup/ArgumentsPopup.vue';
 
 type Props = {
   defaultSettings: GeneralModpackOptions;
@@ -20,6 +20,7 @@ const model = defineModel<Partial<GeneralModpackOptions>>();
 const previousSettings = applyDefaults(model.value, defaultSettings);
 const settings = reactive(clone(previousSettings));
 
+const customJvmArgsPopup = useTemplateRef('custom-jvm-args-popup');
 const customLaunchArgsPopup = useTemplateRef('custom-launch-args-popup');
 
 watch(settings, () => {
@@ -113,6 +114,21 @@ function isChanged(key: keyof GeneralModpackOptions) {
 
   <section class="settings-section">
     <h2 class="settings-section-name">Advanced</h2>
+
+    <label
+      class="settings-option settings-option-button"
+      @contextmenu="reset('customJvmArgs')"
+      :data-changed="isChanged('customJvmArgs')"
+    >
+      <div>Custom Jvm Args</div>
+      <button @click="customJvmArgsPopup?.openMenu()">
+        <span class="ellipsis">
+          {{ settings.customJvmArgs.join(' ') }}
+        </span>
+        <Icon :path="mdiArrowRight" />
+      </button>
+    </label>
+
     <label
       class="settings-option settings-option-button"
       @contextmenu="reset('customLaunchArgs')"
@@ -128,49 +144,13 @@ function isChanged(key: keyof GeneralModpackOptions) {
     </label>
   </section>
 
-  <Popup ref="custom-launch-args-popup">
-    <h2>Custom Launch Arguments</h2>
-    <div class="custom-launch-arg-list">
-      <div
-        v-for="(_, i) in settings.customLaunchArgs"
-        class="custom-launch-arg-line"
-      >
-        <input type="text" v-model="settings.customLaunchArgs[i]" />
-        <button
-          @click="
-            settings.customLaunchArgs = settings.customLaunchArgs.filter(
-              (_, filterIdx) => filterIdx !== i,
-            )
-          "
-        >
-          <Icon :path="mdiDeleteOutline" />
-        </button>
-      </div>
-      <button class="icon-btn" @click="settings.customLaunchArgs.push('')">
-        <Icon :path="mdiPlus" />
-        Add new
-      </button>
-    </div>
-  </Popup>
+  <ArgumentsPopup ref="custom-jvm-args-popup" v-model="settings.customJvmArgs">
+    Custom JVM Arguments
+  </ArgumentsPopup>
+  <ArgumentsPopup
+    ref="custom-launch-args-popup"
+    v-model="settings.customLaunchArgs"
+  >
+    Custom Launch Arguments
+  </ArgumentsPopup>
 </template>
-
-<style scoped>
-.custom-launch-arg-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  & .custom-launch-arg-line {
-    display: flex;
-    gap: 0.375rem;
-
-    & input {
-      flex-grow: 1
-    }
-  }
-
-  & > button {
-    justify-content: center;
-  }
-}
-</style>
