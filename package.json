@@ -4,7 +4,7 @@
   "main": "./out/main/index.js",
   "type": "module",
   "scripts": {
-    "postinstall": "install-electron && electron-builder install-app-deps",
+    "postinstall": "node ./scripts/postinstall.js",
     "typecheck": "pnpm run typecheck:node && pnpm run typecheck:web",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "vue-tsc --noEmit -p tsconfig.renderer.json --composite false",
