@@ -40,7 +40,7 @@ function socketPath(socketId: string) {
   if (process.platform === 'win32') {
     return `\\\\.\\pipe\\tomate-launcher-minecraft-wrapper-${socketId}.sock`;
   } else {
-    return `${process.env.XDG_RUNTIME_DIR ?? "/tmp"}/tomate-launcher-minecraft-wrapper-${socketId}.sock`;
+    return `${process.env.XDG_RUNTIME_DIR ?? '/tmp'}/tomate-launcher-minecraft-wrapper-${socketId}.sock`;
   }
 }
 
@@ -109,7 +109,7 @@ export async function spawnWrapper(
     '--game-args',
     JSON.stringify(await launcher.getLaunchArguments(launchOptions)),
     '--game-cwd',
-    launcher.options.root
+    launcher.options.root,
   ];
 
   if (getSettings().wrapper.reopen) {
@@ -119,6 +119,9 @@ export async function spawnWrapper(
       '--launcher-args',
       JSON.stringify(process.argv.slice(1)),
     );
+  } else {
+    // TODO make optional
+    wrapperArgs.push('--launcher-args', '[]');
   }
 
   const wrapper = getWrapperExecutable();
