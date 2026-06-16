@@ -81,9 +81,6 @@
 
             env = {
               PKG_CONFIG_PATH = "${pkgs.gtk4}/lib/pkgconfig:${pkgs.json-glib}/lib/pkgconfig";
-              MC_WRAPPER_PATH = "${self.packages.${system}.mc-wrapper}/bin/${
-                self.packages.${system}.mc-wrapper.pname
-              }";
               __GL_THREADED_OPTIMIZATIONS = 0;
               LD_LIBRARY_PATH = lib.makeLibraryPath (
                 with pkgs;
