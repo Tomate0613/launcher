@@ -79,6 +79,9 @@ export async function registerInStore(filePath: string) {
 }
 
 export async function gcStore() {
+  logger.log('Running gc');
+  getSettings().storeGcLastRunDate = Date.now();
+
   const storeItems = await fs.readdir(storePath);
 
   for (const storeItem of storeItems) {
@@ -95,3 +98,12 @@ export async function gcStore() {
   }
 }
 
+const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
+
+export async function storeSchedules() {
+  const now = Date.now();
+
+  if (now - getSettings().storeGcLastRunDate > ONE_WEEK && getSettings().store.gcSchedule === 'weekly') {
+    await gcStore();
+  }
+}
