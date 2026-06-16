@@ -3,6 +3,9 @@ import { storePath } from '../../paths';
 import path from 'node:path';
 import { log } from '../../../common/logging/log';
 import crypto from 'node:crypto';
+import { runOnClose } from '../../utils';
+import { getSettings } from '../../data';
+import { app } from 'electron';
 
 const logger = log('content-store');
 const locks: Map<string, Promise<void>> = new Map();
@@ -75,7 +78,7 @@ export async function registerInStore(filePath: string) {
   return fs.link(path.resolve(filePath), path.resolve(storeItemPath));
 }
 
-export async function gc() {
+export async function gcStore() {
   const storeItems = await fs.readdir(storePath);
 
   for (const storeItem of storeItems) {
@@ -92,7 +95,3 @@ export async function gc() {
   }
 }
 
-// TODO
-setTimeout(() => {
-  gc();
-}, 5000);
