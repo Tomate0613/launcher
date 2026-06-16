@@ -2,6 +2,8 @@ import { app } from 'electron';
 import { getAllProcesses } from './process';
 import { mainWindow } from './windows';
 import { log } from '../common/logging/log';
+import { getSettings } from './data';
+import { gcStore } from './data/content/store';
 
 const logger = log('close');
 
@@ -33,6 +35,10 @@ export async function safeClose() {
   for (const process of processes) {
     logger.log('Waiting for process', process);
     await process.wait();
+  }
+
+  if(getSettings().store.gcSchedule === 'on-close') {
+    await gcStore();
   }
 
   app.quit();
