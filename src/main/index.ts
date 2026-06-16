@@ -14,6 +14,7 @@ import { safeClose } from './close';
 import './protocol';
 import { handleProtocolUrl, registerProtocolHandler } from './protocol';
 import { openInBrowser } from './utils';
+import { storeSchedules } from './data/content/store';
 
 const logger = log('main');
 
@@ -110,6 +111,7 @@ if (app.requestSingleInstanceLock()) {
 export function prepare() {
   ensureAppDirectoriesExist();
   loadData();
+  storeSchedules();
 }
 
 registerProtocolHandler();

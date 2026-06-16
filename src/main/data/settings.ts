@@ -11,7 +11,7 @@ const frontendKeys = [
   'transparentWindow',
   'hideFrame',
   'wrapper',
-  'store'
+  'store',
 ] as const;
 
 export type SettingsFrontendData = {
@@ -71,6 +71,8 @@ export class Settings extends Serializable {
   store: StoreOptions = {
     gcSchedule: 'weekly',
   };
+  @SerializableProperty
+  storeGcLastRunDate = Date.now();
 
   _constructor(version: string): void {
     switch (version) {
@@ -78,6 +80,7 @@ export class Settings extends Serializable {
         this.wrapper = { enabled: true, reopen: true, autoClose: false };
       case '2':
         this.store = { gcSchedule: 'weekly' };
+        this.storeGcLastRunDate = Date.now();
     }
 
     this.__version = '3';
