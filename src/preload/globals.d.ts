@@ -13,15 +13,6 @@ declare global {
       on: ElectronAPI['ipcRenderer']['on'];
       versions: ElectronAPI['process']['versions'];
       platform: ElectronAPI['process']['platform'];
-      settings: {
-        getProperty<Key extends keyof Settings>(
-          key: Key,
-        ): Promise<Settings[Key]>;
-        setProperty<Key extends keyof Settings>(
-          key: Key,
-          value: Settings[Key],
-        ): Promise<void>;
-      };
     };
 
     log: (

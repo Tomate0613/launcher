@@ -4,6 +4,7 @@ import { createGlobalState } from '@vueuse/core';
 import { SyncedIdSet } from '../../../common/synced/synced-id-set/frontend';
 import { ModpackFrontendData } from '../../../main/data/modpack';
 import { log } from '../../../common/logging/log';
+import { syncedSettings } from './settings';
 
 const logger = log('app-state');
 
@@ -45,10 +46,11 @@ export const useAppState = createGlobalState(async () => {
     accountId.value ? accounts.value?.get(accountId.value) : undefined,
   );
   const consoleLogLevels = ref(new Set(['info', 'warn', 'error']));
+  const settings = await syncedSettings();
 
-  accountId.value =
-    (await window.api.settings.getProperty('activeAccountId')) ?? '';
+  accountId.value = settings.activeAccountId ?? '';
 
+  // TODO
   watch(
     [() => accounts.value?.size, accountId],
     async () => {
@@ -66,7 +68,7 @@ export const useAppState = createGlobalState(async () => {
         accountId.value = undefined;
       }
 
-      await window.api.settings.setProperty('activeAccountId', accountId.value);
+      settings.activeAccountId = accountId.value;
     },
     { immediate: true },
   );
@@ -77,6 +79,7 @@ export const useAppState = createGlobalState(async () => {
     accountId,
     account,
     consoleLogLevels,
+    settings,
   });
 });
 

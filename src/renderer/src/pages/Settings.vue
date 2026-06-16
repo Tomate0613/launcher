@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { reactive, ref, toRaw, useTemplateRef, watch, watchEffect } from 'vue';
+import { ref, useTemplateRef, watchEffect } from 'vue';
 import { usePageFocus } from '../composables/pageFocus';
-import { clone } from '../../../common/utils';
 import { mdiArrowRight, mdiDeleteOutline, mdiFolder, mdiTuneVariant } from '@mdi/js';
 import Versions from '../components/Versions.vue';
 import Icon from '../components/Icon.vue';
@@ -10,8 +9,10 @@ import Toggle from '../components/Toggle.vue';
 import { setTheme } from '../theme';
 import SetMinecraftDefaultsPopup from '../components/popup/SetMinecraftDefaultsPopup.vue';
 import '../assets/settings.css';
-import type { WrapperOptions } from '../../../main/data/settings';
 import Popup from '../components/Popup.vue';
+import { useAppState } from '../composables/appState';
+
+const { settings } = await useAppState();
 
 const setMinecraftDefaultsPopup = useTemplateRef(
   'set-minecraft-defaults-popup',
@@ -19,45 +20,17 @@ const setMinecraftDefaultsPopup = useTemplateRef(
 
 const curseforgeTokenPopup = useTemplateRef('curseforge-token-popup');
 
-let instanceDefaultOptions = reactive(
-  await window.api.settings.getProperty('modpackDefaultOptions'),
-);
-
 const defaultGeneralModpackSettings = await window.api.invoke(
   'getDefaultGeneralModpackOptions',
 );
 
 usePageFocus();
 
-watch(instanceDefaultOptions, async () => {
-  await window.api.settings.setProperty(
-    'modpackDefaultOptions',
-    clone(instanceDefaultOptions),
-  );
-});
-
 function openRootFolder() {
   return window.api.invoke('openBaseFolder');
 }
 
-const theme = ref(
-  ((await window.api.invoke('getSettingsProperty', 'theme')) as string) ??
-    'default',
-);
 const themes = await window.api.invoke('getThemes');
-const transparentWindow = ref(
-  (await window.api.invoke(
-    'getSettingsProperty',
-    'transparentWindow',
-  )) as boolean,
-);
-const hideFrame = ref(
-  (await window.api.invoke('getSettingsProperty', 'hideFrame')) as boolean,
-);
-const wrapper = ref(
-  (await window.api.invoke('getSettingsProperty', 'wrapper')) as WrapperOptions,
-);
-
 const tokens = ref(await window.api.invoke('getTokens'));
 const cfKey = ref<string>(tokens.value.hasCurseforgeToken ? 'a'.repeat(60) : '');
 
@@ -72,43 +45,26 @@ async function applyCurseforgeApiKey() {
 }
 
 watchEffect(() => {
-  setTheme(themes.find((t) => t.id == theme.value)?.url);
+  setTheme(themes.find((t) => t.id == settings.theme)?.url);
 });
-
-watchEffect(() => {
-  window.api.settings.setProperty('theme', theme.value);
-});
-watchEffect(() => {
-  window.api.settings.setProperty('transparentWindow', transparentWindow.value);
-});
-watchEffect(() => {
-  window.api.settings.setProperty('hideFrame', hideFrame.value);
-});
-watch(
-  [wrapper],
-  () => {
-    window.api.settings.setProperty('wrapper', toRaw(wrapper.value));
-  },
-  { deep: true },
-);
 </script>
 
 <template>
   <div class="page-content">
     <div class="page-scrollable settings">
       <GeneralInstanceOptions
-        v-model="instanceDefaultOptions"
+        v-model="settings.modpackDefaultOptions"
         :defaultSettings="defaultGeneralModpackSettings"
       />
       <section class="settings-section">
         <h2 class="settings-section-name">UI</h2>
         <label
           class="settings-option"
-          @contextmenu="theme = 'default'"
-          :data-changed="theme != 'default'"
+          @contextmenu="settings.theme = 'default'"
+          :data-changed="settings.theme != 'default'"
         >
           Theme
-          <select v-model="theme">
+          <select v-model="settings.theme">
             <option value="default">Default</option>
             <option v-for="theme in themes" :value="theme.id">
               {{ theme.name }}
@@ -117,8 +73,8 @@ watch(
         </label>
         <label
           class="settings-option"
-          @contextmenu="transparentWindow = false"
-          :data-changed="transparentWindow"
+          @contextmenu="settings.transparentWindow = false"
+          :data-changed="settings.transparentWindow"
         >
           <div>
             Transparent Background
@@ -126,18 +82,18 @@ watch(
               Only works with specific themes. Requires a restart to apply
             </div>
           </div>
-          <Toggle v-model="transparentWindow" />
+          <Toggle v-model="settings.transparentWindow" />
         </label>
         <label
           class="settings-option"
-          @contextmenu="hideFrame = false"
-          :data-changed="hideFrame"
+          @contextmenu="settings.hideFrame = false"
+          :data-changed="settings.hideFrame"
         >
           <div>
             Hide Frame
             <div class="settings-description">Requires a restart to apply</div>
           </div>
-          <Toggle v-model="hideFrame" />
+          <Toggle v-model="settings.hideFrame" />
         </label>
       </section>
 
@@ -146,8 +102,8 @@ watch(
 
         <label
           class="settings-option"
-          @contextmenu="wrapper.enabled = true"
-          :data-changed="!wrapper.enabled"
+          @contextmenu="settings.wrapper.enabled = true"
+          :data-changed="!settings.wrapper.enabled"
         >
           <div>
             Enabled
@@ -156,13 +112,13 @@ watch(
               after launcher closes
             </div>
           </div>
-          <Toggle v-model="wrapper.enabled" />
+          <Toggle v-model="settings.wrapper.enabled" />
         </label>
 
         <label
           class="settings-option"
-          @contextmenu="wrapper.reopen = true"
-          :data-changed="!wrapper.reopen"
+          @contextmenu="settings.wrapper.reopen = true"
+          :data-changed="!settings.wrapper.reopen"
         >
           <div>
             Reopen
@@ -170,13 +126,13 @@ watch(
               Reopen and focus launcher when game exits
             </div>
           </div>
-          <Toggle v-model="wrapper.reopen" :disabled="!wrapper.enabled" />
+          <Toggle v-model="settings.wrapper.reopen" :disabled="!settings.wrapper.enabled" />
         </label>
 
         <label
           class="settings-option"
-          @contextmenu="wrapper.autoClose = false"
-          :data-changed="wrapper.autoClose"
+          @contextmenu="settings.wrapper.autoClose = false"
+          :data-changed="settings.wrapper.autoClose"
         >
           <div>
             Close in Background
@@ -184,7 +140,7 @@ watch(
               Close launcher when game launches
             </div>
           </div>
-          <Toggle v-model="wrapper.autoClose" :disabled="!wrapper.enabled" />
+          <Toggle v-model="settings.wrapper.autoClose" :disabled="!settings.wrapper.enabled" />
         </label>
       </section>
 
@@ -203,6 +159,26 @@ watch(
             <Icon :path="mdiArrowRight" />
           </button>
         </label>
+      </section>
+
+      <section>
+        <h2 class="settings-section-name">Storage</h2>
+
+        <label class="settings-option settings-option-button">
+          Garbage Collection
+          <select v-model="settings.store.gcSchedule">
+            <option value="weekly">Weekly</option>
+            <option value="on-close">On Close</option>
+          </select>
+        </label>
+
+        <label class="settings-option settings-option-button">
+          Storage
+          <button disabled>
+            <Icon :path="mdiArrowRight" />
+          </button>
+        </label>
+
       </section>
 
       <div class="flex-row justify-space-between">

@@ -4,6 +4,20 @@ import { Serializable, SerializableProperty } from './serialization';
 import fs from 'node:fs';
 import { Modpack } from './modpack';
 
+const frontendKeys = [
+  'activeAccountId',
+  'modpackDefaultOptions',
+  'theme',
+  'transparentWindow',
+  'hideFrame',
+  'wrapper',
+  'store'
+] as const;
+
+export type SettingsFrontendData = {
+  [K in (typeof frontendKeys)[number]]: Settings[K];
+};
+
 export type GeneralModpackOptions = {
   minRam: number;
   maxRam: number;
@@ -19,6 +33,10 @@ export type WrapperOptions = {
   autoClose: boolean;
 };
 
+export type StoreOptions = {
+  gcSchedule: 'on-close' | 'weekly';
+};
+
 export const defaultGeneralModpackOptions: GeneralModpackOptions = {
   minRam: 2500,
   maxRam: 5000,
@@ -31,7 +49,7 @@ export const defaultGeneralModpackOptions: GeneralModpackOptions = {
 };
 
 export class Settings extends Serializable {
-  __version = '2';
+  __version = '3';
   @SerializableProperty
   activeAccountId?: string;
   @SerializableProperty
@@ -49,14 +67,20 @@ export class Settings extends Serializable {
   hideFrame: boolean = false;
   @SerializableProperty
   wrapper: WrapperOptions = { enabled: true, reopen: true, autoClose: false };
+  @SerializableProperty
+  store: StoreOptions = {
+    gcSchedule: 'weekly',
+  };
 
   _constructor(version: string): void {
     switch (version) {
       case '1':
         this.wrapper = { enabled: true, reopen: true, autoClose: false };
+      case '2':
+        this.store = { gcSchedule: 'weekly' };
     }
 
-    this.__version = '2';
+    this.__version = '3';
   }
 
   getModpackDefaultOption<Key extends keyof GeneralModpackOptions>(key: Key) {
@@ -109,6 +133,16 @@ export class Settings extends Serializable {
     }
 
     fs.writeFileSync(settingsPath, JSON.stringify(this));
+  }
+
+  frontendData(): SettingsFrontendData {
+    const result = {} as SettingsFrontendData;
+
+    for (const key of frontendKeys) {
+      result[key] = this[key] as never;
+    }
+
+    return result;
   }
 
   static load() {
