@@ -24,18 +24,6 @@ try {
     on: electronAPI.ipcRenderer.on,
     versions: electronAPI.process.versions,
     platform: electronAPI.process.platform,
-    settings: {
-      getProperty(key: string) {
-        return electronAPI.ipcRenderer.invoke('getSettingsProperty', key);
-      },
-      setProperty(key: string, value: unknown) {
-        return electronAPI.ipcRenderer.invoke(
-          'setSettingsProperty',
-          key,
-          value,
-        );
-      },
-    },
   });
 
   contextBridge.exposeInMainWorld(

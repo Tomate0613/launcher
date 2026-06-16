@@ -17,7 +17,7 @@ import { loader, type LoaderId } from 'tomate-loaders';
 import { Account } from './data/account';
 import { is } from '@electron-toolkit/utils';
 import { ImplementedProvider, Version } from 'tomate-mods';
-import { defaultGeneralModpackOptions, Settings } from './data/settings';
+import { defaultGeneralModpackOptions, SettingsFrontendData } from './data/settings';
 import { log } from '../common/logging/log';
 import * as ModpackImporter from './data/modpack-importer';
 import { mainWindow } from './windows';
@@ -324,16 +324,14 @@ export const routes = {
   },
   deleteSkin,
 
-  setSettingsProperty<Key extends keyof Settings>(
-    propertyName: Key,
-    propertyValue: Settings[Key],
-  ) {
-    getSettings()[propertyName] = propertyValue;
+  getSettings() {
+    return getSettings().frontendData();
   },
-  getSettingsProperty<Key extends keyof Settings>(
+  setSettingsProperty<Key extends keyof SettingsFrontendData>(
     propertyName: Key,
-  ): Settings[Key] {
-    return getSettings()[propertyName];
+    propertyValue: SettingsFrontendData[Key],
+  ) {
+    getSettings()[propertyName] = propertyValue as never;
   },
   setCurseforgeToken(token: string) {
     return getTokens().setCurseforgeToken(token);
