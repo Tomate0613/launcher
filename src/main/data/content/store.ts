@@ -3,9 +3,7 @@ import { storePath } from '../../paths';
 import path from 'node:path';
 import { log } from '../../../common/logging/log';
 import crypto from 'node:crypto';
-import { runOnClose } from '../../utils';
 import { getSettings } from '../../data';
-import { app } from 'electron';
 
 const logger = log('content-store');
 const locks: Map<string, Promise<void>> = new Map();
