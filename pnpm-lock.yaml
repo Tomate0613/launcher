@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@doublekekse/find-java':
         specifier: github:Tomate0613/find-java
-        version: https://codeload.github.com/Tomate0613/find-java/tar.gz/3406a77cfba5b11ba9f8a2650dccd52cb27a8231(@swc/core@1.15.40)(jiti@2.7.0)(postcss@8.5.15)(typescript@6.0.3)(yaml@2.9.0)
+        version: https://codeload.github.com/Tomate0613/find-java/tar.gz/37d62bc5a3cc7fb7181ce9d26a96e12a156ec70b(@swc/core@1.15.40)(jiti@2.7.0)(postcss@8.5.15)(typescript@6.0.3)(yaml@2.9.0)
       '@electron-toolkit/preload':
         specifier: ^3.0.2
         version: 3.0.2(electron@42.3.3)
@@ -61,7 +61,7 @@ importers:
         version: 3.4.2
       tomate-launcher-core:
         specifier: github:Tomate0613/launcher-core
-        version: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/52a0115b27d7d5096d1e6a665f15fc2d45bf658a
+        version: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/8ef509a6cfa365676c9cfb935cd591cb285f08bf
       tomate-loaders:
         specifier: github:Tomate0613/tomate-loaders
         version: https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/e5d7e3478d36bed4ad6438d75f58de25f1cac389
@@ -224,8 +224,8 @@ packages:
     resolution: {integrity: sha512-p7/ABylAYlexb31wtRdIfH9L9A0Z2T/9H6zAqzqndkY2PLkvNNc580wGhp/gGKN4Sp9sQvSkhc6Oga8/O+wTyw==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/3406a77cfba5b11ba9f8a2650dccd52cb27a8231':
-    resolution: {gitHosted: true, integrity: sha512-3iRC9nsDdSyRRp9qQsh03You4dv/jn3MFl80vEePbk0JjfXfG2wLn2C6wAGRAgcRuyIN7Hnzqj9i2b4kkbTcLA==, tarball: https://codeload.github.com/Tomate0613/find-java/tar.gz/3406a77cfba5b11ba9f8a2650dccd52cb27a8231}
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/37d62bc5a3cc7fb7181ce9d26a96e12a156ec70b':
+    resolution: {gitHosted: true, integrity: sha512-mC42ATQi9Xan0qlbK/HwtzX23nbQD0smg65lU1DB+ZX7vZvkIOIfkGXVW4RAnvhTVI4koms7hcw47PmNTUxvAQ==, tarball: https://codeload.github.com/Tomate0613/find-java/tar.gz/37d62bc5a3cc7fb7181ce9d26a96e12a156ec70b}
     version: 1.0.0
 
   '@electron-toolkit/preload@3.0.2':
@@ -2604,8 +2604,8 @@ packages:
     resolution: {integrity: sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13ZeIcZnDg/QpSuU2zfZ3rzwY8ukEnaXw==}
     engines: {node: '>=14.14'}
 
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/52a0115b27d7d5096d1e6a665f15fc2d45bf658a:
-    resolution: {gitHosted: true, integrity: sha512-AiJnQh28GYkrUWExi2NiPiidvoqNcr29nUl/bMphYz/gw7mKo2xwe/Eo1Q+dwiDZhXO50i+vyktTq+dCld5Lmg==, tarball: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/52a0115b27d7d5096d1e6a665f15fc2d45bf658a}
+  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/8ef509a6cfa365676c9cfb935cd591cb285f08bf:
+    resolution: {gitHosted: true, integrity: sha512-oquAUdtZLbrVWJGsZOzw63cI15+9oMl6wWpSPy3IoX7VrYEA7D9ZlisWXnnQBySJVYLVHNidPPQVhTdSG3LCDw==, tarball: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/8ef509a6cfa365676c9cfb935cd591cb285f08bf}
     version: 1.0.0
 
   tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/e5d7e3478d36bed4ad6438d75f58de25f1cac389:
@@ -3016,7 +3016,7 @@ snapshots:
       '@babel/helper-string-parser': 8.0.0-rc.6
       '@babel/helper-validator-identifier': 8.0.0-rc.6
 
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/3406a77cfba5b11ba9f8a2650dccd52cb27a8231(@swc/core@1.15.40)(jiti@2.7.0)(postcss@8.5.15)(typescript@6.0.3)(yaml@2.9.0)':
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/37d62bc5a3cc7fb7181ce9d26a96e12a156ec70b(@swc/core@1.15.40)(jiti@2.7.0)(postcss@8.5.15)(typescript@6.0.3)(yaml@2.9.0)':
     dependencies:
       node-fetch: 3.3.2
       tsup: 8.5.1(@swc/core@1.15.40)(jiti@2.7.0)(postcss@8.5.15)(typescript@6.0.3)(yaml@2.9.0)
@@ -5327,7 +5327,7 @@ snapshots:
 
   tmp@0.2.7: {}
 
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/52a0115b27d7d5096d1e6a665f15fc2d45bf658a:
+  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/8ef509a6cfa365676c9cfb935cd591cb285f08bf:
     dependencies:
       adm-zip: 0.5.17
       axios: 1.17.0
