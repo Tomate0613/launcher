@@ -32,6 +32,7 @@
   --sidebar-width: 240px;
 
   --border-radius: .25rem;
+  --border-radius-strong: .5rem;
 
   color-scheme: dark;
 }
@@ -76,7 +77,7 @@ button:not(.btn-other),
   color: currentColor;
   background-color: var(--color-ui-layer);
   border: none;
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
   transition: scale 200ms;
   cursor: pointer;
   vertical-align: middle;
@@ -156,7 +157,7 @@ input[type='number'] {
   font-size: 0.875rem;
   background-color: var(--color-ui-layer-dim);
   border: 2px solid var(--color-ui-layer);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
   cursor: auto;
 
   &:hover {
@@ -208,7 +209,7 @@ select {
   /* We seem to have to do this because the browser uses this for the options too, which doesn't support this layering */
   /* background-color: #2a2a2a; */
   border: 2px solid var(--color-ui-layer);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
   cursor: auto;
 }
 
@@ -267,7 +268,7 @@ select option {
 }
 
 .shimmer-text {
-  border-radius: .25rem;
+  border-radius: var(--border-radius);
   width: 100%;
   animation-delay: -1.25rem;
 }
@@ -351,7 +352,7 @@ select option {
 ::-webkit-scrollbar-track {
   background-color: transparent;
   background-clip: content-box;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-strong);
   border: 0.25rem solid transparent;
 }
 
@@ -359,7 +360,7 @@ select option {
   background-color: transparent;
   background-clip: content-box;
   border: 0.25rem solid transparent;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-strong);
 }
 
 :hover::-webkit-scrollbar-thumb,

@@ -28,7 +28,7 @@ defineExpose({ openMenu, closeMenu, isOpen });
 dialog {
   outline: none;
   border: 1px solid var(--color-ui-layer);
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-strong);
   position: relative;
 
   & .close-button {

@@ -355,7 +355,7 @@ async function deleteSkin() {
 .player {
   position: relative;
   overflow: clip;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-strong);
   box-shadow: 0 2px 4px var(--color-shadow-light);
   padding: 1rem;
 
@@ -378,7 +378,7 @@ async function deleteSkin() {
     font-family: var(--font-monospace);
     font-weight: bold;
     background-color: var(--color-ui-layer-light);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius);
     transform: translateX(-50%);
     user-select: text;
   }

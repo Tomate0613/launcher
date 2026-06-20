@@ -188,7 +188,7 @@ function scrollToBottom() {
   font-family: var(--font-monospace);
   white-space: pre;
   background-color: var(--color-ui-layer-dim-2);
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-strong);
   user-select: text;
 }
 

@@ -84,7 +84,7 @@ defineExpose({ openMenu, openAt, closeMenu });
   flex-direction: column;
   background-color: var(--color-context-menu);
   border: 2px solid var(--color-ui-layer-dim);
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-strong);
   box-shadow: 0 2px 6px 2px var(--color-shadow-strong);
   z-index: 10;
 

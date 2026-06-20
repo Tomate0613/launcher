@@ -179,7 +179,7 @@ function accountTypeString(accountType: AccountType) {
   text-decoration: none;
   text-transform: uppercase;
   color: var(--color-text);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
   transition: scale 200ms;
 
   &::before {
@@ -230,7 +230,7 @@ function accountTypeString(accountType: AccountType) {
   gap: 1rem;
   align-items: center;
   flex-grow: 1;
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
 
   &:focus-visible {
     outline: 2px solid var(--color-accent);

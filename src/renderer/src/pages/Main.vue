@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 .progress {
   height: 0;
   background-color: var(--color-green);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
   transition: height 200ms;
 
   &.loading {
