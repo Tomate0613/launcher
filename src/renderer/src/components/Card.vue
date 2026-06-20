@@ -81,7 +81,7 @@ const slots = useSlots();
 .card {
   padding: 0.5rem;
   background-color: var(--color-ui-layer-dim);
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-strong);
   display: flex;
   gap: 0.5rem;
   position: relative;
@@ -91,7 +91,7 @@ const slots = useSlots();
     width: 4rem;
     height: 4rem;
 
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius);
     box-shadow: 0 2px 8px var(--color-shadow-strong);
     object-fit: cover;
 
@@ -122,7 +122,7 @@ const slots = useSlots();
       width: 2rem;
       height: 2rem;
       padding: 0.25rem;
-      border-radius: 0.5rem;
+      border-radius: var(--border-radius-strong);
     }
 
     & .context-menu-button {

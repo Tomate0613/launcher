@@ -48,11 +48,11 @@ defineProps<{
   padding: 0.5rem;
 
   position: relative;
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
 }
 
 .rounded {
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
 }
 
 .content-item-info {

@@ -28,15 +28,15 @@
 
   &:first-of-type {
     margin-top: 0.5rem;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
+    border-top-left-radius: var(--border-radius-strong);
+    border-top-right-radius: var(--border-radius-strong);
     clip-path: inset(-1rem -1rem 0 -1rem);
   }
 
   &:last-of-type {
     border: none;
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
+    border-bottom-left-radius: var(--border-radius-strong);
+    border-bottom-right-radius: var(--border-radius-strong);
     clip-path: inset(0 -1rem -1rem -1rem);
   }
 

@@ -48,7 +48,7 @@ const TRANSPARENT_THEME_CSS = css`
   }
 
   .content-item-card {
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-strong);
   }
 
   .context-menu {
