@@ -17,6 +17,7 @@ const { settings } = await useAppState();
 const setMinecraftDefaultsPopup = useTemplateRef(
   'set-minecraft-defaults-popup',
 );
+const storagePopup = useTemplateRef('storage-popup');
 
 const curseforgeTokenPopup = useTemplateRef('curseforge-token-popup');
 
@@ -42,6 +43,14 @@ async function applyCurseforgeApiKey() {
   await window.api.invoke('setCurseforgeToken', cfKey.value);
   curseforgeTokenPopup.value?.closeMenu();
   tokens.value = await window.api.invoke('getTokens');
+}
+
+function validateStore() {
+  return window.api.invoke('validateStore');
+}
+
+function gcStore() {
+  return window.api.invoke('gcStore');
 }
 
 watchEffect(() => {
@@ -174,7 +183,7 @@ watchEffect(() => {
 
         <label class="settings-option settings-option-button">
           Storage
-          <button disabled>
+          <button @click="storagePopup?.openMenu()">
             <Icon :path="mdiArrowRight" />
           </button>
         </label>
@@ -229,6 +238,19 @@ watchEffect(() => {
     <hr />
     <button @click="applyCurseforgeApiKey">Done</button>
   </Popup>
+
+  <Popup ref="storage-popup" class="storage-popup">
+    <h2>Storage</h2>
+    <div class="contents">
+      <!-- <div> -->
+      <!-- </div> -->
+
+      <div class="buttons">
+        <button @click="validateStore()">Validate</button>
+        <button @click="gcStore()">Collect Garbage</button>
+      </div>
+    </div>
+  </Popup>
 </template>
 
 <style scoped>
@@ -242,6 +264,20 @@ watchEffect(() => {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.storage-popup {
+  & .contents {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    & .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+  }
 }
 
 .curseforge-token-popup {
