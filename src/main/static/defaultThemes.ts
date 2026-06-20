@@ -56,6 +56,21 @@ const TRANSPARENT_THEME_CSS = css`
   }
 `;
 
+const BLOCK_THEME_CSS = css`
+  :root {
+    --border-radius: 0;
+    --border-radius-strong: 0;
+  }
+
+  .toggle {
+    border-radius: 0;
+
+    &::before {
+      border-radius: 0;
+    }
+  }
+`;
+
 type ThemeManifest = {
   name: string;
 };
@@ -79,6 +94,7 @@ async function writeTheme(
 
 export async function writeDefaultThemes() {
   const lightThemePath = path.join(themesPath, 'light');
+  const blockThemePath = path.join(themesPath, 'block');
   const transparentThemePath = path.join(themesPath, 'transparent');
 
   await writeTheme(lightThemePath, LIGHT_THEME_CSS, {
@@ -86,5 +102,8 @@ export async function writeDefaultThemes() {
   });
   await writeTheme(transparentThemePath, TRANSPARENT_THEME_CSS, {
     name: 'Transparent',
+  });
+  await writeTheme(blockThemePath, BLOCK_THEME_CSS, {
+    name: 'Block',
   });
 }
