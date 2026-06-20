@@ -43,6 +43,7 @@ import { applyDefaults } from '../common/utils';
 import { error, FrontendError, ProviderError } from './error';
 import { LaunchOptions } from 'tomate-launcher-core';
 import { tomateMods } from './data/content/lib';
+import { gcStore, validateStore } from './data/content/store';
 
 const logger = log('api');
 
@@ -370,6 +371,9 @@ export const routes = {
     return getModpack(modpackId).createDefault(file);
   },
   clearDefaultFile,
+
+  validateStore,
+  gcStore,
 } satisfies Router;
 
 export function invoke(route: string, ...args: unknown[]) {

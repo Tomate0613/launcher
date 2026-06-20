@@ -6,25 +6,28 @@ import crypto from 'node:crypto';
 import { getSettings } from '../../data';
 
 const logger = log('content-store');
-const locks: Map<string, Promise<void>> = new Map();
+const locks: Map<string, Promise<unknown>> = new Map();
 
 async function getHash(filePath: string) {
   const file = await fs.readFile(filePath);
   return crypto.createHash('sha1').update(file).digest('hex');
 }
 
-async function locked(key: string, func: () => Promise<void>) {
+async function locked<T>(key: string, func: () => Promise<T>) {
   const lock = locks.get(key);
   if (lock) {
     await lock;
   }
 
   const promise = (async () => {
+    let value: T;
     try {
-      await func();
+      value = await func();
     } finally {
       locks.delete(key);
     }
+
+    return value;
   })();
 
   locks.set(key, promise);
@@ -96,12 +99,46 @@ export async function gcStore() {
   }
 }
 
+export async function validateStore() {
+  logger.log('Validating store');
+  const storeItems = await fs.readdir(storePath);
+
+  const count = (
+    await Promise.all(
+      storeItems.map(async (storeItem) => {
+        const storeItemPath = path.join(storePath, storeItem);
+
+        return await locked(storeItem, async () => {
+          const sha1 = await getHash(storeItemPath);
+
+          if (sha1 !== storeItem) {
+            logger.log(
+              'Broken store file',
+              storeItem,
+              'should have hash',
+              sha1,
+            );
+            return 1;
+          }
+
+          return 0;
+        });
+      }),
+    )
+  ).reduce<number>((a, b) => a + b, 0);
+
+  logger.log('Validated store,', count, 'broken files found');
+}
+
 const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 export async function storeSchedules() {
   const now = Date.now();
 
-  if (now - getSettings().storeGcLastRunDate > ONE_WEEK && getSettings().store.gcSchedule === 'weekly') {
+  if (
+    now - getSettings().storeGcLastRunDate > ONE_WEEK &&
+    getSettings().store.gcSchedule === 'weekly'
+  ) {
     await gcStore();
   }
 }
