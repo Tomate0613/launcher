@@ -336,7 +336,7 @@ watch(installedSearchQuery, (q) => {
         <input
           type="search"
           v-model="installedSearchQuery"
-          :placeholder="`Search ${contentType}`"
+          :placeholder="`Search installed ${contentType}`"
         />
         <DialogButton>
           <Icon :path="mdiFilter" />
