@@ -39,6 +39,10 @@ export async function getThemes() {
   return (
     await Promise.all(
       themes.map(async (theme) => {
+        if (theme.startsWith('.')) {
+          return null;
+        }
+
         try {
           const data = JSON.parse(
             await fs.readFile(
