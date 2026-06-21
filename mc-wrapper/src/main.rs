@@ -1,15 +1,18 @@
 use clap::Arg;
+
 use interprocess::TryClone;
 use interprocess::local_socket::{GenericFilePath, ListenerOptions, prelude::*};
-use interprocess::os::unix::local_socket::ListenerOptionsExt;
-use serde::Serialize;
-use std::io::{BufRead, BufReader, Write};
 
-use std::process::{Command, Stdio};
-use std::thread::{self};
+#[cfg(unix)]
+use interprocess::os::unix::local_socket::ListenerOptionsExt;
+
+use serde::Serialize;
 
 use std::collections::VecDeque;
+use std::io::{BufRead, BufReader, Write};
+use std::process::{Command, Stdio};
 use std::sync::{Arc, Mutex};
+use std::thread::{self};
 
 #[derive(Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -130,8 +133,7 @@ fn main() {
         },
     );
 
-    create_socket(shared_buffer, shared_stream, instance_id)
-        .expect("Failed to create socket");
+    create_socket(shared_buffer, shared_stream, instance_id).expect("Failed to create socket");
 }
 
 fn create_socket(
@@ -154,12 +156,19 @@ fn create_socket(
 
     let name = pipe_name.to_fs_name::<GenericFilePath>()?;
 
-    let listener = ListenerOptions::new()
-        .name(name)
-        .reclaim_name(true)
-        .try_overwrite(true)
-        .mode(0o600)
-        .create_sync()?;
+    let listener = {
+        let mut b = ListenerOptions::new()
+            .name(name)
+            .reclaim_name(true)
+            .try_overwrite(true);
+
+        #[cfg(unix)]
+        {
+            b = b.mode(0o600);
+        }
+
+        b.create_sync()?
+    };
 
     loop {
         println!("Waiting for connection...");
