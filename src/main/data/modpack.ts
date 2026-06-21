@@ -12,7 +12,7 @@ import {
   stashesPath,
 } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
-import TomateLoaders, { type LoaderId, ModdedLoaderId } from 'tomate-loaders';
+import { liner, loader, type LoaderId, ModdedLoaderId } from 'tomate-loaders';
 import { randomUUID } from 'node:crypto';
 import {
   LaunchOptions,
@@ -345,7 +345,7 @@ export class Modpack extends Serializable implements ModpackData {
 
   async launcher() {
     this.logger.log('Getting launch config');
-    const modLoader = TomateLoaders.loader(this.loader.id);
+    const modLoader = loader(this.loader.id);
 
     try {
       this.launchConfig = await modLoader.getMCLCLaunchConfig({
@@ -472,27 +472,31 @@ export class Modpack extends Serializable implements ModpackData {
       const javaPath = await this.javaPath(launcher);
 
       this.launcherEvents(launcher, ctx);
-      await this.spawn(launcher, {
-        authorization: auth as never,
-        javaPath,
-        memory: {
-          min: `${
-            this.modpackOptions?.minRam ??
-            getSettings().getModpackDefaultOption('minRam')
-          }M`,
-          max: `${
-            this.modpackOptions?.maxRam ??
-            getSettings().getModpackDefaultOption('maxRam')
-          }M`,
+      await this.spawn(
+        launcher,
+        {
+          authorization: auth as never,
+          javaPath,
+          memory: {
+            min: `${
+              this.modpackOptions?.minRam ??
+              getSettings().getModpackDefaultOption('minRam')
+            }M`,
+            max: `${
+              this.modpackOptions?.maxRam ??
+              getSettings().getModpackDefaultOption('maxRam')
+            }M`,
+          },
+          customLaunchArgs:
+            this.modpackOptions?.customLaunchArgs ??
+            getSettings().getModpackDefaultOption('customLaunchArgs'),
+          customJvmArgs:
+            this.modpackOptions?.customJvmArgs ??
+            getSettings().getModpackDefaultOption('customJvmArgs'),
+          quickPlay,
         },
-        customLaunchArgs:
-          this.modpackOptions?.customLaunchArgs ??
-          getSettings().getModpackDefaultOption('customLaunchArgs'),
-        customJvmArgs:
-          this.modpackOptions?.customJvmArgs ??
-          getSettings().getModpackDefaultOption('customJvmArgs'),
-        quickPlay,
-      }, ctx);
+        ctx,
+      );
 
       return launcher;
     } catch (e) {
@@ -541,7 +545,7 @@ export class Modpack extends Serializable implements ModpackData {
 
     launcher.on(
       'data',
-      TomateLoaders.liner((data) => {
+      liner((data) => {
         if (data.includes('Reloading ResourceManager')) {
           ctx.done();
         }
@@ -552,7 +556,7 @@ export class Modpack extends Serializable implements ModpackData {
 
     launcher.on(
       'data-error',
-      TomateLoaders.liner((data) => {
+      liner((data) => {
         this.logger.mcLogError(data);
       }),
     );
