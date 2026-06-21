@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { hideBin } from 'yargs/helpers';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
 import icon from '../../assets/icon.png?asset';
 import { getSettings, loadData } from './data';
@@ -15,6 +15,10 @@ import './protocol';
 import { handleProtocolUrl, registerProtocolHandler } from './protocol';
 import { openInBrowser } from './utils';
 import { storeSchedules } from './data/content/store';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const logger = log('main');
 

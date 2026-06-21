@@ -9,12 +9,13 @@ files:
   - "LICENSE"
   - "package.json"
   - "pnpm-workspace.yaml"
+  - "!node_modules/**"
 extraResources:
   - from: "extra-binaries/"
     to: "bin"
 asarUnpack:
   # - assets/**
-  - "**/*.{node,dll}"
+  # - "**/*.{node,dll}"
 win:
   executableName: tomate-launcher
 nsis:
@@ -33,7 +34,6 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
     - flatpak
     - deb
   maintainer: doublekekse.dev

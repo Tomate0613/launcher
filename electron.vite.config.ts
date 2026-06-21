@@ -21,12 +21,12 @@ export default defineConfig({
       }),
     ],
     build: {
-      externalizeDeps: true,
+      externalizeDeps: false,
     },
   },
   preload: {
     build: {
-      externalizeDeps: true,
+      externalizeDeps: false,
     },
   },
   renderer: {
