@@ -1,0 +1,62 @@
+name: "build project"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: setup node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24.15.0
+
+    - name: setup pnpm
+      uses: pnpm/action-setup@v5
+      with:
+        version: 11.5.1
+        run_install: false
+
+    - name: cache mc-wrapper
+      uses: actions/cache@v5
+      id: mc-wrapper-cache
+      with:
+        path: extra-binaries
+        key: mc-wrapper-${{ runner.os }}-${{ hashFiles('extra-binaries/**') }}
+
+    - name: install dependencies
+      run: pnpm i --frozen-lockfile
+      shell: bash
+
+    - name: setup rust
+      if: steps.mc-wrapper-cache.outputs.cache-hit != 'true'
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: build mc-wrapper
+      if: steps.mc-wrapper-cache.outputs.cache-hit != 'true'
+      run: pnpm build:wrapper
+      shell: bash
+
+    - name: build windows
+      if: runner.os == 'Windows'
+      run: pnpm build:win
+      shell: bash
+
+    - name: setup flatpak
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y flatpak flatpak-builder
+      shell: bash
+
+    - name: setup flatpak runtime
+      if: runner.os == 'Linux'
+      run: |
+        flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+        flatpak --user install -y flathub org.freedesktop.Platform//25.08
+        flatpak --user install -y flathub org.freedesktop.Sdk//25.08
+      shell: bash
+
+    - name: build linux
+      if: runner.os == 'Linux'
+      run: pnpm build:linux
+      shell: bash
