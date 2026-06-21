@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+
+
+      - name: build project
+        uses: ./.github/actions/build
+
+
+      - name: upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: Dist-${{ runner.os }}
+          path: |
+            dist/**
+            extra-binaries/**
