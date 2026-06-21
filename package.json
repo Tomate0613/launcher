@@ -24,7 +24,7 @@
     "@vueuse/core": "^14.3.0",
     "adm-zip": "^0.5.17",
     "ansi-colors": "^4.1.3",
-    "axios": "^1.17.0",
+    "axios": "^1.18.0",
     "axios-retry": "^4.5.0",
     "configparser": "^0.3.10",
     "fs-extra": "^11.3.5",
@@ -37,25 +37,25 @@
     "tomate-launcher-core": "github:Tomate0613/launcher-core",
     "tomate-loaders": "github:Tomate0613/tomate-loaders",
     "tomate-mods": "github:Tomate0613/tomate-mods",
-    "vue": "^3.5.35",
+    "vue": "^3.5.38",
     "vue-router": "^5.1.0",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",
-    "@swc/core": "^1.15.40",
+    "@swc/core": "^1.15.41",
     "@types/adm-zip": "^0.5.8",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^25.9.2",
+    "@types/node": "^26.0.0",
     "@types/yargs": "^17.0.35",
     "@vitejs/plugin-vue": "^6.0.7",
     "autoprefixer": "^10.5.0",
     "dotenv": "^17.4.2",
-    "electron": "^42.3.3",
-    "electron-builder": "^26.15.2",
+    "electron": "^42.4.1",
+    "electron-builder": "^26.15.3",
     "electron-vite": "6.0.0-beta.1",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
-    "vue-tsc": "^3.3.4"
+    "vue-tsc": "^3.3.5"
   }
 }
