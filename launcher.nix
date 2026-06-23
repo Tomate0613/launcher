@@ -88,7 +88,7 @@ pkgs.mkPnpmPackage {
       --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
       --set TOMATE_LAUNCHER_JDKS ${lib.makeBinPath jdks} \
       --set ELECTRON_FORCE_IS_PACKAGED=1 \
-      --prefix PATH ${
+      --prefix PATH:${
         lib.makeBinPath (
           with pkgs;
           [
