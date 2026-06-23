@@ -51,6 +51,7 @@ export const downloadPath = path.join(basePath, 'java/');
 export const defaultsPath = path.join(basePath, 'defaults/');
 export const themesPath = path.join(basePath, 'themes/');
 export const screenshotsPath = path.join(basePath, 'screenshots/');
+export const sandboxPath = path.join(basePath, 'sandbox/');
 export const accountsPath = path.join(basePath, 'accounts.json');
 export const settingsPath = path.join(basePath, 'settings.json');
 export const tokensPath = path.join(basePath, 'tokens.json');

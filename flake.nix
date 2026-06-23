@@ -66,6 +66,8 @@
               pnpm
               jdk21
               jdk25
+              bubblewrap
+              xdg-dbus-proxy
 
               pciutils
               xrandr
@@ -79,8 +81,16 @@
               vue-language-server
             ];
 
+            buildInputs = with pkgs; [
+              pkg-config
+              gtk4
+              json-glib
+              libseccomp
+            ];
+
             env = {
-              PKG_CONFIG_PATH = "${pkgs.gtk4}/lib/pkgconfig:${pkgs.json-glib}/lib/pkgconfig";
+              # PKG_CONFIG_PATH = "${pkgs.gtk4}/lib/pkgconfig:${pkgs.json-glib}/lib/pkgconfig:${pkgs.}";
+
               __GL_THREADED_OPTIMIZATIONS = 0;
               LD_LIBRARY_PATH = lib.makeLibraryPath (
                 with pkgs;
@@ -91,6 +101,7 @@
                   nss
                   nspr
                   dbus
+                  libseccomp
                   alsa-lib
                   atk
                   cups
@@ -150,35 +161,17 @@
 
               buildInputs = with pkgs; [
                 dbus
+                libseccomp
               ];
 
               src = ./mc-wrapper;
 
               cargoLock = {
                 lockFile = ./mc-wrapper/Cargo.lock;
-              };
-            });
 
-          tray-test =
-            let
-              cargoToml = lib.fromTOML (lib.readFile ./tray-test/Cargo.toml);
-            in
-            pkgs.rustPlatform.buildRustPackage (finalAttrs: {
-              pname = cargoToml.package.name;
-              version = cargoToml.package.version;
-
-              nativeBuildInputs = with pkgs; [
-                pkg-config
-              ];
-
-              buildInputs = with pkgs; [
-                dbus
-              ];
-
-              src = ./tray-test;
-
-              cargoLock = {
-                lockFile = ./tray-test/Cargo.lock;
+                outputHashes = {
+                  "command-5.2.2" = "sha256-jUvCrz8srRRlXcrFWQ5Kx8V6KLc8cozZg+QYrcnMOUE=";
+                };
               };
             });
         }
