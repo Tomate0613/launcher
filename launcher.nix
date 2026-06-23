@@ -82,12 +82,6 @@ pkgs.mkPnpmPackage {
 
   postFixup = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
     makeWrapper ${pkgs.electron}/bin/electron $out/bin/tomate-launcher \
-      --add-flags $out/opt/TomateLauncher/app.asar \
-      --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
-      --set MC_WRAPPER_PATH ${mc-wrapper}/bin/${mc-wrapper.pname} \
-      --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
-      --set TOMATE_LAUNCHER_JDKS ${lib.makeBinPath jdks} \
-      --set ELECTRON_FORCE_IS_PACKAGED=1 \
       --prefix PATH : ${
         lib.makeBinPath (
           with pkgs;
@@ -96,6 +90,12 @@ pkgs.mkPnpmPackage {
             xdg-dbus-proxy
           ]
         )
-      }
+      } \
+      --add-flags $out/opt/TomateLauncher/app.asar \
+      --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
+      --set MC_WRAPPER_PATH ${mc-wrapper}/bin/${mc-wrapper.pname} \
+      --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
+      --set TOMATE_LAUNCHER_JDKS ${lib.makeBinPath jdks} \
+      --set ELECTRON_FORCE_IS_PACKAGED=1 \
   '';
 }
