@@ -2,15 +2,21 @@ import net from 'node:net';
 import cp from 'node:child_process';
 import { log } from '../common/logging/log';
 import { randomUUID } from 'node:crypto';
-import { socketsStatePath } from './paths';
+import {
+  javaInstallationsPath,
+  minecraftRootPath,
+  sandboxPath,
+  socketsStatePath,
+} from './paths';
 import fs from 'node:fs/promises';
 import fsSync from 'node:fs';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
 import { runOnClose, withPlatformExtension } from './utils';
 import { is } from '@electron-toolkit/utils';
 import { Launcher, LaunchOptions } from 'tomate-launcher-core';
 import { ProcessContext } from './process';
 import { getSettings } from './data';
+import { fileURLToPath } from 'node:url';
 
 let socketsState: string[];
 
@@ -22,6 +28,9 @@ function getWrapperExecutable() {
   }
 
   if (is.dev) {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+
     return path.join(
       __dirname,
       '../../extra-binaries',
@@ -108,9 +117,18 @@ export async function spawnWrapper(
     launchOptions.javaPath,
     '--game-args',
     JSON.stringify(await launcher.getLaunchArguments(launchOptions)),
-    '--game-cwd',
+    '--game-dir',
     launcher.options.root,
+    '--minecraft-dir',
+    minecraftRootPath,
+    '--sandbox-dir',
+    sandboxPath,
   ];
+
+  const jdksOverriden = !!process.env.TOMATE_LAUNCHER_JDKS;
+  if (!jdksOverriden) {
+    wrapperArgs.push('--launcher-java-dir', javaInstallationsPath);
+  }
 
   if (getSettings().wrapper.reopen) {
     wrapperArgs.push(
@@ -119,21 +137,22 @@ export async function spawnWrapper(
       '--launcher-args',
       JSON.stringify(process.argv.slice(1)),
     );
-  } else {
-    // TODO make optional
-    wrapperArgs.push('--launcher-args', '[]');
   }
 
   const wrapper = getWrapperExecutable();
 
+  // TODO
+  const wrapperDebug = false;
+
   const child = cp.spawn(wrapper, wrapperArgs, {
     detached: true,
-    // stdio: 'ignore',
-    stdio: 'pipe',
+    stdio: wrapperDebug ? 'pipe' : 'ignore',
   });
 
-  child.stdout.on('data', (m) => logger.log(m.toString('utf8')));
-  child.stderr.on('data', (m) => logger.error(m.toString('utf8')));
+  if (wrapperDebug) {
+    child.stdout?.on('data', (m) => logger.log(m.toString('utf8')));
+    child.stderr?.on('data', (m) => logger.error(m.toString('utf8')));
+  }
 
   child.on('exit', (code) => {
     logger.log('Wrapper exited', code);
@@ -143,7 +162,6 @@ export async function spawnWrapper(
   child.unref();
 
   logger.log(process.execPath, JSON.stringify(process.argv.slice(1)));
-  logger.log(child);
 
   socketsState.push(id);
 
