@@ -239,10 +239,11 @@ async fn spawn_game<F>(
     let sandbox_dir = sandbox_dir.and_then(|dir| dir.canonicalize().ok());
 
     println!("Spawning game");
+
     let mut c = PandoraCommand::new(executable.to_string());
     c.stdout(command::PandoraStdioReadMode::Pipe);
     c.stderr(command::PandoraStdioReadMode::Pipe);
-    c.current_dir(Path::new(&game_dir));
+    c.current_dir(&game_dir);
 
     for arg in arguments {
         c.arg(arg.to_string());
@@ -255,8 +256,8 @@ async fn spawn_game<F>(
         game_dir.join("shaderpacks").into(),
     ];
 
-    if let Some(dir) = &launcher_java_dir {
-        allow_read.push(Path::new(dir).canonicalize().unwrap().into());
+    if let Some(dir) = launcher_java_dir {
+        allow_read.push(dir.into());
     }
 
     let mut child = match sandbox_dir {
