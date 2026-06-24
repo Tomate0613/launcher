@@ -141,10 +141,10 @@ async fn main() {
     spawn_game(
         game_executable,
         game_args,
-        game_dir,
-        minecraft_dir,
-        launcher_java_dir.cloned(),
-        sandbox_dir,
+        Path::new(game_dir),
+        Path::new(minecraft_dir),
+        launcher_java_dir.map(Path::new),
+        Path::new(sandbox_dir),
         Arc::clone(&shared_stream),
         Arc::clone(&shared_buffer),
         move || {
@@ -224,42 +224,48 @@ fn create_socket(
 async fn spawn_game<F>(
     executable: &str,
     arguments: Vec<String>,
-    game_dir: &str,
-    minecraft_dir: &str,
-    launcher_java_dir: Option<String>,
-    sandbox_dir: &str,
+    game_dir: &Path,
+    minecraft_dir: &Path,
+    launcher_java_dir: Option<&Path>,
+    sandbox_dir: &Path,
     stream: Arc<Mutex<Option<LocalSocketStream>>>,
     shared_buffer: SharedBuffer,
     on_exit: F,
 ) where
     F: FnOnce() + Send + 'static,
 {
+    let game_dir = game_dir.canonicalize().unwrap();
+    let minecraft_dir = minecraft_dir.canonicalize().unwrap();
+    let launcher_java_dir = launcher_java_dir.and_then(|dir| dir.canonicalize().ok());
+    let sandbox_dir = sandbox_dir.canonicalize().unwrap();
+
     println!("Spawning game");
+
     let mut c = PandoraCommand::new(executable.to_string());
     c.stdout(command::PandoraStdioReadMode::Pipe);
     c.stderr(command::PandoraStdioReadMode::Pipe);
-    c.current_dir(Path::new(&game_dir));
+    c.current_dir(&game_dir);
 
     for arg in arguments {
         c.arg(arg.to_string());
     }
 
-    let mut allow_read = vec![Path::new(&minecraft_dir).canonicalize().unwrap().into()];
+    let mut allow_read: Vec<Arc<Path>> = vec![minecraft_dir.into()];
 
-    if let Some(dir) = &launcher_java_dir {
-        allow_read.push(Path::new(dir).canonicalize().unwrap().into());
+    if let Some(dir) = launcher_java_dir {
+        allow_read.push(dir.into());
     }
 
     let mut child = c
         .spawn_sandboxed(PandoraSandbox {
             allow_read,
-            allow_write: vec![Path::new(&game_dir).into()],
+            allow_write: vec![game_dir.into()],
             is_jvm: true,
             grant_network_access: true,
             #[cfg(target_os = "linux")]
-            sandbox_dir: Path::new(&sandbox_dir).into(),
+            sandbox_dir: sandbox_dir.into(),
             #[cfg(windows)]
-            name: Arc::from(OsStr::new("PandoraInstanceSandbox")),
+            name: Arc::from(OsStr::new("TomateLauncherInstanceSandbox")),
             #[cfg(windows)]
             description: Arc::from(OsStr::new(
                 "Sandbox for Minecraft instances run by Tomate Launcher",
