@@ -142,7 +142,7 @@ export async function spawnWrapper(
   const wrapper = getWrapperExecutable();
 
   // TODO
-  const wrapperDebug = false;
+  const wrapperDebug = true;
 
   const child = cp.spawn(wrapper, wrapperArgs, {
     detached: true,
