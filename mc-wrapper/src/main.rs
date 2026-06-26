@@ -1,5 +1,7 @@
 use clap::Arg;
 
+#[cfg(windows)]
+use command::PandoraArg;
 use command::{PandoraCommand, PandoraSandbox};
 use interprocess::TryClone;
 use interprocess::local_socket::{GenericFilePath, ListenerOptions, prelude::*};
@@ -11,6 +13,8 @@ use serde::Serialize;
 
 use core::panic;
 use std::collections::VecDeque;
+#[cfg(windows)]
+use std::ffi::OsStr;
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::Command;
