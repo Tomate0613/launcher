@@ -73,4 +73,5 @@ export function ensureAppDirectoriesExist() {
   ensureDirectoryExists(skinCachePath);
   ensureDirectoryExists(javaInstallationsPath);
   ensureDirectoryExists(screenshotsPath);
+  ensureDirectoryExists(sandboxPath);
 }
