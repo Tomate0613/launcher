@@ -709,7 +709,7 @@ export class Modpack extends Serializable implements ModpackData {
     this.logger.log('Started process', id);
     this.invalidate();
 
-    const ctx = new ProcessContext();
+    const ctx = new ProcessContext(id);
 
     ctx.on('progress', (progress) => {
       process.progress = progress;
