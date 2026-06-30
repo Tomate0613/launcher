@@ -29,7 +29,7 @@ type ProcessEvents = {
 export class ProcessContext extends EventEmitter<ProcessEvents> {
   private stopped = false;
 
-  constructor() {
+  constructor(private processName: string) {
     super();
 
     processes.push(this);
@@ -44,18 +44,28 @@ export class ProcessContext extends EventEmitter<ProcessEvents> {
   }
 
   private stop() {
-    if (this.stopped) return;
+    if (this.stopped) {
+      return;
+    }
 
     this.stopped = true;
     this.emit('stop');
   }
 
   done() {
+    if (this.stopped) {
+      return;
+    }
+
     this.emit('done');
     this.stop();
   }
 
   cancel() {
+    if (this.stopped) {
+      return;
+    }
+
     this.emit('cancel');
     this.stop();
   }
@@ -68,6 +78,10 @@ export class ProcessContext extends EventEmitter<ProcessEvents> {
     return new Promise<void>((resolve) => {
       this.once('stop', resolve);
     });
+  }
+
+  toString() {
+    return `Process ${this.processName} (${JSON.stringify(this)})`;
   }
 }
 
