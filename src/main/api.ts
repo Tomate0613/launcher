@@ -1,4 +1,4 @@
-import { app, ipcMain, shell } from 'electron';
+import { ipcMain, shell } from 'electron';
 import {
   LoaderInfo,
   Modpack,
