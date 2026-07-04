@@ -121,8 +121,6 @@ export async function spawnWrapper(
     launcher.options.root,
     '--minecraft-dir',
     minecraftRootPath,
-    '--sandbox-dir',
-    sandboxPath,
   ];
 
   const jdksOverriden = !!process.env.TOMATE_LAUNCHER_JDKS;
@@ -137,6 +135,10 @@ export async function spawnWrapper(
       '--launcher-args',
       JSON.stringify(process.argv.slice(1)),
     );
+  }
+
+  if (getSettings().wrapper.sandbox) {
+    wrapperArgs.push('--sandbox-dir', sandboxPath);
   }
 
   const wrapper = getWrapperExecutable();

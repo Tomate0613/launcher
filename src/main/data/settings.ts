@@ -31,6 +31,7 @@ export type WrapperOptions = {
   enabled: boolean;
   reopen: boolean;
   autoClose: boolean;
+  sandbox: boolean;
 };
 
 export type StoreOptions = {
@@ -66,7 +67,12 @@ export class Settings extends Serializable {
   @SerializableProperty
   hideFrame: boolean = false;
   @SerializableProperty
-  wrapper: WrapperOptions = { enabled: true, reopen: true, autoClose: false };
+  wrapper: WrapperOptions = {
+    enabled: true,
+    reopen: true,
+    autoClose: false,
+    sandbox: true,
+  };
   @SerializableProperty
   store: StoreOptions = {
     gcSchedule: 'weekly',
@@ -77,7 +83,12 @@ export class Settings extends Serializable {
   _constructor(version: string): void {
     switch (version) {
       case '1':
-        this.wrapper = { enabled: true, reopen: true, autoClose: false };
+        this.wrapper = {
+          enabled: true,
+          reopen: true,
+          autoClose: false,
+          sandbox: true,
+        };
       case '2':
         this.store = { gcSchedule: 'weekly' };
         this.storeGcLastRunDate = Date.now();

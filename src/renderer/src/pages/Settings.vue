@@ -151,6 +151,20 @@ watchEffect(() => {
           </div>
           <Toggle v-model="settings.wrapper.autoClose" :disabled="!settings.wrapper.enabled" />
         </label>
+
+        <label
+          class="settings-option"
+          @contextmenu="settings.wrapper.sandbox = true"
+          :data-changed="!settings.wrapper.sandbox"
+        >
+          <div>
+            Sandbox
+            <div class="settings-description">
+              Runs modpacks in a more secure environment
+            </div>
+          </div>
+          <Toggle v-model="settings.wrapper.sandbox" :disabled="!settings.wrapper.enabled" />
+        </label>
       </section>
 
       <section>
