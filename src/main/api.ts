@@ -1,4 +1,4 @@
-import { ipcMain, shell } from 'electron';
+import { app, ipcMain, shell } from 'electron';
 import {
   LoaderInfo,
   Modpack,
@@ -29,6 +29,7 @@ import {
   copyScreenshot,
   deleteSkin,
   getDefaultFiles,
+  getJavaPatchnotes,
   getScreenshots,
   getServers,
   getSkins,
@@ -374,6 +375,11 @@ export const routes = {
 
   validateStore,
   gcStore,
+
+  getJavaPatchnotes,
+  viewJavaPatchnoteEntry(version: string) {
+    shell.openExternal(`https://quiltmc.org/en/mc-patchnotes/#${version}`);
+  }
 } satisfies Router;
 
 export function invoke(route: string, ...args: unknown[]) {

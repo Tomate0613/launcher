@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, watchEffect } from 'vue';
+import { capitalize, ref, reactive, watch, useTemplateRef, watchEffect } from 'vue';
 import { usePageFocus } from '../composables/pageFocus';
 import { mdiArrowRight, mdiDeleteOutline, mdiFolder, mdiTuneVariant } from '@mdi/js';
 import Versions from '../components/Versions.vue';
@@ -18,8 +18,26 @@ const setMinecraftDefaultsPopup = useTemplateRef(
   'set-minecraft-defaults-popup',
 );
 const storagePopup = useTemplateRef('storage-popup');
-
 const curseforgeTokenPopup = useTemplateRef('curseforge-token-popup');
+const sidebarPopup = useTemplateRef('sidebar-popup');
+
+const sidebarTabs = [
+  "instances", "worlds", "screenshots", "servers", "news", "explore", "accounts", "console"
+];
+
+let sidebar = reactive(Object.fromEntries(sidebarTabs.map(tab => [tab, !settings.disabledTabs.includes(tab)])));
+
+watch(sidebar, () => {
+  const disabledTabs: string = [];
+
+  for(const entry of Object.entries(sidebar)) {
+    if(!entry[1]) {
+      disabledTabs.push(entry[0]);
+    }
+  }
+
+  settings.disabledTabs = disabledTabs;
+});
 
 const defaultGeneralModpackSettings = await window.api.invoke(
   'getDefaultGeneralModpackOptions',
@@ -103,6 +121,17 @@ watchEffect(() => {
             <div class="settings-description">Requires a restart to apply</div>
           </div>
           <Toggle v-model="settings.hideFrame" />
+        </label>
+        <label
+          class="settings-option settings-option-button"
+          @contextmenu="settings.hideFrame = false"
+          :data-changed="settings.hideFrame"
+        >
+          Customize Sidebar
+
+          <button @click="sidebarPopup?.openMenu()">
+            <Icon :path="mdiArrowRight" />
+          </button>
         </label>
       </section>
 
@@ -250,6 +279,20 @@ watchEffect(() => {
         <button @click="gcStore()">Collect Garbage</button>
       </div>
     </div>
+  </Popup>
+
+  <Popup ref="sidebar-popup">
+    <section class="settings-section">
+      <h2>Customize Sidebar</h2>
+      <label
+        class="settings-option"
+        v-for="tab in sidebarTabs"
+      >
+        Show {{capitalize(tab)}}
+        <Toggle v-model="sidebar[tab]" />
+      </label>
+    </section>
+
   </Popup>
 </template>
 

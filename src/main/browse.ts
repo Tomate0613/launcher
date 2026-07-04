@@ -12,6 +12,7 @@ import { css, image, imageOrDelete, pathFileBuffer } from './utils';
 import { clipboard, nativeImage, shell } from 'electron';
 import { lookup } from './server';
 import { getModpack, getVisibleModpacks, modpacks } from './data';
+import { FrontendError } from './error';
 
 const logger = log('browse');
 
@@ -277,4 +278,37 @@ export function getDefaultFiles() {
 
 export function clearDefaultFile(file: string) {
   return fs.rm(path.join(defaultsPath, file), { recursive: true });
+}
+
+export type JavaPatchnotesEntry = {
+  title: string;
+  version: string;
+  type: 'snapshot' | string;
+  image: {
+    url: string;
+    title: string;
+  };
+  contentPath: string;
+  id: string;
+  date: string;
+  shortText: string;
+  needsTranslation: boolean;
+};
+
+export type JavaPatchnotes = {
+  version: 1;
+  entries: JavaPatchnotesEntry[];
+};
+
+export async function getJavaPatchnotes(): Promise<JavaPatchnotes> {
+  const res = await fetch(
+    'https://launchercontent.mojang.com/v2/javaPatchNotes.json',
+  );
+  const patchNotes = await res.json();
+
+  if (patchNotes.version !== 1) {
+    throw new FrontendError('Unsupported patchnotes format');
+  }
+
+  return patchNotes;
 }

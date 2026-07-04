@@ -10,6 +10,7 @@ import {
   mdiEarthBox,
   mdiImage,
   mdiMinecraft,
+  mdiNewspaper,
   mdiServer,
 } from '@mdi/js';
 import steve from '../assets/steve.png';
@@ -19,6 +20,7 @@ import microsoftLogo from '../assets/microsoft.svg';
 import type { AccountType } from '../../../main/data/account';
 
 const appState = await useAppState();
+const disabledTabs = computed(() => appState.settings.disabledTabs);
 const profileLoaded = computed(
   () => appState.account?.profile || appState.account?.type !== 'msa',
 );
@@ -65,31 +67,75 @@ function accountTypeString(accountType: AccountType) {
 
 <template>
   <div class="sidebar">
-    <RouterLink class="sidebar-item" to="/" draggable="false">
+    <RouterLink
+      class="sidebar-item"
+      to="/"
+      draggable="false"
+      v-if="!disabledTabs.includes('instances')"
+    >
       <Icon :path="mdiMinecraft" />
       Play
     </RouterLink>
-    <RouterLink class="sidebar-item" to="/worlds" draggable="false">
+    <RouterLink
+      class="sidebar-item"
+      to="/worlds"
+      draggable="false"
+      v-if="!disabledTabs.includes('worlds')"
+    >
       <Icon :path="mdiEarthBox" />
       Worlds
     </RouterLink>
-    <RouterLink class="sidebar-item" to="/screenshots" draggable="false">
+    <RouterLink
+      class="sidebar-item"
+      to="/screenshots"
+      draggable="false"
+      v-if="!disabledTabs.includes('screenshots')"
+    >
       <Icon :path="mdiImage" />
       Screenshots
     </RouterLink>
-    <RouterLink class="sidebar-item" to="/servers" draggable="false">
+    <RouterLink
+      class="sidebar-item"
+      to="/servers"
+      draggable="false"
+      v-if="!disabledTabs.includes('servers')"
+    >
       <Icon :path="mdiServer" />
       Servers
     </RouterLink>
-    <RouterLink class="sidebar-item" to="/install" draggable="false">
+    <RouterLink
+      class="sidebar-item"
+      to="/news"
+      draggable="false"
+      v-if="!disabledTabs.includes('news')"
+    >
+      <Icon :path="mdiNewspaper" />
+      News
+    </RouterLink>
+    <RouterLink
+      class="sidebar-item"
+      to="/install"
+      draggable="false"
+      v-if="!disabledTabs.includes('explore')"
+    >
       <Icon :path="mdiDownload" />
       Explore
     </RouterLink>
-    <RouterLink class="sidebar-item" to="/accounts" draggable="false">
+    <RouterLink
+      class="sidebar-item"
+      to="/accounts"
+      draggable="false"
+      v-if="!disabledTabs.includes('accounts')"
+    >
       <Icon :path="mdiAccount" />
       Accounts
     </RouterLink>
-    <RouterLink class="sidebar-item" to="/console" draggable="false">
+    <RouterLink
+      class="sidebar-item"
+      to="/console"
+      draggable="false"
+      v-if="!disabledTabs.includes('console')"
+    >
       <Icon :path="mdiConsoleLine" />
       Console
     </RouterLink>
