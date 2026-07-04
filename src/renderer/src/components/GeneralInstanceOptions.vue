@@ -120,7 +120,7 @@ function isChanged(key: keyof GeneralModpackOptions) {
       @contextmenu="reset('customJvmArgs')"
       :data-changed="isChanged('customJvmArgs')"
     >
-      <div>Custom Jvm Args</div>
+      <div>Custom JVM Args</div>
       <button @click="customJvmArgsPopup?.openMenu()">
         <span class="ellipsis">
           {{ settings.customJvmArgs.join(' ') }}
