@@ -30,6 +30,13 @@ runs:
       if: steps.mc-wrapper-cache.outputs.cache-hit != 'true'
       uses: dtolnay/rust-toolchain@stable
 
+    - name: setup build dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y flatpak flatpak-builder libseccomp-dev
+      shell: bash
+
     - name: build mc-wrapper
       if: steps.mc-wrapper-cache.outputs.cache-hit != 'true'
       run: pnpm build:wrapper
@@ -38,13 +45,6 @@ runs:
     - name: build windows
       if: runner.os == 'Windows'
       run: pnpm build:win
-      shell: bash
-
-    - name: setup flatpak
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y flatpak flatpak-builder
       shell: bash
 
     - name: setup flatpak runtime
