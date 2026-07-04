@@ -112,12 +112,7 @@ async fn main() {
                 .long("launcher-java-dir")
                 .num_args(1),
         )
-        .arg(
-            Arg::new("sandbox-dir")
-                .long("sandbox-dir")
-                .num_args(1)
-                .required(true),
-        )
+        .arg(Arg::new("sandbox-dir").long("sandbox-dir").num_args(1))
         .get_matches();
 
     let instance_id = matches.get_one::<String>("instance-id").unwrap();
@@ -137,7 +132,7 @@ async fn main() {
     let game_dir = matches.get_one::<String>("game-dir").unwrap();
     let minecraft_dir = matches.get_one::<String>("minecraft-dir").unwrap();
     let launcher_java_dir = matches.get_one::<String>("launcher-java-dir");
-    let sandbox_dir = matches.get_one::<String>("sandbox-dir").unwrap();
+    let sandbox_dir = matches.get_one::<String>("sandbox-dir");
 
     let shared_buffer: SharedBuffer = Arc::new(Mutex::new(VecDeque::with_capacity(MAX_LINES)));
     let shared_stream: SharedStream = Arc::new(Mutex::new(None));
@@ -145,10 +140,10 @@ async fn main() {
     spawn_game(
         game_executable,
         game_args,
-        game_dir,
-        minecraft_dir,
-        launcher_java_dir.cloned(),
-        sandbox_dir,
+        Path::new(game_dir),
+        Path::new(minecraft_dir),
+        launcher_java_dir.map(Path::new),
+        sandbox_dir.map(Path::new),
         Arc::clone(&shared_stream),
         Arc::clone(&shared_buffer),
         move || {
@@ -228,16 +223,21 @@ fn create_socket(
 async fn spawn_game<F>(
     executable: &str,
     arguments: Vec<String>,
-    game_dir: &str,
-    minecraft_dir: &str,
-    launcher_java_dir: Option<String>,
-    sandbox_dir: &str,
+    game_dir: &Path,
+    minecraft_dir: &Path,
+    launcher_java_dir: Option<&Path>,
+    sandbox_dir: Option<&Path>,
     stream: Arc<Mutex<Option<LocalSocketStream>>>,
     shared_buffer: SharedBuffer,
     on_exit: F,
 ) where
     F: FnOnce() + Send + 'static,
 {
+    let game_dir = game_dir.canonicalize().unwrap();
+    let minecraft_dir = minecraft_dir.canonicalize().unwrap();
+    let launcher_java_dir = launcher_java_dir.and_then(|dir| dir.canonicalize().ok());
+    let sandbox_dir = sandbox_dir.and_then(|dir| dir.canonicalize().ok());
+
     println!("Spawning game");
     let mut c = PandoraCommand::new(executable.to_string());
     c.stdout(command::PandoraStdioReadMode::Pipe);
@@ -254,30 +254,32 @@ async fn spawn_game<F>(
         allow_read.push(Path::new(dir).canonicalize().unwrap().into());
     }
 
-    let mut child = c
-        .spawn_sandboxed(PandoraSandbox {
-            allow_read,
-            allow_write: vec![Path::new(&game_dir).into()],
-            is_jvm: true,
-            grant_network_access: true,
-            #[cfg(target_os = "linux")]
-            sandbox_dir: Path::new(&sandbox_dir).into(),
-            #[cfg(windows)]
-            name: Arc::from(OsStr::new("PandoraInstanceSandbox")),
-            #[cfg(windows)]
-            description: Arc::from(OsStr::new(
-                "Sandbox for Minecraft instances run by Tomate Launcher",
-            )),
-            #[cfg(windows)]
-            self_elevate_for_acl_arg: Some(PandoraArg::from(OsStr::new(
-                "--internal-set-traverse-acls",
-            ))),
-            #[cfg(windows)]
-            grant_winsta_writeattributes: true,
-        })
-        // .spawn()
-        .await
-        .expect("Failed to spawn sandboxed");
+    let mut child = match sandbox_dir {
+        None => c.spawn().await.expect("Failed to spawn"),
+        Some(sandbox_dir) => c
+            .spawn_sandboxed(PandoraSandbox {
+                allow_read,
+                allow_write: vec![game_dir.into()],
+                is_jvm: true,
+                grant_network_access: true,
+                #[cfg(target_os = "linux")]
+                sandbox_dir: sandbox_dir.into(),
+                #[cfg(windows)]
+                name: Arc::from(OsStr::new("TomateLauncherInstanceSandbox")),
+                #[cfg(windows)]
+                description: Arc::from(OsStr::new(
+                    "Sandbox for Minecraft instances run by Tomate Launcher",
+                )),
+                #[cfg(windows)]
+                self_elevate_for_acl_arg: Some(PandoraArg::from(OsStr::new(
+                    "--internal-set-traverse-acls",
+                ))),
+                #[cfg(windows)]
+                grant_winsta_writeattributes: true,
+            })
+            .await
+            .expect("Failed to spawn sandboxed"),
+    };
 
     let stdout = child.stdout.take().expect("Failed to capture stdout");
     let stderr = child.stderr.take().expect("Failed to capture stderr");
