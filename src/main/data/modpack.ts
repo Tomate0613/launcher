@@ -388,6 +388,10 @@ export class Modpack extends Serializable implements ModpackData {
       this.gameVersion,
     );
 
+    const isForge = this.loader.id === 'forge' || this.loader.id === 'neoforge';
+    const requiresOwnLibraries =
+      isForge && getSettings().wrapper.enabled && getSettings().wrapper.sandbox;
+
     const launcher = new Launcher({
       ...this.launchConfig,
       root: this.dir,
@@ -398,7 +402,9 @@ export class Modpack extends Serializable implements ModpackData {
         : undefined,
 
       paths: {
-        libraryRoot: minecraftLibrariesPath,
+        libraryRoot: requiresOwnLibraries
+          ? paths.join(this.dir, 'libraries')
+          : minecraftLibrariesPath,
         assetRoot: minecraftAssetRootPath,
         versionRoot: minecraftVersionDirectoryPath,
       },
