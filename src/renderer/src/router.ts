@@ -10,6 +10,7 @@ import Screenshots from './pages/Screenshots.vue';
 import Explore from './pages/Explore.vue';
 import Worlds from './pages/Worlds.vue';
 import Servers from './pages/Servers.vue'
+import News from './pages/News.vue';
 
 export const router = createRouter({
   history: createWebHashHistory(),
@@ -23,6 +24,7 @@ export const router = createRouter({
         { path: 'screenshots', component: Screenshots },
         { path: 'worlds', component: Worlds },
         { path: 'servers', component: Servers },
+        { path: 'news', component: News },
         { path: 'accounts', component: Accounts },
         { path: 'console', component: Console },
         { path: 'settings', component: Settings },

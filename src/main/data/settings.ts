@@ -12,6 +12,7 @@ const frontendKeys = [
   'hideFrame',
   'wrapper',
   'store',
+  'disabledTabs',
 ] as const;
 
 export type SettingsFrontendData = {
@@ -50,7 +51,7 @@ export const defaultGeneralModpackOptions: GeneralModpackOptions = {
 };
 
 export class Settings extends Serializable {
-  __version = '3';
+  __version = '4';
   @SerializableProperty
   activeAccountId?: string;
   @SerializableProperty
@@ -79,6 +80,8 @@ export class Settings extends Serializable {
   };
   @SerializableProperty
   storeGcLastRunDate = Date.now();
+  @SerializableProperty
+  disabledTabs: string[] = ['news'];
 
   _constructor(version: string): void {
     switch (version) {
@@ -92,9 +95,11 @@ export class Settings extends Serializable {
       case '2':
         this.store = { gcSchedule: 'weekly' };
         this.storeGcLastRunDate = Date.now();
+      case '3':
+        this.disabledTabs = ['news'];
     }
 
-    this.__version = '3';
+    this.__version = '4';
   }
 
   getModpackDefaultOption<Key extends keyof GeneralModpackOptions>(key: Key) {
