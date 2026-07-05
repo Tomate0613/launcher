@@ -28,7 +28,7 @@ const sidebarTabs = [
 let sidebar = reactive(Object.fromEntries(sidebarTabs.map(tab => [tab, !settings.disabledTabs.includes(tab)])));
 
 watch(sidebar, () => {
-  const disabledTabs: string = [];
+  const disabledTabs: string[] = [];
 
   for(const entry of Object.entries(sidebar)) {
     if(!entry[1]) {
