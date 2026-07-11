@@ -96,6 +96,6 @@ pkgs.mkPnpmPackage {
       --set MC_WRAPPER_PATH ${mc-wrapper}/bin/${mc-wrapper.pname} \
       --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
       --set TOMATE_LAUNCHER_JDKS ${lib.makeBinPath jdks} \
-      --set ELECTRON_FORCE_IS_PACKAGED=1 \
+      --set ELECTRON_FORCE_IS_PACKAGED 1 \
   '';
 }
