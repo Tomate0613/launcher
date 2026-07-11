@@ -72,7 +72,7 @@ export class Settings extends Serializable {
     enabled: true,
     reopen: true,
     autoClose: false,
-    sandbox: true,
+    sandbox: false,
   };
   @SerializableProperty
   store: StoreOptions = {
@@ -90,13 +90,14 @@ export class Settings extends Serializable {
           enabled: true,
           reopen: true,
           autoClose: false,
-          sandbox: true,
+          sandbox: false,
         };
       case '2':
         this.store = { gcSchedule: 'weekly' };
         this.storeGcLastRunDate = Date.now();
       case '3':
         this.disabledTabs = ['news'];
+        this.wrapper.sandbox = false;
     }
 
     this.__version = '4';
