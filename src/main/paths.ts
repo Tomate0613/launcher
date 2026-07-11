@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import { is } from '@electron-toolkit/utils';
 import { ensureDirectoryExists } from './utils';
 
@@ -25,10 +26,10 @@ function getBaseDataPath() {
 
 const appData = getBaseDataPath();
 
-export const basePath = path.join(
+export const basePath = fs.realpathSync(path.join(
   appData,
   is.dev ? 'tomate-launcher-dev' : 'tomate-launcher',
-);
+));
 
 export const modpacksPath = path.join(basePath, 'modpacks/');
 export const logsPath = path.join(basePath, 'logs/');
