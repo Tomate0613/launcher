@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, watch } from 'vue';
 import Popup from '../Popup.vue';
-import type { InstanceSyncOptions } from '../../../../main/data/sync';
+import type { InstanceSyncOptions } from '../../../../main/data/sync/types';
 import '../../assets/settings.css';
 
 const popup = useTemplateRef('popup');
