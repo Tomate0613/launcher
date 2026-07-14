@@ -2,6 +2,7 @@
 import { ref, useTemplateRef, watch } from 'vue';
 import Popup from '../Popup.vue';
 import type { InstanceSyncOptions } from '../../../../main/data/sync';
+import '../../assets/settings.css';
 
 const popup = useTemplateRef('popup');
 
@@ -25,6 +26,7 @@ watch(type, () => {
   }
 
   options.value = {
+    ...options.value,
     type: type.value,
   };
 });
@@ -45,11 +47,24 @@ defineExpose({
 
 <template>
   <Popup ref="popup">
-    <h2>Sync Options</h2>
+    <section class="settings-section">
+      <h2>Sync Options</h2>
 
-    <select v-model="type">
-      <option value="disabled">Disabled</option>
-      <option value="external">External</option>
-    </select>
+      <label class="settings-option">
+        Type
+        <select v-model="type">
+          <option value="disabled">Disabled</option>
+          <option value="external">External</option>
+          <option value="unsup">Unsup</option>
+        </select>
+      </label>
+
+      <label v-if="type === 'external'" class="settings-option settings-option-text">
+        <div>
+          Command
+        </div>
+        <input type="text" v-model="options.command"></input>
+      </label>
+    </section>
   </Popup>
 </template>

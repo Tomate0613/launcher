@@ -1,7 +1,6 @@
 import paths from 'node:path';
 import {
   defaultsPath,
-  javaInstallationsPath,
   log4jConfigPath,
   minecraftAssetRootPath,
   minecraftLibrariesPath,
@@ -54,7 +53,9 @@ import { error, FrontendError, showError } from '../error';
 import { Process, ProcessContext } from '../process';
 import { spawnWrapper } from '../wrapper';
 import { safeClose } from '../close';
-import { InstanceSyncOptions } from './sync';
+import { InstanceSyncOptions } from './sync/types';
+import { syncModpack } from './sync';
+import { javaTasks } from './java';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
 
@@ -107,7 +108,7 @@ export class VanillaError extends Error {
 }
 
 export class Modpack extends Serializable implements ModpackData {
-  __version = '6';
+  __version = '7';
   dir: string;
   isDeleted = false;
 
@@ -234,12 +235,13 @@ export class Modpack extends Serializable implements ModpackData {
         if (typeof this.java !== 'string') {
           this.java = undefined;
         }
-        this['__version'] = '6';
       }
       case '6': {
         if (this.externallyManaged) {
           this.sync = { type: 'external' };
         }
+
+        this['__version'] = '7';
       }
     }
 
@@ -420,33 +422,15 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   async javaPath(launcher: Launcher) {
+    if (this.java) {
+      return this.java;
+    }
+
     this.logger.log('Getting java version');
 
     const javaVersion = await launcher.getJavaVersion();
-    this.logger.log('Finding java', javaVersion);
-
-    const java =
-      this.java ?? javaInstallations.get(javaVersion.majorVersion)?.[0];
-
-    if (java) {
-      this.logger.log('Found', java);
-
-      if (process.platform == 'win32') {
-        return java.replace(/\.exe$/, 'w.exe');
-      }
-
-      return java;
-    }
-
-    if (jdksOverriden) {
-      throw new FrontendError(`Missing jdk ${javaVersion.majorVersion}`);
-    }
-
-    try {
-      return launcher.javaTasks(javaInstallationsPath);
-    } catch (err) {
-      throw error('Failed to download java', err);
-    }
+    this.logger.log(javaVersion);
+    return javaTasks(javaVersion, launcher);
   }
 
   async launch(account: Account, quickPlay?: LaunchOptions['quickPlay']) {
@@ -470,14 +454,36 @@ export class Modpack extends Serializable implements ModpackData {
       throw new FrontendError('Could not log in');
     }
 
-    try {
-      const launcher = await this.launcher();
+    const step = async <T>(stage: string, fn: () => Promise<T>): Promise<T> => {
+      try {
+        return await fn();
+      } catch (e) {
+        ctx.cancel();
+        throw error(`Failed to ${stage}`, e);
+      }
+    };
 
+    const launcher = await step('prepare launch', async () => {
+      const launcher = await this.launcher();
+      this.launcherEvents(launcher, ctx);
+      return launcher;
+    });
+
+    const sync = await step('prepare sync', () => syncModpack(this, launcher));
+    const javaPath = await step('prepare java', () => this.javaPath(launcher));
+    await step('prepare launch', () => launcher.prepare());
+
+    await step('sync modpack', async () => {
+      if (sync) {
+        await sync();
+
+        this.contents().map((c) => c.updateFromFiles('origin'));
+      }
+    });
+
+    return await step('launch', async () => {
       this.logger.log('Launching the game');
 
-      const javaPath = await this.javaPath(launcher);
-
-      this.launcherEvents(launcher, ctx);
       await this.spawn(
         launcher,
         {
@@ -505,10 +511,7 @@ export class Modpack extends Serializable implements ModpackData {
       );
 
       return launcher;
-    } catch (e) {
-      ctx.cancel();
-      throw error('Failed to launch', e);
-    }
+    });
   }
 
   async spawn(
@@ -750,6 +753,12 @@ export class Modpack extends Serializable implements ModpackData {
     }
 
     throw new Error('Invalid content type');
+  }
+
+  contents() {
+    const types = ['mods', 'shaderpacks', 'resourcepacks'] as const;
+
+    return types.map((type) => this.content(type));
   }
 
   static async searchModpack(query: string) {

@@ -375,7 +375,7 @@ export abstract class Content {
     this.items.invalidate(item);
   }
 
-  async updateFromFiles() {
+  async updateFromFiles(source: ResourceSource = 'local') {
     if (this.modpack.isProcessing('update-from-files')) {
       return;
     }
@@ -411,8 +411,6 @@ export abstract class Content {
       for (const removedMod of previouslyRemovedMods) {
         this.setState(removedMod.id, 'INSTALLED');
       }
-
-      const source = this.modpack.externallyManaged ? 'origin' : 'local';
 
       for (const filename of missingFilenames) {
         this.items.push({
