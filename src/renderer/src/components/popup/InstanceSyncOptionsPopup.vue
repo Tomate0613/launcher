@@ -63,7 +63,7 @@ defineExpose({
         <div>
           Command
         </div>
-        <input type="text" v-model="(options as any)?.command"></input>
+        <input type="text" v-model="(options as any).command"></input>
       </label>
     </section>
   </Popup>
