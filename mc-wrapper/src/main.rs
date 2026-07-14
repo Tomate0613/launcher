@@ -248,7 +248,12 @@ async fn spawn_game<F>(
         c.arg(arg.to_string());
     }
 
-    let mut allow_read = vec![Path::new(&minecraft_dir).canonicalize().unwrap().into()];
+    let mut allow_read: Vec<Arc<Path>> = vec![
+        minecraft_dir.into(),
+        game_dir.join("mods").into(),
+        game_dir.join("resourcepacks").into(),
+        game_dir.join("shaderpacks").into(),
+    ];
 
     if let Some(dir) = &launcher_java_dir {
         allow_read.push(Path::new(dir).canonicalize().unwrap().into());
