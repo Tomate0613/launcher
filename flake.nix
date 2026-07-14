@@ -64,8 +64,6 @@
             packages = with pkgs; [
               nodejs
               pnpm
-              jdk21
-              jdk25
               bubblewrap
               xdg-dbus-proxy
 
@@ -90,6 +88,13 @@
 
             env = {
               # PKG_CONFIG_PATH = "${pkgs.gtk4}/lib/pkgconfig:${pkgs.json-glib}/lib/pkgconfig:${pkgs.}";
+              TOMATE_LAUNCHER_JDKS = lib.makeBinPath (
+                with pkgs;
+                [
+                  jdk21
+                  jdk25
+                ]
+              );
 
               __GL_THREADED_OPTIMIZATIONS = 0;
               LD_LIBRARY_PATH = lib.makeLibraryPath (
