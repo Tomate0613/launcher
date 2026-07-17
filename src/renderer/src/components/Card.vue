@@ -110,7 +110,7 @@ const slots = useSlots();
 
     & .description {
       font-size: 0.75rem;
-      opacity: 0.75;
+      color: var(--color-text-secondary);
     }
 
     & .primary-action,
