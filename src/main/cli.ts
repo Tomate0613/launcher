@@ -137,10 +137,12 @@ async function create(
   });
   modpacks.push(modpack);
 
-  // TODO detect project type
-  const mrs = mr.map((mod) =>
-    modpack.modsContent.installLatest('modrinth', mod, 'local'),
-  );
+  const mrs = mr.map(async (projectId) => {
+    const proj = await tomateMods.provider('modrinth').project(projectId);
+    modpack
+      .content(proj.type ?? 'mod')
+      .installLatest('modrinth', projectId, 'local');
+  });
 
   let cfs: Promise<string>[] = [];
   if (cf.length) {
@@ -149,9 +151,13 @@ async function create(
     if (!tomateMods.hasProvider(curseforge)) {
       throw new ProviderError(curseforge);
     }
-    cfs = cf.map((mod: string) =>
-      modpack.modsContent.installLatest(curseforge, mod, 'local'),
-    );
+
+    cfs = cf.map(async (projectId: string) => {
+      const proj = await tomateMods.provider(curseforge).project(projectId);
+      return modpack
+        .content(proj.type ?? 'mod')
+        .installLatest(curseforge, projectId, 'local');
+    });
   }
 
   const files = file.map((mod: string) => modpack.modsContent.import(mod));
