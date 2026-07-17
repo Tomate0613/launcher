@@ -69,7 +69,7 @@ watch(settingsInstance, save, { deep: true });
 
 <template>
   <div class="page-content">
-    <div class="page-scrollable settings">
+    <div class="page-scrollable instance-settings settings-page">
       <section class="settings-section">
         <h2 class="settings-section-name">General</h2>
         <label class="settings-option settings-option-text">

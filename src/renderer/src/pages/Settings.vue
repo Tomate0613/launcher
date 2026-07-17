@@ -78,7 +78,7 @@ watchEffect(() => {
 
 <template>
   <div class="page-content">
-    <div class="page-scrollable settings">
+    <div class="page-scrollable settings settings-page">
       <GeneralInstanceOptions
         v-model="settings.modpackDefaultOptions"
         :defaultSettings="defaultGeneralModpackSettings"
@@ -312,7 +312,6 @@ watchEffect(() => {
 
 <style scoped>
 .settings {
-  max-width: 720px;
   margin-inline: auto;
   gap: 2rem;
 }
