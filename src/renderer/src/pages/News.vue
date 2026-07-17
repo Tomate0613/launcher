@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
-import Icon from '../components/Icon.vue';
-import type { JavaPatchnotesEntry } from '../../../main/browse';
 import { mdiContentCopy } from '@mdi/js';
+import type { JavaPatchnotesEntry } from '../../../main/browse';
+import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
+import ImageIcon from '../components/ImageIcon.vue';
+import Icon from '../components/Icon.vue';
 
-const javaPatchNotes = await window.api.invoke('getJavaPatchnotes');
+const javaPatchNotes = await window.api
+  .invoke('getJavaPatchnotes')
+  .catch(() => ({
+    entries: [],
+  }));
 
 function viewEntry(selected: JavaPatchnotesEntry) {
   window.api.invoke('viewJavaPatchnoteEntry', selected.version);
 }
 
 function copy(selected: JavaPatchnotesEntry) {
-  const url = `https://quiltmc.org/en/mc-patchnotes/#${selected.version}`
+  const url = `https://quiltmc.org/en/mc-patchnotes/#${selected.version}`;
   navigator.clipboard.writeText(url);
 }
 </script>
@@ -19,22 +24,20 @@ function copy(selected: JavaPatchnotesEntry) {
 <template>
   <div class="page-header" />
   <div class="page-content">
-    <div class="page-scrollable news">
+    <div class="page-scrollable news card-grid">
       <ContextMenuWrapper v-for="entry in javaPatchNotes.entries">
         <template v-slot:content>
           <button @click="viewEntry(entry)" class="entry">
             <h2>{{ entry.title }}</h2>
-            <img
+            <ImageIcon
               :src="`https://launchercontent.mojang.com/${entry.image.url}`"
+              :alt="entry.image.title"
             />
             <div class="short-text">{{ entry.shortText }}</div>
           </button>
         </template>
         <template v-slot:context-menu>
-          <button
-            class="icon-btn"
-            @click="copy(entry)"
-          >
+          <button class="icon-btn" @click="copy(entry)">
             <Icon :path="mdiContentCopy" />
             Copy URL
           </button>
@@ -46,14 +49,6 @@ function copy(selected: JavaPatchnotesEntry) {
 
 <style scoped>
 .news {
-  padding-top: 0;
-  gap: 0.5rem;
-
-  display: grid;
-  gap: 0.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  grid-auto-rows: min-content;
-
   & button.entry {
     display: flex;
     flex-direction: column;
@@ -61,6 +56,9 @@ function copy(selected: JavaPatchnotesEntry) {
 
     padding-top: 0;
     padding-bottom: 0;
+
+    background-color: var(--color-ui-layer-dim);
+    border-radius: var(--border-radius-strong);
 
     & h2 {
       margin: 0.5rem 0;

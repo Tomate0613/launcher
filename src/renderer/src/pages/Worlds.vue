@@ -43,7 +43,7 @@ function launch(modpack: string, save: string) {
 <template>
   <div class="page-header" />
   <div class="page-content">
-    <div class="page-scrollable worlds">
+    <div class="page-scrollable worlds card-grid">
       <Card
         v-for="world in worlds"
         :icon="world.icon"
@@ -73,15 +73,3 @@ function launch(modpack: string, save: string) {
     </div>
   </div>
 </template>
-
-<style scoped>
-.worlds {
-  padding-top: 0;
-  gap: 0.5rem;
-
-  display: grid;
-  gap: 0.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  grid-auto-rows: min-content;
-}
-</style>

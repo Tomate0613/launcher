@@ -342,6 +342,16 @@ select option {
 }
 
 
+.card-grid {
+  padding-top: 0;
+  gap: 0.5rem;
+
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-auto-rows: min-content;
+}
+
 
 ::-webkit-scrollbar {
   width: 0.75rem;

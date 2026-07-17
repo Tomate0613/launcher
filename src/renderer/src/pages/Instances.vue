@@ -64,7 +64,7 @@ function onChooseFile() {
     </div>
   </div>
   <div class="page-content" @dragover.prevent.stop @drop.prevent="onDrop">
-    <div class="page-scrollable instances">
+    <div class="page-scrollable instances card-grid">
       <Instance
         v-for="instance of Array.from(appState.modpacks.values())
           .filter((instance) => !instance.isDeleted)
@@ -78,15 +78,3 @@ function onChooseFile() {
 
   <CreateInstancePopup ref="create-instance-popup" />
 </template>
-
-<style scoped>
-.instances {
-  padding-top: 0;
-  gap: 0.5rem;
-
-  display: grid;
-  gap: 0.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  grid-auto-rows: min-content;
-}
-</style>
