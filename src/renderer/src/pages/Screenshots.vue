@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import {
+  mdiArrowLeft,
+  mdiArrowRight,
   mdiContentCopy,
   mdiOpenInApp,
   mdiViewAgendaOutline,
@@ -9,11 +11,12 @@ import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import Icon from '../components/Icon.vue';
 import { ref, useTemplateRef } from 'vue';
 import Popup from '../components/Popup.vue';
-
-const popup = useTemplateRef('popup');
-const popupScreenshot = ref('');
+import { onKeyDown } from '@vueuse/core';
 
 const screenshots = await window.api.invoke('getScreenshots');
+
+const popup = useTemplateRef('popup');
+const popupScreenshotIdx = ref(0);
 
 function copy(instance: string | null, screenshot: string) {
   window.api.invoke('copyScreenshot', instance, screenshot);
@@ -23,10 +26,26 @@ function showInFileManager(instance: string | null, screenshot: string) {
   return window.api.invoke('showScreenshotInFileManager', instance, screenshot);
 }
 
-function openScreenshotPopup(url: string) {
-  popupScreenshot.value = url;
+function openScreenshotPopup(index: number) {
+  popupScreenshotIdx.value = index;
   popup.value?.openMenu();
 }
+
+onKeyDown(['ArrowRight', 'ArrowDown', 'j', 'l'], () => {
+  if (popupScreenshotIdx.value >= screenshots.length - 1) {
+    return;
+  }
+
+  popupScreenshotIdx.value++;
+});
+
+onKeyDown(['ArrowLeft', 'ArrowUp', 'h', 'k'], () => {
+  if (popupScreenshotIdx.value < 1) {
+    return;
+  }
+
+  popupScreenshotIdx.value--;
+});
 
 const layout = ref<'list' | 'grid'>('grid');
 </script>
@@ -51,11 +70,11 @@ const layout = ref<'list' | 'grid'>('grid');
       }"
       v-if="screenshots"
     >
-      <ContextMenuWrapper v-for="screenshot in screenshots">
+      <ContextMenuWrapper v-for="(screenshot, i) in screenshots">
         <template v-slot:content>
           <button
             class="btn-other screenshot-btn"
-            @click="openScreenshotPopup(screenshot.data ?? '')"
+            @click="openScreenshotPopup(i)"
           >
             <img :src="screenshot.data" />
           </button>
@@ -83,7 +102,21 @@ const layout = ref<'list' | 'grid'>('grid');
   </div>
 
   <Popup ref="popup" class="screenshot-popup">
-    <img :src="popupScreenshot" />
+    <img :src="screenshots[popupScreenshotIdx].data" />
+    <button
+      @click="popupScreenshotIdx--"
+      :disabled="popupScreenshotIdx < 1"
+      class="btn-other previous"
+    >
+      <Icon :path="mdiArrowLeft" size="32" />
+    </button>
+    <button
+      @click="popupScreenshotIdx++"
+      :disabled="popupScreenshotIdx >= screenshots.length - 1"
+      class="btn-other next"
+    >
+      <Icon :path="mdiArrowRight" size="32" />
+    </button>
   </Popup>
 </template>
 
@@ -119,6 +152,52 @@ img {
 }
 
 .screenshot-popup {
+  display: flex;
+  position: relative;
+  user-select: none;
+
+  & button {
+    all: unset;
+    cursor: pointer;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 8rem;
+
+    opacity: 0;
+    transition: opacity 0.25s;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.previous {
+      left: 0;
+      background-image: linear-gradient(
+        90deg,
+        var(--color-ui-layer),
+        transparent
+      );
+      padding-right: 2rem;
+    }
+
+    &.next {
+      right: 0;
+      background-image: linear-gradient(
+        -90deg,
+        var(--color-ui-layer),
+        transparent
+      );
+      padding-left: 2rem;
+    }
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus-within {
+      opacity: 1;
+    }
+  }
+
   & img {
     max-height: 90vh;
   }
