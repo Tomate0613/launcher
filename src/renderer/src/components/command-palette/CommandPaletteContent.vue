@@ -82,7 +82,7 @@ function moveUp(count: number = 1) {
   }
 }
 
-function execute(idx: number, actionIdx: number) {
+async function execute(idx: number, actionIdx: number) {
   const selected = filteredOptions.value[idx];
   if (selected) {
     const action =
@@ -97,7 +97,7 @@ function execute(idx: number, actionIdx: number) {
       actionsSearchQuery.value = '';
       searchQuery.value = '';
 
-      const keepAliveRet = action.execute();
+      const keepAliveRet = await action.execute();
       if (!action.keepAlive && !keepAliveRet) {
         closeCommandPalette();
       }

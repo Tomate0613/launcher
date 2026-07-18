@@ -5,5 +5,7 @@ export type RouteArgs<T> = T extends (...args: infer Args) => any
   ? Args
   : never;
 export type RouteReturn<T> = T extends (...args: any) => infer ReturnType
-  ? Promise<ReturnType>
+  ? ReturnType extends Promise<any>
+    ? ReturnType
+    : Promise<ReturnType>
   : never;

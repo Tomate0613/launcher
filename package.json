@@ -38,7 +38,8 @@
     "tomate-mods": "github:Tomate0613/tomate-mods",
     "vue": "^3.5.38",
     "vue-router": "^5.1.0",
-    "yargs": "^18.0.0"
+    "yargs": "^18.0.0",
+    "png-to-ico": "^3.0.2"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",

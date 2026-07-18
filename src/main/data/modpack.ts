@@ -37,12 +37,13 @@ import {
   copyFilesWithRename,
   downloadFileFromUrl,
   ensureDirectoryExists,
-  localFileUnchecked,
   localFileSync,
   noop,
+  safeFilename,
+  escapeDesktopValue,
 } from '../utils';
 import { log, type Logger } from '../../common/logging/log';
-import { shell } from 'electron';
+import { app, shell } from 'electron';
 import { ModsContent } from './content/mods';
 import { GeneralModpackOptions } from './settings';
 import { tomateMods } from './content/lib';
@@ -57,6 +58,8 @@ import { safeClose } from '../close';
 import { InstanceSyncOptions } from './sync/types';
 import { syncModpack } from './sync';
 import { javaTasks } from './java';
+import { platform } from 'node:os';
+import pngToIco from 'png-to-ico';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
 
@@ -169,15 +172,7 @@ export class Modpack extends Serializable implements ModpackData {
     this.loader = loader;
     this.dir = paths.join(
       modpacksPath,
-      this.name
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9-]/g, '')
-        .replace(/-+/g, '-')
-        .replace(/^-+|-+$/g, '')
-        .substring(0, 20) +
-        '-' +
-        this.id,
+      safeFilename(this.name) + '-' + this.id,
     );
     this.lastUsed = Date.now();
     this.modsContent = new ModsContent(this, []);
@@ -880,6 +875,58 @@ export class Modpack extends Serializable implements ModpackData {
       force: true,
       recursive: true,
     });
+  }
+
+  async createDesktopShortcut() {
+    const desktopPath = app.getPath('desktop');
+
+    if (platform() == 'win32') {
+      const shortcutPath = paths.join(
+        desktopPath,
+        `${safeFilename(this.name)}.lnk`,
+      );
+
+      let windowsIconPath: string | undefined = undefined;
+      if (this.iconPath) {
+        const ico = await pngToIco(this.iconPath);
+        windowsIconPath = paths.join(this.dir, 'icon.ico');
+        fs.writeFileSync(windowsIconPath, ico);
+      }
+
+      shell.writeShortcutLink(shortcutPath, {
+        target: process.execPath,
+        args: `launch ${this.id}`,
+        icon: windowsIconPath,
+      });
+
+      return;
+    }
+
+    if (platform() == 'linux') {
+      const desktop = app.getPath('desktop');
+      const filePath = paths.join(
+        desktop,
+        `${safeFilename(this.name)}.desktop`,
+      );
+
+      const content = `[Desktop Entry]
+Type=Application
+Name=${escapeDesktopValue(this.name)}
+Exec=${escapeDesktopValue(process.execPath)} launch ${this.id}
+Icon=${escapeDesktopValue(this.iconPath)}
+Terminal=false
+Categories=Game;
+`;
+
+      await fs.writeFile(filePath, content, 'utf8');
+
+      await fs.chmod(filePath, 0o755);
+      return;
+    }
+
+    throw new FrontendError(
+      'Creating a desktop shortcut is not supported on this operating system',
+    );
   }
 
   toString() {

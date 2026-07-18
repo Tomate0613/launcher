@@ -122,6 +122,9 @@ export const routes = {
   setModpackIconFromUrl(modpackId: string, url: string) {
     return getModpack(modpackId).setIconFromUrl(url);
   },
+  createModpackDesktopShortcut(modpackId: string) {
+    return getModpack(modpackId).createDesktopShortcut();
+  },
   async installModpack(provider: ImplementedProvider, id: string) {
     if (!tomateMods.hasProvider(provider)) {
       throw new ProviderError(provider);

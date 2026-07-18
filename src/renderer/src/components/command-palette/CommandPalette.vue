@@ -19,14 +19,21 @@ import type {
   ContentType,
 } from '../../../../main/data/content/content';
 import {
+  mdiCog,
+  mdiCogOutline,
+  mdiFolderOpenOutline,
+  mdiImageOutline,
   mdiLightbulbOnOutline,
+  mdiLink,
   mdiPackageVariantClosed,
   mdiPaletteSwatchOutline,
+  mdiPlay,
 } from '@mdi/js';
 import { useSyncedIdSet } from '../../composables/syncedIdSet';
-import { ModpackData } from '../../../../main/data/modpack';
+import { ModpackFrontendData } from '../../../../main/data/modpack';
 import { setCommandPaletteInstance } from '../../composables/commandPalette';
 import { log } from '../../../../common/logging/log';
+import { exec } from 'node:child_process';
 
 const logger = log('command-palette');
 
@@ -95,69 +102,136 @@ function scoped<T>(fn: () => T) {
 
 type ActionProvider<T> = (item: T) => Action[] | false;
 
+type SimpleArg = Action & Omit<Option, 'actions'>;
+
+function simpleOption(args: SimpleArg): Option {
+  return {
+    name: args.name,
+    actions: [
+      {
+        name: args.name,
+        execute: args.execute,
+        disabled: args.disabled,
+        keepAlive: args.keepAlive,
+      },
+    ],
+    icon: args.icon,
+    image: args.image,
+  };
+}
+
 function openInstances() {
   return showAsyncComputed(async () => {
     const appState = await useAppState();
 
-    return forEachModpack(appState, (modpack) => [
-      {
-        name: 'Launch',
-        execute() {
-          return window.api.invoke(
-            'launchModpack',
-            modpack.id,
-            appState.accountId!,
-          );
-        },
-        disabled: !appState.accountId,
-      },
-      {
-        name: 'Open Folder',
-        execute() {
-          return window.api.invoke('openModpackFolder', modpack.id);
-        },
-      },
-      {
-        name: 'Show Mods',
-        execute() {
-          router.push(`/${modpack.id}/mods`);
-        },
-        disabled: modpack.loader.id === 'vanilla',
-      },
-      {
-        name: 'Show Shaderpacks',
-        execute() {
-          router.push(`/${modpack.id}/shaderpacks`);
-        },
-      },
-      {
-        name: 'Show Resourcepacks',
-        execute() {
-          router.push(`/${modpack.id}/resourcepacks`);
-        },
-      },
-      {
-        name: 'Set Icon',
-        execute() {
-          setModpackIcon(modpack);
-          return true;
-        },
-      },
-      {
-        name: 'Settings',
-        execute() {
-          router.push(`/${modpack.id}/settings`);
-        },
-      },
-    ]);
+    return forEachModpack(
+      appState,
+      (modpack) => baseModpackOptions(modpack, appState.accountId),
+      // (modpack) =>
+      // (
+      //   baseModpackOptions(
+      //     modpack,
+      //     appState.accountId,
+      //   ) satisfies Action[] as Action[]
+      // ).concat([
+      //   {
+      //     name: 'All Options',
+      //     execute() {
+      //       openInstanceOptions(modpack.id);
+      //       return true;
+      //     },
+      //   },
+      // ]),
+    );
   }, 'Search Instances...');
+}
+
+function baseModpackOptions(modpack: ModpackFrontendData, accountId?: string) {
+  return [
+    {
+      name: 'Launch',
+      execute() {
+        return window.api.invoke('launchModpack', modpack.id, accountId!);
+      },
+      disabled: !accountId,
+      icon: mdiPlay,
+    },
+    {
+      name: 'Open Folder',
+      execute() {
+        return window.api.invoke('openModpackFolder', modpack.id);
+      },
+      icon: mdiFolderOpenOutline,
+    },
+    {
+      name: 'Show Mods',
+      execute() {
+        router.push(`/${modpack.id}/mods`);
+      },
+      disabled: modpack.loader.id === 'vanilla',
+      icon: mdiPackageVariantClosed,
+    },
+    {
+      name: 'Show Shaderpacks',
+      execute() {
+        router.push(`/${modpack.id}/shaderpacks`);
+      },
+      icon: mdiLightbulbOnOutline,
+    },
+    {
+      name: 'Show Resourcepacks',
+      execute() {
+        router.push(`/${modpack.id}/resourcepacks`);
+      },
+      icon: mdiPaletteSwatchOutline,
+    },
+    {
+      name: 'Set Icon',
+      execute() {
+        setModpackIcon(modpack);
+        return true;
+      },
+      icon: mdiImageOutline,
+    },
+    {
+      name: 'Settings',
+      execute() {
+        router.push(`/${modpack.id}/settings`);
+      },
+      icon: mdiCogOutline,
+    },
+    {
+      name: 'Create Desktop Shortcut',
+      execute() {
+        return window.api.invoke('createModpackDesktopShortcut', modpack.id);
+      },
+      icon: mdiLink,
+    },
+  ] satisfies SimpleArg[];
+}
+
+function openInstanceOptions(instanceId: string) {
+  return showAsyncComputed(
+    async () => {
+      const appState = await useAppState();
+      const modpack = appState.modpacks.get(instanceId);
+
+      return computed(() =>
+        modpack
+          ? baseModpackOptions(modpack, appState.accountId).map(simpleOption)
+          : [],
+      );
+    },
+    'Instance options...',
+    'Instance Options',
+  );
 }
 
 type PossibleOption = Option | (Omit<Option, 'actions'> & { actions: false });
 
 function forEachModpack(
   appState: AppState,
-  actions: ActionProvider<ModpackData>,
+  actions: ActionProvider<ModpackFrontendData>,
 ): ComputedRef<Option[]> {
   return computed<Option[]>(() => {
     return Array.from(appState.modpacks.values())
@@ -238,7 +312,7 @@ function setModpackIconFromContentType(
   );
 }
 
-function setModpackIcon(modpack: ModpackData) {
+function setModpackIcon(modpack: ModpackFrontendData) {
   showBasic(
     forEachContentType((contentType) =>
       contentType === 'mods' && modpack.loader.id === 'vanilla'
@@ -254,11 +328,11 @@ function setModpackIcon(modpack: ModpackData) {
           ],
     ),
     'Search icon sources...',
-    'Select Icon Source'
+    'Select Icon Source',
   );
 }
 
-function selectModpack(onSelect: (modpack: ModpackData) => void) {
+function selectModpack(onSelect: (modpack: ModpackFrontendData) => void) {
   return showAsyncComputed(
     async () => {
       const appState = await useAppState();

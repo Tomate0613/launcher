@@ -73,6 +73,23 @@ export function copyFilesWithRename(srcDir: string, destDir: string) {
   });
 }
 
+export function safeFilename(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 20);
+}
+
+export function escapeDesktopValue(value: string) {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n");
+}
+
 export async function downloadFileFromUrl(
   url: string,
   filePath: string,

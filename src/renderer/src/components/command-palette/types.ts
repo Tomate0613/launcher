@@ -1,6 +1,6 @@
 export type Action = {
   name: string;
-  execute(): boolean | void;
+  execute(): boolean | void | Promise<boolean> | Promise<void>;
   disabled?: boolean;
   keepAlive?: boolean;
 };
