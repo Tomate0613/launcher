@@ -4,6 +4,7 @@ import type { JavaPatchnotesEntry } from '../../../main/browse';
 import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import ImageIcon from '../components/ImageIcon.vue';
 import Icon from '../components/Icon.vue';
+import { formatTimeAgoIntl } from '@vueuse/core';
 
 const javaPatchNotes = await window.api
   .invoke('getJavaPatchnotes')
@@ -27,13 +28,16 @@ function copy(selected: JavaPatchnotesEntry) {
     <div class="page-scrollable news card-grid">
       <ContextMenuWrapper v-for="entry in javaPatchNotes.entries">
         <template v-slot:content>
-          <button @click="viewEntry(entry)" class="entry">
-            <h2>{{ entry.title }}</h2>
+          <button @click="viewEntry(entry)" class="entry btn-other">
             <ImageIcon
               :src="`https://launchercontent.mojang.com/${entry.image.url}`"
               :alt="entry.image.title"
             />
+            <div class="title">{{ entry.title }}</div>
             <div class="short-text">{{ entry.shortText }}</div>
+            <span class="date">{{
+              formatTimeAgoIntl(new Date(entry.date))
+            }}</span>
           </button>
         </template>
         <template v-slot:context-menu>
@@ -50,8 +54,16 @@ function copy(selected: JavaPatchnotesEntry) {
 <style scoped>
 .news {
   & button.entry {
+    all: unset;
+
+    cursor: pointer;
+
+    /* font-size: 0.875rem; */
+
     display: flex;
     flex-direction: column;
+
+    width: 100%;
     height: 100%;
 
     padding-top: 0;
@@ -60,8 +72,15 @@ function copy(selected: JavaPatchnotesEntry) {
     background-color: var(--color-ui-layer-dim);
     border-radius: var(--border-radius-strong);
 
+    align-items: start;
+    text-align: left;
+
+    padding: 0.75rem;
+    gap: 0.75rem;
+
     & h2 {
-      margin: 0.5rem 0;
+      /* TODO */
+      margin: 0;
     }
 
     & img {
@@ -69,8 +88,16 @@ function copy(selected: JavaPatchnotesEntry) {
       border-radius: var(--border-radius);
     }
 
-    & .short-text {
-      padding: 1rem;
+    & .short-text,
+    & .date {
+      color: var(--color-text-secondary);
+      font-size: 0.75rem;
+    }
+  }
+
+  & button.entry:hover {
+    & .title {
+      text-decoration: underline;
     }
   }
 }
