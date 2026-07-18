@@ -208,22 +208,22 @@ function baseModpackOptions(modpack: ModpackFrontendData, accountId?: string) {
   ] satisfies SimpleArg[];
 }
 
-function openInstanceOptions(instanceId: string) {
-  return showAsyncComputed(
-    async () => {
-      const appState = await useAppState();
-      const modpack = appState.modpacks.get(instanceId);
-
-      return computed(() =>
-        modpack
-          ? baseModpackOptions(modpack, appState.accountId).map(simpleOption)
-          : [],
-      );
-    },
-    'Instance options...',
-    'Instance Options',
-  );
-}
+// function openInstanceOptions(instanceId: string) {
+//   return showAsyncComputed(
+//     async () => {
+//       const appState = await useAppState();
+//       const modpack = appState.modpacks.get(instanceId);
+//
+//       return computed(() =>
+//         modpack
+//           ? baseModpackOptions(modpack, appState.accountId).map(simpleOption)
+//           : [],
+//       );
+//     },
+//     'Instance options...',
+//     'Instance Options',
+//   );
+// }
 
 type PossibleOption = Option | (Omit<Option, 'actions'> & { actions: false });
 
