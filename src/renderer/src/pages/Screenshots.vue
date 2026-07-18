@@ -12,11 +12,15 @@ import Icon from '../components/Icon.vue';
 import { ref, useTemplateRef } from 'vue';
 import Popup from '../components/Popup.vue';
 import { onKeyDown } from '@vueuse/core';
+import { log } from '../../../common/logging/log';
+
+const logger = log('screenshots');
 
 const screenshots = await window.api.invoke('getScreenshots');
 
 const popup = useTemplateRef('popup');
 const popupScreenshotIdx = ref(0);
+const popupFullscreen = ref(false);
 
 function copy(instance: string | null, screenshot: string) {
   window.api.invoke('copyScreenshot', instance, screenshot);
@@ -101,8 +105,17 @@ const layout = ref<'list' | 'grid'>('grid');
     </div>
   </div>
 
-  <Popup ref="popup" class="screenshot-popup">
-    <img :src="screenshots[popupScreenshotIdx].data" />
+  <Popup
+    ref="popup"
+    class="screenshot-popup"
+    :class="{ fullscreen: popupFullscreen }"
+  >
+    <img
+      :src="screenshots[popupScreenshotIdx].data"
+      tabindex="-1"
+      @dblclick="popupFullscreen = !popupFullscreen"
+    />
+
     <button
       @click="popupScreenshotIdx--"
       :disabled="popupScreenshotIdx < 1"
@@ -152,9 +165,19 @@ img {
 }
 
 .screenshot-popup {
-  display: flex;
+  &:open {
+    display: flex;
+  }
+
   position: relative;
   user-select: none;
+
+  padding: 2.5rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+
+  align-items: center;
+  justify-content: center;
 
   & button {
     all: unset;
@@ -202,7 +225,10 @@ img {
 
   & img {
     max-height: 90vh;
-      z-index: -2;
+    z-index: -2;
+    width: auto;
+    max-width: 100%;
+    height: auto;
   }
 }
 </style>
