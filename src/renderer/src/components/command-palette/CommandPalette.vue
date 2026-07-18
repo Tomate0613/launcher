@@ -19,7 +19,6 @@ import type {
   ContentType,
 } from '../../../../main/data/content/content';
 import {
-  mdiCog,
   mdiCogOutline,
   mdiFolderOpenOutline,
   mdiImageOutline,
@@ -33,7 +32,6 @@ import { useSyncedIdSet } from '../../composables/syncedIdSet';
 import { ModpackFrontendData } from '../../../../main/data/modpack';
 import { setCommandPaletteInstance } from '../../composables/commandPalette';
 import { log } from '../../../../common/logging/log';
-import { exec } from 'node:child_process';
 
 const logger = log('command-palette');
 

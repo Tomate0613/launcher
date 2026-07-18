@@ -12,9 +12,6 @@ import Icon from '../components/Icon.vue';
 import { ref, useTemplateRef } from 'vue';
 import Popup from '../components/Popup.vue';
 import { onKeyDown } from '@vueuse/core';
-import { log } from '../../../common/logging/log';
-
-const logger = log('screenshots');
 
 const screenshots = await window.api.invoke('getScreenshots');
 
