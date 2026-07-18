@@ -180,6 +180,7 @@ img {
         transparent
       );
       padding-right: 2rem;
+      z-index: -1;
     }
 
     &.next {
@@ -190,6 +191,7 @@ img {
         transparent
       );
       padding-left: 2rem;
+      z-index: -1;
     }
 
     &:not(:disabled):hover,
@@ -200,6 +202,7 @@ img {
 
   & img {
     max-height: 90vh;
+      z-index: -2;
   }
 }
 </style>
