@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, net, protocol } from 'electron';
 import { hideBin } from 'yargs/helpers';
 import { dirname, join } from 'node:path';
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
@@ -8,14 +8,14 @@ import * as Windows from './windows';
 import '../common/logging/logMain';
 import { parseArgs } from './cli';
 import { log } from '../common/logging/log';
-import { ensureAppDirectoriesExist } from './paths';
+import { basePath, ensureAppDirectoriesExist } from './paths';
 import { tryReattachSockets } from './wrapper';
 import { safeClose } from './close';
 import './protocol';
 import { handleProtocolUrl, registerProtocolHandler } from './protocol';
-import { openInBrowser } from './utils';
+import { openInBrowser, safeJoin } from './utils';
 import { storeSchedules } from './data/content/store';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -127,6 +127,31 @@ app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
   prepare();
+
+  protocol.handle('local', async (request) => {
+    const url = new URL(request.url);
+
+    try {
+      const filePath = safeJoin(
+        basePath,
+        decodeURIComponent(url.pathname.slice(1)),
+      );
+
+      const response = await net.fetch(pathToFileURL(filePath).toString());
+
+      if (!response.ok) {
+        return new Response(null, {
+          status: 404,
+        });
+      }
+
+      return response;
+    } catch {
+      return new Response(null, {
+        status: 404,
+      });
+    }
+  });
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.

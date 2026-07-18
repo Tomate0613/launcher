@@ -37,7 +37,8 @@ import {
   copyFilesWithRename,
   downloadFileFromUrl,
   ensureDirectoryExists,
-  imageSync,
+  localFileUnchecked,
+  localFileSync,
   noop,
 } from '../utils';
 import { log, type Logger } from '../../common/logging/log';
@@ -829,7 +830,7 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   getIcon() {
-    return imageSync(this.iconPath);
+    return localFileSync(this.iconPath);
   }
 
   setIcon(path: string) {

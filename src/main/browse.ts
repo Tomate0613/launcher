@@ -8,7 +8,7 @@ import {
 import fs from 'node:fs/promises';
 import nbt from 'prismarine-nbt';
 import { log } from '../common/logging/log';
-import { css, image, imageOrDelete, pathFileBuffer } from './utils';
+import { localFile, localFileUnchecked, pathFileBuffer } from './utils';
 import { clipboard, nativeImage, shell } from 'electron';
 import { lookup } from './server';
 import { getModpack, getVisibleModpacks, modpacks } from './data';
@@ -22,7 +22,7 @@ export async function getSkins() {
   return (
     await Promise.all(
       skins.map(async (skin) => ({
-        url: await imageOrDelete(path.join(skinCachePath, skin)),
+        url: localFileUnchecked(path.join(skinCachePath, skin)),
         file: await pathFileBuffer(path.join(skinCachePath, skin)),
         id: skin,
       })),
@@ -58,7 +58,7 @@ export async function getThemes() {
                 ? (data.name as string)
                 : 'Unamed',
             id: theme,
-            url: await css(path.join(themesPath, theme, 'theme.css')),
+            url: await localFile(path.join(themesPath, theme, 'theme.css')),
           };
         } catch (e) {
           logger.warn(e);
@@ -71,7 +71,7 @@ export async function getThemes() {
 
 export async function getTheme(theme: string) {
   try {
-    const a = await css(path.join(themesPath, theme, 'theme.css'));
+    const a = await localFile(path.join(themesPath, theme, 'theme.css'));
     return a;
   } catch {
     return '';
@@ -109,7 +109,7 @@ export async function getScreenshots() {
           return {
             modpack: modpack.id,
             screenshot,
-            data: await image(screenshotPath),
+            data: localFileUnchecked(screenshotPath),
             date: stat.mtime.getTime(),
           };
         }),
@@ -130,7 +130,7 @@ export async function getScreenshots() {
         return {
           modpack: null,
           screenshot,
-          data: await image(screenshotPath),
+          data: localFileUnchecked(screenshotPath),
           date: stat.mtime.getTime(),
         };
       }),
@@ -196,7 +196,7 @@ export async function getWorlds() {
                   modpack: modpack.id,
                   save,
                   name: (parsed.value.Data?.value as any).LevelName.value,
-                  icon: await image(path.join(savePath, 'icon.png')),
+                  icon: await localFile(path.join(savePath, 'icon.png')),
                   date: (await fs.stat(savePath)).mtime.getTime(),
                   hardcore:
                     (parsed.value.Data?.value as any).hardcore.value !== 0,
