@@ -216,7 +216,9 @@ function openModpackOptions(instanceId: string) {
 
       return computed(() =>
         modpack
-          ? baseModpackOptions(modpack, appState.accountId).map(simpleOption)
+          ? baseModpackOptions(modpack, appState.accountId)
+              .filter((x) => !x.disabled)
+              .map(simpleOption)
           : [],
       );
     },
@@ -364,7 +366,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <dialog ref="dialog" @close="onClosed">
+  <dialog ref="dialog" @close="onClosed" class="command-palette">
     <CommandPaletteContent
       v-if="open"
       :closeCommandPalette="() => commandPalette?.close()"
