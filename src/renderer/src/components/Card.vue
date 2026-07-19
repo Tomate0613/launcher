@@ -27,7 +27,12 @@ const slots = useSlots();
 </script>
 
 <template>
-  <div class="card" @contextmenu.prevent="showContextMenu" tabindex="0" v-bind="$attrs">
+  <div
+    class="card"
+    @contextmenu.prevent="showContextMenu"
+    tabindex="0"
+    v-bind="$attrs"
+  >
     <ImageIcon
       class="card-icon"
       :class="{ 'card-icon-btn': !!openIconChooser }"
@@ -89,9 +94,12 @@ const slots = useSlots();
   position: relative;
   overflow: hidden;
 
+  /* transition: outline-offset 200ms; */
+  /* outline-offset: 4px; */
+
   &:focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: -2px;
+    outline-offset: 0;
   }
 
   & .card-icon {

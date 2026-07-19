@@ -96,7 +96,6 @@ function copy(selected: JavaPatchnotesEntry) {
 
     &:focus-visible {
       outline: 2px solid var(--color-accent);
-      outline-offset: -2px;
     }
 
     &:hover,

@@ -53,7 +53,7 @@ useNavigationInput((action) => {
     popupScreenshotIdx.value--;
   }
 
-  if(action === "cancel") {
+  if (action === 'cancel') {
     popup.value?.closeMenu();
   }
 });
@@ -128,10 +128,6 @@ img {
 }
 
 .screenshots {
-  padding-top: 0;
-}
-
-.screenshots {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
   grid-auto-rows: min-content;
@@ -153,7 +149,6 @@ img {
 
     &:focus-visible {
       outline: 2px solid var(--color-accent);
-      outline-offset: -2px;
     }
   }
 }
@@ -183,7 +178,7 @@ img {
     width: 8rem;
 
     opacity: 0;
-    transition: opacity 0.25s;
+    transition: opacity 200ms;
 
     display: flex;
     align-items: center;
@@ -212,7 +207,7 @@ img {
     }
 
     &:not(:disabled):hover,
-    &:not(:disabled):focus-within {
+    &:not(:disabled):focus-visible {
       opacity: 1;
     }
   }

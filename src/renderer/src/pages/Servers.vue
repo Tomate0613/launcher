@@ -17,7 +17,6 @@ const servers = await window.api.invoke('getServers');
 
 <style scoped>
 .servers {
-  padding-top: 0;
   gap: 0.5rem;
 
   display: grid;
