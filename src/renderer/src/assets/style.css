@@ -7,7 +7,7 @@
 }
 
 /* *:focus-within { */
-  /* outline: 2px solid green; */
+/* outline: 2px solid green; */
 /* } */
 
 :root {
@@ -313,6 +313,7 @@ select option {
     display: flex;
     flex-direction: column;
     padding: 1rem;
+    padding-bottom: .5rem;
     gap: 1rem;
   }
 
@@ -332,6 +333,7 @@ select option {
   flex-direction: column;
   flex-grow: 1;
   padding: 1rem;
+  padding-top: .5rem;
   gap: 1rem;
   overflow: auto;
   transition: margin-bottom 200ms;

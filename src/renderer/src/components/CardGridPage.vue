@@ -85,7 +85,6 @@ useNavigationInput((action) => {
 
 <style scoped>
 .card-grid {
-  padding-top: 0;
   gap: 0.5rem;
 
   display: grid;
