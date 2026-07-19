@@ -86,12 +86,12 @@ useEventListener('controller-input' as never, (event) => {
       index++;
     } else if (action === 'tab-previous') {
       index--;
-    } else {
-      return;
     }
   }
 
-  logger.log(action);
+  if (action !== 'tab-next' && action !== 'tab-previous') {
+    return;
+  }
 
   if (sidebarItems[index]) {
     // TODO Remove as never when ts types are up to date
