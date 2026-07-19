@@ -8,6 +8,7 @@ type CommandPalette = {
     contentType: ContentType,
   ): void;
   selectModpack(onSelect: (modpack: ModpackData) => void): void;
+  openModpackOptions(modpackId: string): void;
 };
 const commandPaletteRef = ref<CommandPalette | null>(null);
 

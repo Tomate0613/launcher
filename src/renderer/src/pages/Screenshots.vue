@@ -4,14 +4,14 @@ import {
   mdiArrowRight,
   mdiContentCopy,
   mdiOpenInApp,
-  mdiViewAgendaOutline,
-  mdiViewGridOutline,
 } from '@mdi/js';
 import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import Icon from '../components/Icon.vue';
 import { ref, useTemplateRef } from 'vue';
 import Popup from '../components/Popup.vue';
 import { onKeyDown } from '@vueuse/core';
+import CardGridPage from '../components/CardGridPage.vue';
+import { useNavigationInput } from '../composables/navigationInput';
 
 const screenshots = await window.api.invoke('getScreenshots');
 
@@ -32,50 +32,42 @@ function openScreenshotPopup(index: number) {
   popup.value?.openMenu();
 }
 
-onKeyDown(['ArrowRight', 'ArrowDown', 'j', 'l'], () => {
-  if (popupScreenshotIdx.value >= screenshots.length - 1) {
-    return;
+onKeyDown(['ArrowRight', 'ArrowDown', 'j', 'l'], () => {});
+
+onKeyDown(['ArrowLeft', 'ArrowUp', 'h', 'k'], () => {});
+
+useNavigationInput((action) => {
+  if (action === 'right' || action === 'down') {
+    if (popupScreenshotIdx.value >= screenshots.length - 1) {
+      return;
+    }
+
+    popupScreenshotIdx.value++;
   }
 
-  popupScreenshotIdx.value++;
-});
+  if (action === 'left' || action === 'up') {
+    if (popupScreenshotIdx.value < 1) {
+      return;
+    }
 
-onKeyDown(['ArrowLeft', 'ArrowUp', 'h', 'k'], () => {
-  if (popupScreenshotIdx.value < 1) {
-    return;
+    popupScreenshotIdx.value--;
   }
 
-  popupScreenshotIdx.value--;
+  if(action === "cancel") {
+    popup.value?.closeMenu();
+  }
 });
-
-const layout = ref<'list' | 'grid'>('grid');
 </script>
 <template>
-  <div class="page-header">
-    <div class="action-row">
-      <button class="icon-btn" @click="layout = 'grid'">
-        <Icon :path="mdiViewGridOutline" />
-        Grid
-      </button>
-      <button class="icon-btn" @click="layout = 'list'">
-        <Icon :path="mdiViewAgendaOutline" />
-        List
-      </button>
-    </div>
-  </div>
+  <div class="page-header"></div>
   <div class="page-content">
-    <div
-      class="page-scrollable screenshots"
-      :class="{
-        'layout-grid': layout == 'grid',
-      }"
-      v-if="screenshots"
-    >
+    <CardGridPage class="screenshots" v-if="screenshots">
       <ContextMenuWrapper v-for="(screenshot, i) in screenshots">
         <template v-slot:content>
           <button
-            class="btn-other screenshot-btn"
+            class="btn-other screenshot-btn card"
             @click="openScreenshotPopup(i)"
+            @keydown.enter.stop="openScreenshotPopup(i)"
           >
             <img :src="screenshot.data" />
           </button>
@@ -99,7 +91,7 @@ const layout = ref<'list' | 'grid'>('grid');
           </button>
         </template>
       </ContextMenuWrapper>
-    </div>
+    </CardGridPage>
   </div>
 
   <Popup
@@ -139,7 +131,7 @@ img {
   padding-top: 0;
 }
 
-.layout-grid {
+.screenshots {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
   grid-auto-rows: min-content;
@@ -157,6 +149,11 @@ img {
 
     & img {
       display: block;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
     }
   }
 }

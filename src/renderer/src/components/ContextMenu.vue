@@ -1,15 +1,3 @@
-<template>
-  <div
-    v-if="isOpen"
-    ref="menu"
-    class="context-menu"
-    :style="{ top: `${y}px`, left: `${x}px` }"
-    @click.self.stop
-  >
-    <slot />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, useTemplateRef } from 'vue';
 
@@ -67,12 +55,31 @@ function cleanup() {
   window.removeEventListener('context-menu-opened', closeMenu);
 }
 
+function onKeyDown(ev: KeyboardEvent) {
+  if (ev.key === 'Escape') {
+    closeMenu();
+  }
+}
+
 onUnmounted(() => {
   cleanup();
 });
 
 defineExpose({ openMenu, openAt, closeMenu });
 </script>
+
+<template>
+  <div
+    v-if="isOpen"
+    ref="menu"
+    class="context-menu"
+    :style="{ top: `${y}px`, left: `${x}px` }"
+    @click.self.stop
+    @keydown="onKeyDown"
+  >
+    <slot />
+  </div>
+</template>
 
 <style>
 .context-menu {
@@ -118,7 +125,8 @@ defineExpose({ openMenu, openAt, closeMenu });
     }
   }
 }
-.context-menu button {
+.context-menu button,
+.context-menu .fake-btn {
   &:hover,
   &:focus-visible {
     background-color: var(--color-ui-layer);

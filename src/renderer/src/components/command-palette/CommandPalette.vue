@@ -149,17 +149,10 @@ function baseModpackOptions(modpack: ModpackFrontendData, accountId?: string) {
     {
       name: 'Launch',
       execute() {
-        return window.api.invoke('launchModpack', modpack.id, accountId!);
+        window.api.invoke('launchModpack', modpack.id, accountId!);
       },
       disabled: !accountId,
       icon: mdiPlay,
-    },
-    {
-      name: 'Open Folder',
-      execute() {
-        return window.api.invoke('openModpackFolder', modpack.id);
-      },
-      icon: mdiFolderOpenOutline,
     },
     {
       name: 'Show Mods',
@@ -182,6 +175,13 @@ function baseModpackOptions(modpack: ModpackFrontendData, accountId?: string) {
         router.push(`/${modpack.id}/resourcepacks`);
       },
       icon: mdiPaletteSwatchOutline,
+    },
+    {
+      name: 'Open Folder',
+      execute() {
+        window.api.invoke('openModpackFolder', modpack.id);
+      },
+      icon: mdiFolderOpenOutline,
     },
     {
       name: 'Set Icon',
@@ -208,22 +208,22 @@ function baseModpackOptions(modpack: ModpackFrontendData, accountId?: string) {
   ] satisfies SimpleArg[];
 }
 
-// function openInstanceOptions(instanceId: string) {
-//   return showAsyncComputed(
-//     async () => {
-//       const appState = await useAppState();
-//       const modpack = appState.modpacks.get(instanceId);
-//
-//       return computed(() =>
-//         modpack
-//           ? baseModpackOptions(modpack, appState.accountId).map(simpleOption)
-//           : [],
-//       );
-//     },
-//     'Instance options...',
-//     'Instance Options',
-//   );
-// }
+function openModpackOptions(instanceId: string) {
+  return showAsyncComputed(
+    async () => {
+      const appState = await useAppState();
+      const modpack = appState.modpacks.get(instanceId);
+
+      return computed(() =>
+        modpack
+          ? baseModpackOptions(modpack, appState.accountId).map(simpleOption)
+          : [],
+      );
+    },
+    'Instance options...',
+    'Instance Options',
+  );
+}
 
 type PossibleOption = Option | (Omit<Option, 'actions'> & { actions: false });
 
@@ -355,7 +355,11 @@ function onClosed() {
 }
 
 onMounted(() => {
-  setCommandPaletteInstance({ setModpackIconFromContentType, selectModpack });
+  setCommandPaletteInstance({
+    setModpackIconFromContentType,
+    selectModpack,
+    openModpackOptions,
+  });
 });
 </script>
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { usePageFocus } from '../composables/pageFocus';
 import Instance from '../components/Instance.vue';
 import { useAppState } from '../composables/appState';
 import { useTemplateRef } from 'vue';
@@ -10,6 +9,7 @@ import CreateInstancePopup from '../components/popup/CreateInstancePopup.vue';
 import Icon from '../components/Icon.vue';
 import { mdiDownload, mdiImport, mdiPlusBoxMultipleOutline } from '@mdi/js';
 import { forEachDroppedFile, forEachInputtedFile } from '../files';
+import CardGridPage from '../components/CardGridPage.vue';
 
 const appState = await useAppState();
 const logger = log('Instances');
@@ -17,8 +17,6 @@ const logger = log('Instances');
 const createInstancePopup = useTemplateRef('create-instance-popup');
 const filePicker = useTemplateRef('file-picker');
 const newInstanceSplitButton = useTemplateRef('new-instance-split-button');
-
-usePageFocus();
 
 async function onDrop(event: DragEvent) {
   forEachDroppedFile(event, importModpack);
@@ -64,7 +62,7 @@ function onChooseFile() {
     </div>
   </div>
   <div class="page-content" @dragover.prevent.stop @drop.prevent="onDrop">
-    <div class="page-scrollable instances card-grid">
+    <CardGridPage class="instances">
       <Instance
         v-for="instance of Array.from(appState.modpacks.values())
           .filter((instance) => !instance.isDeleted)
@@ -73,7 +71,7 @@ function onChooseFile() {
         :instance
         :account-id="appState.accountId"
       />
-    </div>
+    </CardGridPage>
   </div>
 
   <CreateInstancePopup ref="create-instance-popup" />

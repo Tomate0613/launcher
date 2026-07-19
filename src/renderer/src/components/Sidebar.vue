@@ -18,6 +18,9 @@ import Icon from './Icon.vue';
 import PlayerHead from './PlayerHead.vue';
 import microsoftLogo from '../assets/microsoft.svg';
 import type { AccountType } from '../../../main/data/account';
+import { log } from '../../../common/logging/log';
+
+const logger = log('sidebar');
 
 const appState = await useAppState();
 const disabledTabs = computed(() => appState.settings.disabledTabs);
@@ -63,6 +66,38 @@ function accountTypeString(accountType: AccountType) {
 
   return 'Unknown';
 }
+
+useEventListener('controller-input' as never, (event) => {
+  const action = (event as any).detail as string;
+
+  const sidebarItems = Array.from(
+    document.querySelectorAll<HTMLElement>('.sidebar-item'),
+  );
+  const activeItem = document.querySelector<HTMLElement>(
+    '.sidebar-item.router-link-exact-active',
+  );
+
+  let index = 0;
+
+  if (activeItem) {
+    index = sidebarItems.indexOf(activeItem);
+
+    if (action === 'tab-next') {
+      index++;
+    } else if (action === 'tab-previous') {
+      index--;
+    } else {
+      return;
+    }
+  }
+
+  logger.log(action);
+
+  if (sidebarItems[index]) {
+    // TODO Remove as never when ts types are up to date
+    sidebarItems[index].click();
+  }
+});
 </script>
 
 <template>

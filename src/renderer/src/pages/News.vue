@@ -5,6 +5,7 @@ import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import ImageIcon from '../components/ImageIcon.vue';
 import Icon from '../components/Icon.vue';
 import { formatTimeAgoIntl } from '@vueuse/core';
+import CardGridPage from '../components/CardGridPage.vue';
 
 const javaPatchNotes = await window.api
   .invoke('getJavaPatchnotes')
@@ -25,10 +26,14 @@ function copy(selected: JavaPatchnotesEntry) {
 <template>
   <div class="page-header" />
   <div class="page-content">
-    <div class="page-scrollable news card-grid">
+    <CardGridPage class="news">
       <ContextMenuWrapper v-for="entry in javaPatchNotes.entries">
         <template v-slot:content>
-          <button @click="viewEntry(entry)" class="entry btn-other">
+          <button
+            @click="viewEntry(entry)"
+            @keydown.enter.stop="viewEntry(entry)"
+            class="card btn-other"
+          >
             <ImageIcon
               :src="`https://launchercontent.mojang.com/${entry.image.url}`"
               :alt="entry.image.title"
@@ -47,13 +52,13 @@ function copy(selected: JavaPatchnotesEntry) {
           </button>
         </template>
       </ContextMenuWrapper>
-    </div>
+    </CardGridPage>
   </div>
 </template>
 
 <style scoped>
 .news {
-  & button.entry {
+  & button.card {
     all: unset;
 
     cursor: pointer;
@@ -78,11 +83,6 @@ function copy(selected: JavaPatchnotesEntry) {
     padding: 0.75rem;
     gap: 0.75rem;
 
-    & h2 {
-      /* TODO */
-      margin: 0;
-    }
-
     & img {
       width: 100%;
       border-radius: var(--border-radius);
@@ -93,11 +93,17 @@ function copy(selected: JavaPatchnotesEntry) {
       color: var(--color-text-secondary);
       font-size: 0.75rem;
     }
-  }
 
-  & button.entry:hover {
-    & .title {
-      text-decoration: underline;
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+
+    &:hover,
+    &:focus-visible {
+      & .title {
+        text-decoration: underline;
+      }
     }
   }
 }

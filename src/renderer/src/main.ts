@@ -4,6 +4,7 @@ import { router } from './router';
 import '../../common/logging/logRenderer';
 import { log } from '../../common/logging/log';
 import { setTheme } from './theme';
+import './controller'
 
 const logger = log('main');
 

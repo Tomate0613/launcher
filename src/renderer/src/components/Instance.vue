@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { nextTick, useTemplateRef } from 'vue';
 import type { ModpackFrontendData } from '../../../main/data/modpack';
 import ContextMenu from './ContextMenu.vue';
 import Popup from './Popup.vue';
@@ -14,11 +14,14 @@ import {
   mdiPackageVariantClosed,
   mdiPaletteSwatchOutline,
 } from '@mdi/js';
+import { useCommandPalette } from '../composables/commandPalette';
 
 const { instance, accountId } = defineProps<{
   instance: ModpackFrontendData;
   accountId?: string;
 }>();
+
+const commandPalette = useCommandPalette();
 
 async function launch() {
   if (!accountId) {
@@ -34,6 +37,10 @@ function openFolder() {
 
 function deleteInstance() {
   return window.api.invoke('deleteModpack', instance.id);
+}
+
+function openModpackOptions() {
+  commandPalette.value?.openModpackOptions(instance.id);
 }
 
 const confirmInstanceDelete = useTemplateRef('confirm-instance-delete');
@@ -56,6 +63,7 @@ const iconChooser = useTemplateRef('icon-chooser');
     "
     :open-icon-chooser="iconChooser?.openMenu"
     @click-primary-action="launch"
+    @keydown.enter.stop="openModpackOptions()"
   >
     <template v-slot:description>
       {{ instance.gameVersion }} - {{ instance.loader.id }}
@@ -65,35 +73,40 @@ const iconChooser = useTemplateRef('icon-chooser');
       <RouterLink
         :to="`/${instance.id}/mods`"
         draggable="false"
+        class="fake-btn icon-btn"
         v-if="instance.loader.id !== 'vanilla'"
       >
-        <button class="icon-btn">
-          <Icon :path="mdiPackageVariantClosed" />
-          Mods
-        </button>
+        <Icon :path="mdiPackageVariantClosed" />
+        Mods
       </RouterLink>
-      <RouterLink :to="`/${instance.id}/shaderpacks`" draggable="false">
-        <button class="icon-btn">
-          <Icon :path="mdiLightbulbOnOutline" />
-          Shaderpacks
-        </button>
+      <RouterLink
+        :to="`/${instance.id}/shaderpacks`"
+        draggable="false"
+        class="fake-btn icon-btn"
+      >
+        <Icon :path="mdiLightbulbOnOutline" />
+        Shaderpacks
       </RouterLink>
-      <RouterLink :to="`/${instance.id}/resourcepacks`" draggable="false">
-        <button class="icon-btn">
-          <Icon :path="mdiPaletteSwatchOutline" />
-          Resourcepacks
-        </button>
+      <RouterLink
+        :to="`/${instance.id}/resourcepacks`"
+        draggable="false"
+        class="fake-btn icon-btn"
+      >
+        <Icon :path="mdiPaletteSwatchOutline" />
+        Resourcepacks
       </RouterLink>
       <button class="icon-btn" @click="openFolder">
         <Icon :path="mdiFolderOpenOutline" />
         Open Folder
       </button>
 
-      <RouterLink :to="`/${instance.id}/settings`" draggable="false">
-        <button class="icon-btn">
-          <Icon :path="mdiCogOutline" />
-          Settings
-        </button>
+      <RouterLink
+        :to="`/${instance.id}/settings`"
+        draggable="false"
+        class="fake-btn icon-btn"
+      >
+        <Icon :path="mdiCogOutline" />
+        Settings
       </RouterLink>
       <hr />
       <button @click="confirmInstanceDelete?.openMenu" class="icon-btn">

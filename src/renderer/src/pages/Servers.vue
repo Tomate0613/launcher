@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CardGridPage from '../components/CardGridPage.vue';
 import Server from '../components/Server.vue';
 
 const servers = await window.api.invoke('getServers');
@@ -8,9 +9,9 @@ const servers = await window.api.invoke('getServers');
   <div class="page-header"></div>
 
   <div class="page-content">
-    <div class="page-scrollable servers" v-if="servers">
+    <CardGridPage class="servers" v-if="servers">
       <Server v-for="server in servers" v-bind="server" />
-    </div>
+    </CardGridPage>
   </div>
 </template>
 

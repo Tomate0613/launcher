@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useEventListener } from '@vueuse/core';
 import {
   computed,
   nextTick,
@@ -15,6 +14,7 @@ import { mdiHelpCircleOutline, mdiMagnify } from '@mdi/js';
 import ImageIcon from '../ImageIcon.vue';
 import type { Option } from './types';
 import Keybind from '../Keybind.vue';
+import { useNavigationInput } from '../../composables/navigationInput';
 
 const logger = log('command-palette');
 
@@ -105,71 +105,72 @@ async function execute(idx: number, actionIdx: number) {
   }
 }
 
-useEventListener(
-  'keydown',
-  (e) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      if (e.shiftKey) {
-        moveUp();
-      } else {
-        moveDown();
+useNavigationInput(
+  (action) => {
+    if (action === 'down') {
+      moveDown();
+    } else if (action === 'up') {
+      moveUp();
+    } else if (!actionsPopover.value?.matches(':popover-open')) {
+      if (action === 'primary') {
+        execute(selectedIdx.value, 0);
       }
-    }
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      moveDown();
-    }
-
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      moveUp();
-    }
-
-    if (e.ctrlKey && (e.key === 'j' || e.key === 'n')) {
-      e.preventDefault();
-      moveDown();
-    }
-
-    if (e.ctrlKey && (e.key === 'k' || e.key === 'p')) {
-      e.preventDefault();
-      moveUp();
-    }
-
-    if (!actionsPopover.value?.matches(':popover-open')) {
-      if (e.key === 'Enter' && !e.repeat) {
-        e.preventDefault();
-        if (e.shiftKey) {
-          execute(selectedIdx.value, 1);
-        } else {
-          execute(selectedIdx.value, 0);
-        }
+      if (action === 'secondary') {
+        execute(selectedIdx.value, 1);
       }
 
       if (
-        e.ctrlKey &&
-        e.key === 'b' &&
+        action === 'options' &&
         selectedOption.value &&
         selectedOption.value.actions.length >= 2
       ) {
-        e.preventDefault();
         actionsSearchQuery.value = '';
         actionsPopover.value?.showPopover();
         actionsInput.value?.focus();
       }
+
+      if (action === 'cancel') {
+        closeCommandPalette();
+      }
     } else {
-      if (e.key === 'Enter' && !e.repeat) {
-        e.preventDefault();
-        if (e.shiftKey) {
-          execute(selectedIdx.value, 1);
-        } else {
-          execute(selectedIdx.value, selectedActionIdx.value);
-        }
+      if (action === 'primary') {
+        execute(selectedIdx.value, selectedActionIdx.value);
+      }
+      if (action === 'secondary') {
+        execute(selectedIdx.value, 1);
+      }
+
+      if (action === 'cancel') {
+        actionsSearchQuery.value = '';
+        actionsPopover.value?.hidePopover();
+        input.value?.focus();
       }
     }
+
+    return true;
   },
-  { passive: false },
+  {
+    bindings: [
+      { key: 'Tab', action: 'down' },
+      { key: 'Tab', shift: true, action: 'up' },
+
+      { key: 'b', ctrl: true, action: 'options' },
+
+      { key: 'ArrowDown', action: 'down' },
+      { key: 'ArrowUp', action: 'up' },
+
+      { key: 'Enter', action: 'primary' },
+      { key: 'Enter', shift: true, action: 'primary' },
+
+      { key: 'Space', action: 'primary' },
+      { key: 'Space', shift: true, action: 'primary' },
+
+      { key: 'j', ctrl: true, action: 'down' },
+      { key: 'k', ctrl: true, action: 'up' },
+
+      { key: 'Escape', action: 'cancel' },
+    ],
+  },
 );
 
 watch(searchQuery, () => {

@@ -27,7 +27,7 @@ const slots = useSlots();
 </script>
 
 <template>
-  <div class="card" @contextmenu.prevent="showContextMenu">
+  <div class="card" @contextmenu.prevent="showContextMenu" tabindex="0" v-bind="$attrs">
     <ImageIcon
       class="card-icon"
       :class="{ 'card-icon-btn': !!openIconChooser }"
@@ -51,12 +51,14 @@ const slots = useSlots();
 
       <button
         class="primary-action"
+        tabindex="-1"
         :disabled="primaryActionDisabled"
         @click="(event) => emit('clickPrimaryAction', event)"
       >
         <Icon :path="primaryActionIcon ?? mdiPlay" />
       </button>
       <button
+        tabindex="-1"
         class="context-menu-button"
         @click.stop="showContextMenu"
         v-if="slots.contextmenu"
@@ -86,6 +88,11 @@ const slots = useSlots();
   gap: 0.5rem;
   position: relative;
   overflow: hidden;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
 
   & .card-icon {
     width: 4rem;

@@ -3,6 +3,7 @@ import { mdiFolderOpenOutline } from '@mdi/js';
 import Card from '../components/Card.vue';
 import { useAppState } from '../composables/appState';
 import Icon from '../components/Icon.vue';
+import CardGridPage from '../components/CardGridPage.vue';
 
 const worlds = await window.api.invoke('getWorlds');
 
@@ -43,7 +44,7 @@ function launch(modpack: string, save: string) {
 <template>
   <div class="page-header" />
   <div class="page-content">
-    <div class="page-scrollable worlds card-grid">
+    <CardGridPage class="worlds">
       <Card
         v-for="world in worlds"
         :icon="world.icon"
@@ -70,6 +71,6 @@ function launch(modpack: string, save: string) {
           </button>
         </template>
       </Card>
-    </div>
+    </CardGridPage>
   </div>
 </template>
