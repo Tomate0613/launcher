@@ -19,7 +19,10 @@ useNavigationInput((action) => {
 
   if (!target.matches('.card')) {
     if (firstInput) {
-      document.querySelector<HTMLElement>('.card')?.focus();
+      // TODO Remove as never when ts types are up to date
+      document
+        .querySelector<HTMLElement>('.card')
+        ?.focus({ focusVisible: true } as never);
       firstInput = false;
       return true;
     }
