@@ -1,12 +1,12 @@
 .settings-page {
   display: grid;
-  flex-direction: column;
 
   margin-inline: auto;
   gap: 2rem;
 
   grid-template-columns: minmax(0, 720px);
   justify-content: center;
+  align-self: start;
 }
 
 .settings-section {
