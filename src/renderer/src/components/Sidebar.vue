@@ -94,7 +94,6 @@ useEventListener('controller-input' as never, (event) => {
   }
 
   if (sidebarItems[index]) {
-    // TODO Remove as never when ts types are up to date
     sidebarItems[index].click();
   }
 });
