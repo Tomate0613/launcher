@@ -31,6 +31,7 @@
     "msmc": "^5.0.5",
     "openid-client": "^6.8.4",
     "pend": "^1.2.0",
+    "png-to-ico": "^3.0.2",
     "prismarine-nbt": "^2.8.0",
     "skinview3d": "^3.4.2",
     "tomate-launcher-core": "github:Tomate0613/launcher-core",
@@ -38,12 +39,11 @@
     "tomate-mods": "github:Tomate0613/tomate-mods",
     "vue": "^3.5.38",
     "vue-router": "^5.1.0",
-    "yargs": "^18.0.0",
-    "png-to-ico": "^3.0.2"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",
-    "@swc/core": "^1.15.41",
+    "@swc/core": "^1.15.46",
     "@types/adm-zip": "^0.5.8",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^26.0.0",
