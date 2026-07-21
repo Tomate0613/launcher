@@ -6,7 +6,7 @@
 
   grid-template-columns: minmax(0, 720px);
   justify-content: center;
-  align-self: start;
+  align-content: start;
 }
 
 .settings-section {
