@@ -1,13 +1,9 @@
 allowBuilds:
-  "@doublekekse/find-java": true
-  "tomate-launcher-core": true
-  "tomate-mods": true
-  tomate-loaders: true
   "@swc/core": true
   electron: true
   electron-winstaller: true
   esbuild: true
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/4f8b18ab8ead6a68523f863372d4dc57fbf98d09': true
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/e3bb5d63968748da599dd3e2ab4aaf091d5c5c53': true
   tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/a8855e288b573c3cb5a7600a0cade615ce8aa68b: true
   tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/681c60c017b9f8cdf38c135edb10f22761836646: true
   tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/39af8724b942f22fd4800eeff33221b5dc6c672e: true

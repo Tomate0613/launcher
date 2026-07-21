@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@doublekekse/find-java':
         specifier: github:Tomate0613/find-java
-        version: https://codeload.github.com/Tomate0613/find-java/tar.gz/4f8b18ab8ead6a68523f863372d4dc57fbf98d09
+        version: https://codeload.github.com/Tomate0613/find-java/tar.gz/e3bb5d63968748da599dd3e2ab4aaf091d5c5c53
       '@electron-toolkit/preload':
         specifier: ^3.0.2
         version: 3.0.2(electron@43.1.1)
@@ -224,8 +224,8 @@ packages:
     resolution: {integrity: sha512-eY+Yn3dCqTGmyiq2QRU66lA5FL8lqqqvecHt0fF3uHONIa7ToYsaCiWV8lOKqAs0Rb2SjixiKFROngnulPtt2g==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/4f8b18ab8ead6a68523f863372d4dc57fbf98d09':
-    resolution: {gitHosted: true, integrity: sha512-VY22n90RVw7NBGHn/j9UWn245Fl3Qr2+hWohlwtGX8535P6/eGHGjwRmUlfSGRbeSpFHQsjvtyohZB0Oh0Qn4w==, tarball: https://codeload.github.com/Tomate0613/find-java/tar.gz/4f8b18ab8ead6a68523f863372d4dc57fbf98d09}
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/e3bb5d63968748da599dd3e2ab4aaf091d5c5c53':
+    resolution: {gitHosted: true, integrity: sha512-tBi8JXTBx+GfHWWOeTauQzRIMhKOUhKi1C4GTNXhXRVH+GH96yatnoaoBLyCj4nYUde1CN28r1HPtQ2EhaOqiw==, tarball: https://codeload.github.com/Tomate0613/find-java/tar.gz/e3bb5d63968748da599dd3e2ab4aaf091d5c5c53}
     version: 1.0.0
 
   '@electron-internal/extract-zip@1.0.4':
@@ -2946,7 +2946,7 @@ snapshots:
       '@babel/helper-string-parser': 8.0.0
       '@babel/helper-validator-identifier': 8.0.4
 
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/4f8b18ab8ead6a68523f863372d4dc57fbf98d09':
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/e3bb5d63968748da599dd3e2ab4aaf091d5c5c53':
     dependencies:
       node-fetch: 3.3.2
 
