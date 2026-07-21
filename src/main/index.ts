@@ -120,11 +120,25 @@ export function prepare() {
 
 registerProtocolHandler();
 
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'local',
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+      stream: true,
+    },
+  },
+]);
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   // Set app user model id for windows
+  // TODO
   electronApp.setAppUserModelId('com.electron');
   prepare();
 
@@ -132,10 +146,10 @@ app.whenReady().then(async () => {
     const url = new URL(request.url);
 
     try {
-      const filePath = safeJoin(
-        basePath,
-        decodeURIComponent(url.pathname.slice(1)),
-      );
+      const relativePath =
+        (url.host ? `${url.host}` : '') + decodeURIComponent(url.pathname);
+
+      const filePath = safeJoin(basePath, relativePath);
 
       const response = await net.fetch(pathToFileURL(filePath).toString());
 

@@ -85,9 +85,9 @@ export function safeFilename(name: string) {
 
 export function escapeDesktopValue(value: string) {
   return value
-    .replace(/\\/g, "\\\\")
+    .replace(/\\/g, '\\\\')
     .replace(/"/g, '\\"')
-    .replace(/\n/g, "\\n");
+    .replace(/\n/g, '\\n');
 }
 
 export async function downloadFileFromUrl(
@@ -153,21 +153,21 @@ export async function pathFileBuffer(filePath: string) {
 export async function localFile(filePath: string) {
   try {
     const t = (await fs.stat(filePath)).mtime.getTime();
-    return `local:///${path.relative(basePath, filePath)}?${t}`;
+    return `local://${path.relative(basePath, filePath)}?${t}`;
   } catch {
     return undefined;
   }
 }
 
 export function localFileUnchecked(filePath: string) {
-  return `local:///${path.relative(basePath, filePath)}`;
+  return `local://${path.relative(basePath, filePath)}`;
 }
 
 export function localFileSync(filePath: string) {
   try {
     const t = fsSync.statSync(filePath).mtime.getTime();
 
-    return `local:///${path
+    return `local://${path
       .relative(basePath, filePath)
       .split(path.sep)
       .join('/')}?${t}`;
