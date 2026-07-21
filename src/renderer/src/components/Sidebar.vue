@@ -18,9 +18,6 @@ import Icon from './Icon.vue';
 import PlayerHead from './PlayerHead.vue';
 import microsoftLogo from '../assets/microsoft.svg';
 import type { AccountType } from '../../../main/data/account';
-import { log } from '../../../common/logging/log';
-
-const logger = log('sidebar');
 
 const appState = await useAppState();
 const disabledTabs = computed(() => appState.settings.disabledTabs);

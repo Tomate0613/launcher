@@ -2,7 +2,6 @@
 import { mdiFolderOpenOutline } from '@mdi/js';
 import Card from '../components/Card.vue';
 import { useAppState } from '../composables/appState';
-import Icon from '../components/Icon.vue';
 import CardGridPage from '../components/CardGridPage.vue';
 import { useContextMenu } from '../composables/contextMenu';
 
