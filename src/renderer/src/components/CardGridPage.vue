@@ -14,11 +14,13 @@ function getColumnCount() {
   return style.gridTemplateColumns.split(' ').length;
 }
 
+const movementActions = ['right', 'left', 'down', 'up'];
+
 useNavigationInput((action) => {
   const target = document.activeElement as HTMLElement;
 
   if (!target.matches('.card')) {
-    if (firstInput) {
+    if (firstInput && movementActions.includes(action)) {
       // TODO Remove as never when ts types are up to date
       document
         .querySelector<HTMLElement>('.card')
@@ -42,11 +44,15 @@ useNavigationInput((action) => {
 
   switch (action) {
     case 'right':
+      // if (next % columns !== columns - 1) {
       next = index + 1;
+      // }
       break;
 
     case 'left':
+      // if (next % columns !== 0) {
       next = index - 1;
+      // }
       break;
 
     case 'down':
