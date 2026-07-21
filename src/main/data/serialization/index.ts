@@ -2,7 +2,7 @@ import { log } from '../../../common/logging/log';
 
 const logger = log('Serialization');
 
-export function SerializableProperty<T>(
+export function SerializableProperty(
   type: 'optional' | 'required',
 ): (target: undefined, context: ClassFieldDecoratorContext) => void;
 export function SerializableProperty(
