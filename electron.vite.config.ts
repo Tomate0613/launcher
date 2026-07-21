@@ -1,6 +1,5 @@
 import { defineConfig, swcPlugin } from 'electron-vite';
 import vue from '@vitejs/plugin-vue';
-import autoprefixer from 'autoprefixer';
 import 'dotenv/config';
 
 export default defineConfig({
@@ -33,7 +32,7 @@ export default defineConfig({
     plugins: [vue()],
     css: {
       postcss: {
-        plugins: [autoprefixer()],
+        plugins: [],
       },
     },
   },
