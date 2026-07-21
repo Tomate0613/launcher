@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { mdiDotsHorizontal, mdiPlay } from '@mdi/js';
-import ContextMenu from './ContextMenu.vue';
 import ImageIcon from './ImageIcon.vue';
 import Icon from './Icon.vue';
-import { useSlots, useTemplateRef } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   icon?: string;
   defaultIcon?: string;
   name: string;
@@ -13,23 +11,26 @@ defineProps<{
   primaryActionDisabled?: boolean;
   primaryActionIcon?: string;
   openIconChooser?: () => void;
+  openContextMenu?: (event: MouseEvent) => void;
 }>();
 
-const emit = defineEmits<{ clickPrimaryAction: [PointerEvent] }>();
-
-const contextMenu = useTemplateRef('context-menu');
+const emit = defineEmits<{
+  clickPrimaryAction: [PointerEvent];
+}>();
 
 function showContextMenu(event: MouseEvent) {
-  contextMenu.value?.openMenu(event);
-}
+  if (!props.openContextMenu) {
+    return;
+  }
 
-const slots = useSlots();
+  props.openContextMenu(event);
+}
 </script>
 
 <template>
   <div
     class="card"
-    @contextmenu.prevent="showContextMenu"
+    @contextmenu="showContextMenu"
     tabindex="0"
     v-bind="$attrs"
   >
@@ -66,7 +67,7 @@ const slots = useSlots();
         tabindex="-1"
         class="context-menu-button"
         @click.stop="showContextMenu"
-        v-if="slots.contextmenu"
+        v-if="openContextMenu"
       >
         <Icon :path="mdiDotsHorizontal" />
       </button>
@@ -78,10 +79,6 @@ const slots = useSlots();
       v-if="progress !== false && progress !== undefined"
     />
   </div>
-
-  <ContextMenu ref="context-menu" v-if="slots.contextmenu">
-    <slot name="contextmenu" />
-  </ContextMenu>
 </template>
 
 <style scoped>

@@ -5,6 +5,7 @@ import { useDownloadState } from '../composables/downloadState';
 import Popup from '../components/Popup.vue';
 import FrontendErrorPopup from '../components/popup/FrontendErrorPopup.vue';
 import CommandPalette from '../components/command-palette/CommandPalette.vue';
+import ContextMenu from '../components/context-menu/ContextMenu.vue';
 
 const progress = ref(0);
 
@@ -52,6 +53,7 @@ onBeforeUnmount(() => {
 
   <FrontendErrorPopup />
   <CommandPalette />
+  <ContextMenu />
 </template>
 
 <style scoped>

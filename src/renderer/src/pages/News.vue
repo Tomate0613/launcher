@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { mdiContentCopy } from '@mdi/js';
 import type { JavaPatchnotesEntry } from '../../../main/browse';
-import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import ImageIcon from '../components/ImageIcon.vue';
-import Icon from '../components/Icon.vue';
 import { formatTimeAgoIntl } from '@vueuse/core';
 import CardGridPage from '../components/CardGridPage.vue';
+import { useContextMenu } from '../composables/contextMenu';
+
+const contextMenu = useContextMenu();
 
 const javaPatchNotes = await window.api
   .invoke('getJavaPatchnotes')
@@ -27,31 +28,35 @@ function copy(selected: JavaPatchnotesEntry) {
   <div class="page-header" />
   <div class="page-content">
     <CardGridPage class="news">
-      <ContextMenuWrapper v-for="entry in javaPatchNotes.entries">
-        <template v-slot:content>
-          <button
-            @click="viewEntry(entry)"
-            @keydown.enter.stop="viewEntry(entry)"
-            class="card btn-other"
-          >
-            <ImageIcon
-              :src="`https://launchercontent.mojang.com/${entry.image.url}`"
-              :alt="entry.image.title"
-            />
-            <div class="title">{{ entry.title }}</div>
-            <div class="short-text">{{ entry.shortText }}</div>
-            <span class="date">{{
-              formatTimeAgoIntl(new Date(entry.date))
-            }}</span>
-          </button>
-        </template>
-        <template v-slot:context-menu>
-          <button class="icon-btn" @click="copy(entry)">
-            <Icon :path="mdiContentCopy" />
-            Copy URL
-          </button>
-        </template>
-      </ContextMenuWrapper>
+      <button
+        v-for="entry in javaPatchNotes.entries"
+        @click="viewEntry(entry)"
+        @keydown.enter.stop="viewEntry(entry)"
+        class="card btn-other"
+        @contextmenu="
+          (event) =>
+            contextMenu?.openContextMenu(
+              [
+                {
+                  name: 'Copy URL',
+                  icon: mdiContentCopy,
+                  execute() {
+                    copy(entry);
+                  },
+                },
+              ],
+              event,
+            )
+        "
+      >
+        <ImageIcon
+          :src="`https://launchercontent.mojang.com/${entry.image.url}`"
+          :alt="entry.image.title"
+        />
+        <div class="title">{{ entry.title }}</div>
+        <div class="short-text">{{ entry.shortText }}</div>
+        <span class="date">{{ formatTimeAgoIntl(new Date(entry.date)) }}</span>
+      </button>
     </CardGridPage>
   </div>
 </template>

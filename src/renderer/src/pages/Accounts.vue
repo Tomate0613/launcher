@@ -15,13 +15,15 @@ import { IdleAnimation } from 'skinview3d';
 import image from '../assets/pack.png';
 import steve from '../assets/steve.png';
 import Icon from '../components/Icon.vue';
-import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import SkinViewer from '../components/SkinViewer.vue';
 import { computed, ref, useTemplateRef } from 'vue';
 import Popup from '../components/Popup.vue';
 import PlayerHead from '../components/PlayerHead.vue';
+import { useContextMenu } from '../composables/contextMenu';
 
 const appState = await useAppState();
+const contextMenu = useContextMenu();
+
 const uploadSkinPopup = useTemplateRef('upload-skin-popup');
 const skinFilePicker = useTemplateRef('skin-file-picker');
 const confirmSkinDelete = useTemplateRef('confirm-skin-delete');
@@ -170,71 +172,80 @@ async function deleteSkin() {
         </template>
       </div>
 
+      <!-- TODO remove div wrapping -->
       <div v-for="account of appState.accounts.values()" :key="account.id">
-        <ContextMenuWrapper>
-          <template v-slot:content>
-            <button class="account" @click="useAccount(account.id)">
-              <PlayerHead
-                :skin="
-                  account?.profile?.skins?.find(
-                    (skin) => skin.state === 'ACTIVE',
-                  )?.url ?? steve
-                "
-                size="2"
-              />
-              {{ account.profile?.name ?? account.name ?? 'Player' }}
-              {{ account.id === appState.accountId ? '(Active)' : '' }}
-            </button>
-          </template>
-          <template v-slot:context-menu>
-            <button
-              class="icon-btn"
-              v-if="account.id !== appState.accountId"
-              @click="useAccount(account.id)"
-            >
-              <Icon :path="mdiAccountCheckOutline" />
-              Use
-            </button>
-            <button class="icon-btn" @click="removeAccount(account.id)">
-              <Icon :path="mdiDeleteOutline" />
-              Remove
-            </button>
-          </template>
-        </ContextMenuWrapper>
+        <button
+          class="account"
+          @click="useAccount(account.id)"
+          @contextmenu="
+            (event) =>
+              contextMenu?.openContextMenu(
+                [
+                  // TODO maybe remove this option?
+                  {
+                    name: 'Use',
+                    icon: mdiAccountCheckOutline,
+                    execute() {
+                      useAccount(account.id);
+                    },
+                  },
+                  {
+                    name: 'Remove',
+                    icon: mdiDeleteOutline,
+                    execute() {
+                      removeAccount(account.id);
+                    },
+                  },
+                ],
+                event,
+              )
+          "
+        >
+          <PlayerHead
+            :skin="
+              account?.profile?.skins?.find((skin) => skin.state === 'ACTIVE')
+                ?.url ?? steve
+            "
+            size="2"
+          />
+          {{ account.profile?.name ?? account.name ?? 'Player' }}
+          {{ account.id === appState.accountId ? '(Active)' : '' }}
+        </button>
       </div>
 
       <h2>Skins</h2>
       <div class="skins" v-if="skins">
         <div v-for="skin of skins" :key="skin.id">
-          <ContextMenuWrapper>
-            <template v-slot:content>
-              <SkinViewer
-                :options="{
-                  width: 100,
-                  height: 100,
-                  skin: skin.url,
-                  animation: new IdleAnimation(),
-                }"
-              />
-            </template>
-
-            <template v-slot:context-menu>
-              <button
-                class="icon-btn"
-                @click="uploadSkinFromArrayBuffer(skin.file)"
-              >
-                <Icon :path="mdiBrushVariant" />
-                Use
-              </button>
-              <button
-                class="icon-btn"
-                @click="openConfirmSkinDeletePopup(skin.id)"
-              >
-                <Icon :path="mdiDeleteOutline" />
-                Forget Skin
-              </button>
-            </template>
-          </ContextMenuWrapper>
+          <SkinViewer
+            :options="{
+              width: 100,
+              height: 100,
+              skin: skin.url,
+              animation: new IdleAnimation(),
+            }"
+            @contextmenu="
+              (event: MouseEvent) =>
+                contextMenu?.openContextMenu(
+                  [
+                    {
+                      name: 'Use',
+                      icon: mdiBrushVariant,
+                      execute() {
+                        uploadSkinFromArrayBuffer(skin.file);
+                      },
+                    },
+                    {
+                      name: 'Forget Skin',
+                      icon: mdiDeleteOutline,
+                      execute() {
+                        openConfirmSkinDeletePopup(skin.id);
+                      },
+                    },
+                  ],
+                  event,
+                )
+            "
+          />
         </div>
 
         <button
@@ -253,27 +264,32 @@ async function deleteSkin() {
       <h2>Capes</h2>
       <div class="capes" v-if="appState?.account?.profile?.capes">
         <div v-for="cape of appState.account.profile.capes" :key="cape.id">
-          <ContextMenuWrapper>
-            <template v-slot:content>
-              <SkinViewer
-                :options="{
-                  width: 100,
-                  height: 100,
-                  skin: activeSkin,
-                  cape: cape.url,
-                  animation: new IdleAnimation(),
-                }"
-                :camera-pos="[0, 0, -1]"
-                :adjust-camera-distance="true"
-              />
-            </template>
-            <template v-slot:context-menu>
-              <button class="icon-btn" @click="setCape(cape.id)">
-                <Icon :path="mdiBrushVariant" />
-                Use
-              </button>
-            </template>
-          </ContextMenuWrapper>
+          <SkinViewer
+            :options="{
+              width: 100,
+              height: 100,
+              skin: activeSkin,
+              cape: cape.url,
+              animation: new IdleAnimation(),
+            }"
+            :camera-pos="[0, 0, -1]"
+            :adjust-camera-distance="true"
+            @contextmenu="
+              (event: MouseEvent) =>
+                contextMenu?.openContextMenu(
+                  [
+                    {
+                      name: 'Use',
+                      icon: mdiBrushVariant,
+                      execute() {
+                        setCape(cape.id);
+                      },
+                    },
+                  ],
+                  event,
+                )
+            "
+          />
         </div>
       </div>
     </div>

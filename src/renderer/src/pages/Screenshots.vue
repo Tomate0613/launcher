@@ -5,17 +5,20 @@ import {
   mdiContentCopy,
   mdiOpenInApp,
 } from '@mdi/js';
-import ContextMenuWrapper from '../components/ContextMenuWrapper.vue';
 import Icon from '../components/Icon.vue';
 import { ref, useTemplateRef } from 'vue';
 import Popup from '../components/Popup.vue';
 import { onKeyDown } from '@vueuse/core';
 import CardGridPage from '../components/CardGridPage.vue';
 import { useNavigationInput } from '../composables/navigationInput';
+import { useContextMenu } from '../composables/contextMenu';
+
+const popup = useTemplateRef('popup');
 
 const screenshots = await window.api.invoke('getScreenshots');
 
-const popup = useTemplateRef('popup');
+const contextMenu = useContextMenu();
+
 const popupScreenshotIdx = ref(0);
 const popupFullscreen = ref(false);
 
@@ -62,35 +65,39 @@ useNavigationInput((action) => {
   <div class="page-header"></div>
   <div class="page-content">
     <CardGridPage class="screenshots" v-if="screenshots">
-      <ContextMenuWrapper v-for="(screenshot, i) in screenshots">
-        <template v-slot:content>
-          <button
-            class="btn-other screenshot-btn card"
-            @click="openScreenshotPopup(i)"
-            @keydown.enter.stop="openScreenshotPopup(i)"
-          >
-            <img :src="screenshot.data" />
-          </button>
-        </template>
-        <template v-slot:context-menu>
-          <button
-            class="icon-btn"
-            @click="copy(screenshot.modpack, screenshot.screenshot)"
-          >
-            <Icon :path="mdiContentCopy" />
-            Copy Image
-          </button>
-          <button
-            class="icon-btn"
-            @click="
-              showInFileManager(screenshot.modpack, screenshot.screenshot)
-            "
-          >
-            <Icon :path="mdiOpenInApp" />
-            Show in File Manager
-          </button>
-        </template>
-      </ContextMenuWrapper>
+      <button
+        v-for="(screenshot, i) in screenshots"
+        class="btn-other screenshot-btn card"
+        @click="openScreenshotPopup(i)"
+        @keydown.enter.stop="openScreenshotPopup(i)"
+        @contextmenu="
+          (event) =>
+            contextMenu?.openContextMenu(
+              [
+                {
+                  name: 'Copy Image',
+                  icon: mdiContentCopy,
+                  execute() {
+                    copy(screenshot.modpack, screenshot.screenshot);
+                  },
+                },
+                {
+                  name: 'Show in File Manager',
+                  icon: mdiOpenInApp,
+                  execute() {
+                    showInFileManager(
+                      screenshot.modpack,
+                      screenshot.screenshot,
+                    );
+                  },
+                },
+              ],
+              event,
+            )
+        "
+      >
+        <img :src="screenshot.data" />
+      </button>
     </CardGridPage>
   </div>
 

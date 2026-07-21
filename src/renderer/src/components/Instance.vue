@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { nextTick, useTemplateRef } from 'vue';
+import { useTemplateRef } from 'vue';
 import type { ModpackFrontendData } from '../../../main/data/modpack';
-import ContextMenu from './ContextMenu.vue';
 import Popup from './Popup.vue';
 import Card from './Card.vue';
 import ChooseIconPopup from './popup/ChooseIconPopup.vue';
-import Icon from './Icon.vue';
 import {
   mdiCogOutline,
   mdiDeleteOutline,
@@ -15,6 +13,7 @@ import {
   mdiPaletteSwatchOutline,
 } from '@mdi/js';
 import { useCommandPalette } from '../composables/commandPalette';
+import { useContextMenu } from '../composables/contextMenu';
 
 const { instance, accountId } = defineProps<{
   instance: ModpackFrontendData;
@@ -22,6 +21,7 @@ const { instance, accountId } = defineProps<{
 }>();
 
 const commandPalette = useCommandPalette();
+const contextMenu = useContextMenu();
 
 async function launch() {
   if (!accountId) {
@@ -45,6 +45,51 @@ function openModpackOptions() {
 
 const confirmInstanceDelete = useTemplateRef('confirm-instance-delete');
 const iconChooser = useTemplateRef('icon-chooser');
+
+function openContextMenu(event: MouseEvent) {
+  contextMenu.value?.openContextMenu(
+    (
+      [
+        instance.loader.id !== 'vanilla' && {
+          name: 'Mods',
+          icon: mdiPackageVariantClosed,
+          href: `/${instance.id}/mods`,
+        },
+        {
+          name: 'Shaderpacks',
+          icon: mdiLightbulbOnOutline,
+          href: `/${instance.id}/shaderpacks`,
+        },
+        {
+          name: 'Resourcepacks',
+          icon: mdiPaletteSwatchOutline,
+          href: `/${instance.id}/resourcepacks`,
+        },
+        {
+          name: 'Open Folder',
+          icon: mdiFolderOpenOutline,
+          execute() {
+            openFolder();
+          },
+        },
+        {
+          name: 'Settings',
+          icon: mdiCogOutline,
+          href: `/${instance.id}/settings`,
+        },
+        { type: 'hr' },
+        {
+          name: 'Delete',
+          icon: mdiDeleteOutline,
+          execute() {
+            confirmInstanceDelete.value?.openMenu();
+          },
+        },
+      ] as const
+    ).filter((n) => n !== false),
+    event,
+  );
+}
 </script>
 
 <template>
@@ -62,61 +107,14 @@ const iconChooser = useTemplateRef('icon-chooser');
       !accountId || instance.processes.some((process) => process.blocking)
     "
     :open-icon-chooser="iconChooser?.openMenu"
+    :open-context-menu="openContextMenu"
     @click-primary-action="launch"
     @keydown.enter.stop="openModpackOptions()"
   >
     <template v-slot:description>
       {{ instance.gameVersion }} - {{ instance.loader.id }}
     </template>
-
-    <template v-slot:contextmenu>
-      <RouterLink
-        :to="`/${instance.id}/mods`"
-        draggable="false"
-        class="fake-btn icon-btn"
-        v-if="instance.loader.id !== 'vanilla'"
-      >
-        <Icon :path="mdiPackageVariantClosed" />
-        Mods
-      </RouterLink>
-      <RouterLink
-        :to="`/${instance.id}/shaderpacks`"
-        draggable="false"
-        class="fake-btn icon-btn"
-      >
-        <Icon :path="mdiLightbulbOnOutline" />
-        Shaderpacks
-      </RouterLink>
-      <RouterLink
-        :to="`/${instance.id}/resourcepacks`"
-        draggable="false"
-        class="fake-btn icon-btn"
-      >
-        <Icon :path="mdiPaletteSwatchOutline" />
-        Resourcepacks
-      </RouterLink>
-      <button class="icon-btn" @click="openFolder">
-        <Icon :path="mdiFolderOpenOutline" />
-        Open Folder
-      </button>
-
-      <RouterLink
-        :to="`/${instance.id}/settings`"
-        draggable="false"
-        class="fake-btn icon-btn"
-      >
-        <Icon :path="mdiCogOutline" />
-        Settings
-      </RouterLink>
-      <hr />
-      <button @click="confirmInstanceDelete?.openMenu" class="icon-btn">
-        <Icon :path="mdiDeleteOutline" />
-        Delete
-      </button>
-    </template>
   </Card>
-
-  <ContextMenu ref="contextMenu"> </ContextMenu>
 
   <Popup ref="confirm-instance-delete">
     <h2>Delete Instance</h2>

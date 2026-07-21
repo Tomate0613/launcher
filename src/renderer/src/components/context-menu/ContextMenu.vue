@@ -1,16 +1,30 @@
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, useTemplateRef } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { setContextMenuInstance } from '../../composables/contextMenu';
+import Icon from '../Icon.vue';
+import { useEventListener } from '@vueuse/core';
+const contextMenu = useTemplateRef('context-menu');
 
-const menu = useTemplateRef('menu');
+const items = ref<ContextMenuItem[]>([]);
+
 const x = ref(0);
 const y = ref(0);
+
 const isOpen = ref(false);
 
-function openMenu(event: MouseEvent) {
-  event.preventDefault();
+type HrItem = { type: 'hr' };
 
-  openAt(event.clientX, event.clientY);
-}
+type ButtonItem = {
+  name: string;
+  icon: string;
+} & (
+  | { href: string }
+  | {
+      execute: () => void;
+    }
+);
+
+export type ContextMenuItem = HrItem | ButtonItem;
 
 function openAt(posX: number, posY: number) {
   x.value = posX;
@@ -22,19 +36,23 @@ function openAt(posX: number, posY: number) {
 
   isOpen.value = true;
 
-  nextTick(adjustPosition);
+  nextTick(() => {
+    adjustPosition();
+    contextMenu.value?.focus();
+  });
 
   window.dispatchEvent(new Event('context-menu-opened'));
   window.addEventListener('context-menu-opened', closeMenu);
 
   window.addEventListener('click', closeMenu);
+  window.addEventListener('scroll', closeMenu, { capture: true });
 }
 
 function adjustPosition() {
-  if (!menu.value) return;
+  if (!contextMenu.value) return;
 
   const { innerWidth, innerHeight } = window;
-  const { offsetWidth, offsetHeight } = menu.value;
+  const { offsetWidth, offsetHeight } = contextMenu.value;
 
   if (x.value + offsetWidth > innerWidth) {
     x.value = innerWidth - offsetWidth;
@@ -46,42 +64,71 @@ function adjustPosition() {
 
 function closeMenu() {
   isOpen.value = false;
-
   cleanup();
 }
 
-function cleanup() {
-  document.removeEventListener('click', closeMenu);
-  window.removeEventListener('context-menu-opened', closeMenu);
-}
-
-function onKeyDown(ev: KeyboardEvent) {
+useEventListener('keydown', (ev: KeyboardEvent) => {
   if (ev.key === 'Escape') {
     closeMenu();
   }
+});
+
+function cleanup() {
+  document.removeEventListener('click', closeMenu);
+  document.removeEventListener('scroll', closeMenu);
+
+  window.removeEventListener('context-menu-opened', closeMenu);
 }
+
+function openContextMenu(menuItems: ContextMenuItem[], event: MouseEvent) {
+  event.preventDefault();
+
+  items.value = menuItems;
+  openAt(event.clientX, event.clientY);
+}
+
+onMounted(() => {
+  setContextMenuInstance({ openContextMenu });
+});
 
 onUnmounted(() => {
   cleanup();
 });
-
-defineExpose({ openMenu, openAt, closeMenu });
 </script>
 
 <template>
   <div
-    v-if="isOpen"
-    ref="menu"
     class="context-menu"
+    ref="context-menu"
+    v-if="isOpen"
     :style="{ top: `${y}px`, left: `${x}px` }"
-    @click.self.stop
-    @keydown="onKeyDown"
   >
-    <slot />
+    <template v-for="item in items">
+      <RouterLink
+        v-if="'href' in item"
+        :to="item.href"
+        draggable="false"
+        class="fake-btn icon-btn"
+      >
+        <Icon :path="item.icon" />
+        {{ item.name }}
+      </RouterLink>
+
+      <button
+        v-else-if="'execute' in item"
+        @click="item.execute()"
+        class="icon-btn"
+      >
+        <Icon :path="item.icon" />
+        {{ item.name }}
+      </button>
+
+      <hr v-else-if="'type' in item && item.type === 'hr'" />
+    </template>
   </div>
 </template>
 
-<style>
+<style scoped>
 .context-menu {
   display: flex;
   position: fixed;

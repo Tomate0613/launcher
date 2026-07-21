@@ -4,7 +4,9 @@ import Card from '../components/Card.vue';
 import { useAppState } from '../composables/appState';
 import Icon from '../components/Icon.vue';
 import CardGridPage from '../components/CardGridPage.vue';
+import { useContextMenu } from '../composables/contextMenu';
 
+const contextMenu = useContextMenu();
 const worlds = await window.api.invoke('getWorlds');
 
 const { modpacks, accountId } = await useAppState();
@@ -50,6 +52,21 @@ function launch(modpack: string, save: string) {
         :icon="world.icon"
         :name="world.name"
         :primary-action-disabled="!accountId"
+        :open-context-menu="
+          (event) =>
+            contextMenu?.openContextMenu(
+              [
+                {
+                  name: 'Open Folder',
+                  icon: mdiFolderOpenOutline,
+                  execute() {
+                    openFolder(world.modpack, world.save);
+                  },
+                },
+              ],
+              event,
+            )
+        "
         @click-primary-action="launch(world.modpack, world.save)"
       >
         <template v-slot:description>
@@ -59,16 +76,6 @@ function launch(modpack: string, save: string) {
           <div class="gamemode">
             {{ gameTypeName(world.gameType) }}
           </div>
-        </template>
-
-        <template v-slot:contextmenu>
-          <button
-            class="icon-btn"
-            @click="openFolder(world.modpack, world.save)"
-          >
-            <Icon :path="mdiFolderOpenOutline" />
-            Open Folder
-          </button>
         </template>
       </Card>
     </CardGridPage>
