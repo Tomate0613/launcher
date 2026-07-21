@@ -311,11 +311,6 @@ watchEffect(() => {
 </template>
 
 <style scoped>
-.settings {
-  margin-inline: auto;
-  gap: 2rem;
-}
-
 .extra-buttons {
   display: flex;
   flex-direction: column;
