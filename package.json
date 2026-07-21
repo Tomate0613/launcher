@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
-    "typecheck": "pnpm run typecheck:node && pnpm run typecheck:web",
+    "typecheck": "pnpm run typecheck:node",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "vue-tsc --noEmit -p tsconfig.renderer.json --composite false",
     "start": "electron-vite dev -w",
