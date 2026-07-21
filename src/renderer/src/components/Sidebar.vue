@@ -97,6 +97,29 @@ useEventListener('controller-input' as never, (event) => {
     sidebarItems[index].click();
   }
 });
+
+useEventListener('keydown', (event) => {
+  if (!event.altKey) {
+    return;
+  }
+
+  let index = Number.parseInt(event.key, 10);
+
+  if (Number.isNaN(index) || index < 0) {
+    return;
+  }
+
+  if(index == 0) {
+    index = 10;
+  }
+
+  const sidebarItems = Array.from(
+    document.querySelectorAll<HTMLElement>('.sidebar-item'),
+  );
+
+  sidebarItems[Math.min(index, sidebarItems.length) - 1]?.click();
+  event.preventDefault();
+});
 </script>
 
 <template>
