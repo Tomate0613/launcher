@@ -83,7 +83,17 @@
               pkg-config
               gtk4
               json-glib
-              libseccomp
+
+              (libseccomp.overrideAttrs (old: {
+                dontDisableStatic = true;
+                doCheck = false;
+              }))
+            ];
+
+            nativeBuildInputs = with pkgs; [
+              # libseccomp
+              # libseccomp.dev
+
             ];
 
             env = {
@@ -106,7 +116,6 @@
                   nss
                   nspr
                   dbus
-                  libseccomp
                   alsa-lib
                   atk
                   cups
@@ -128,6 +137,16 @@
                   libGL
                 ]
                 ++ (runtimeLibs pkgs)
+              );
+
+              LIBSECCOMP_LIB_PATH = lib.makeLibraryPath (
+                with pkgs;
+                [
+                  (libseccomp.overrideAttrs (old: {
+                    dontDisableStatic = true;
+                    doCheck = false;
+                  }))
+                ]
               );
             };
           };
