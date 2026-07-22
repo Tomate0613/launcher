@@ -42,7 +42,7 @@ runs:
       run: |
         mkdir -p extra-binaries
         cd mc-wrapper
-        LIBSECCOMP_LINK_TYPE="static" LIBSECCOMP_LIB_PATH="/usr/lib/x86_64-linux-gnu" cargo build --release --extra-binaries
+        LIBSECCOMP_LINK_TYPE="static" LIBSECCOMP_LIB_PATH="/usr/lib/x86_64-linux-gnu" cargo build --release --bins
         cp target/release/mc-wrapper ../extra-binaries || cp target/release/mc-wrapper.exe ../extra-binaries
       shell: bash
 
