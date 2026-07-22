@@ -39,7 +39,7 @@ runs:
 
     - name: build mc-wrapper
       if: steps.mc-wrapper-cache.outputs.cache-hit != 'true'
-      run: pnpm build:wrapper
+      run: LIBSECCOMP_LIB_PATH="/usr/lib/x86_64-linux-gnu" pnpm build:wrapper
       shell: bash
 
     - name: build windows
