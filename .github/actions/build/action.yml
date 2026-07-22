@@ -20,7 +20,7 @@ runs:
       id: mc-wrapper-cache
       with:
         path: extra-binaries
-        key: mc-wrapper-${{ runner.os }}-${{ hashFiles('mc-wrapper/**') }}
+        key: mc-wrapper-${{ runner.os }}-${{ hashFiles('mc-wrapper/**', '.github/actions/build/action.yml') }}
 
     - name: install dependencies
       run: pnpm i --frozen-lockfile
@@ -39,7 +39,11 @@ runs:
 
     - name: build mc-wrapper
       if: steps.mc-wrapper-cache.outputs.cache-hit != 'true'
-      run: LIBSECCOMP_LINK_TYPE="static" LIBSECCOMP_LIB_PATH="/usr/lib/x86_64-linux-gnu" pnpm build:wrapper
+      run: |
+        mkdir -p extra-binaries
+        cd mc-wrapper
+        LIBSECCOMP_LINK_TYPE="static" LIBSECCOMP_LIB_PATH="/usr/lib/x86_64-linux-gnu" cargo build --release --extra-binaries
+        cp target/release/mc-wrapper ../extra-binaries || cp target/release/mc-wrapper.exe ../extra-binaries
       shell: bash
 
     - name: build windows
