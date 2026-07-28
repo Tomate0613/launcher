@@ -93,7 +93,6 @@
             nativeBuildInputs = with pkgs; [
               # libseccomp
               # libseccomp.dev
-
             ];
 
             env = {
@@ -107,37 +106,7 @@
               );
 
               __GL_THREADED_OPTIMIZATIONS = 0;
-              LD_LIBRARY_PATH = lib.makeLibraryPath (
-                with pkgs;
-                [
-                  glib
-                  libgbm
-                  glibc
-                  nss
-                  nspr
-                  dbus
-                  alsa-lib
-                  atk
-                  cups
-                  gtk3
-                  pango
-                  cairo
-                  libx11
-                  libxcomposite
-                  libxdamage
-                  libxext
-                  libxfixes
-                  libxrandr
-                  libxrender
-                  libxcb
-                  expat
-                  at-spi2-atk
-                  libxkbcommon
-                  mesa
-                  libGL
-                ]
-                ++ (runtimeLibs pkgs)
-              );
+              LD_LIBRARY_PATH = lib.makeLibraryPath (runtimeLibs pkgs);
 
               LIBSECCOMP_LIB_PATH = lib.makeLibraryPath (
                 with pkgs;
