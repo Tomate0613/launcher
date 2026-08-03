@@ -70,13 +70,6 @@
               pciutils
               xrandr
               mesa-demos
-
-              wineWow64Packages.minimal
-              flatpak-builder
-
-              typescript-language-server
-              vtsls
-              vue-language-server
             ];
 
             buildInputs = with pkgs; [
