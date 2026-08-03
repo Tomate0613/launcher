@@ -10,9 +10,9 @@ import nbt from 'prismarine-nbt';
 import { log } from '../common/logging/log';
 import { localFile, localFileUnchecked, pathFileBuffer } from './utils';
 import { clipboard, nativeImage, shell } from 'electron';
-import { lookup } from './server';
 import { getModpack, getVisibleModpacks, modpacks } from './data';
 import { FrontendError } from './error';
+import { lookup } from './server';
 
 const logger = log('browse');
 
