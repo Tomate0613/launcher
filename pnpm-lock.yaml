@@ -64,7 +64,7 @@ importers:
         version: 3.4.2
       tomate-launcher-core:
         specifier: github:Tomate0613/launcher-core
-        version: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/f4c6226cdd67533eee2550e0e88969d50199ac5d(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        version: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/827af32acaec43e0ffde279e3e322db5ccfb79d2(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       tomate-loaders:
         specifier: github:Tomate0613/tomate-loaders
         version: https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/681c60c017b9f8cdf38c135edb10f22761836646(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
@@ -1184,10 +1184,6 @@ packages:
     resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-
-  adm-zip@0.5.17:
-    resolution: {integrity: sha512-+Ut8d9LLqwEvHHJl1+PIHqoyDxFgVN847JTVM3Izi3xHDWPE4UtzzXysMZQs64DMcrJfBeS/uoEP4AD3HQHnQQ==}
-    engines: {node: '>=12.0'}
 
   adm-zip@0.6.0:
     resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
@@ -2522,8 +2518,8 @@ packages:
     resolution: {integrity: sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13ZeIcZnDg/QpSuU2zfZ3rzwY8ukEnaXw==}
     engines: {node: '>=14.14'}
 
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/f4c6226cdd67533eee2550e0e88969d50199ac5d:
-    resolution: {gitHosted: true, integrity: sha512-eysfevmZQdTurOSrqlOx0gzBprMaivg60C6bABYXQgTClpcXdQgr9kSasuzA5X8+q+Jwgotr427T4vlzAvKZgw==, tarball: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/f4c6226cdd67533eee2550e0e88969d50199ac5d}
+  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/827af32acaec43e0ffde279e3e322db5ccfb79d2:
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/827af32acaec43e0ffde279e3e322db5ccfb79d2}
     version: 1.0.0
 
   tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/681c60c017b9f8cdf38c135edb10f22761836646:
@@ -3734,8 +3730,6 @@ snapshots:
       event-target-shim: 5.0.1
 
   acorn@8.16.0: {}
-
-  adm-zip@0.5.17: {}
 
   adm-zip@0.6.0: {}
 
@@ -5171,9 +5165,9 @@ snapshots:
 
   tmp@0.2.7: {}
 
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/f4c6226cdd67533eee2550e0e88969d50199ac5d(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
+  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/827af32acaec43e0ffde279e3e322db5ccfb79d2(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
-      adm-zip: 0.5.17
+      adm-zip: 0.6.0
       axios: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       tomate-launcher-core: 'link:'
     transitivePeerDependencies:
