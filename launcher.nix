@@ -7,6 +7,7 @@
     jdk21
     jdk25
   ],
+  electron ? pkgs.electron_43
 }:
 let
   pname = (lib.fromJSON (lib.readFile ./package.json)).name;
@@ -49,11 +50,11 @@ pkgs.mkPnpmPackage {
 
   preBuild =
     lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-      cp -r ${pkgs.electron.dist}/Electron.app .
+      cp -r ${electron.dist}/Electron.app .
       chmod -R u+w Electron.app
     ''
     + lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-      cp -r ${pkgs.electron.dist} electron-dist
+      cp -r ${electron.dist} electron-dist
       chmod -R u+w electron-dist
     '';
 
@@ -64,7 +65,7 @@ pkgs.mkPnpmPackage {
     pnpm exec electron-builder \
       --dir \
       -c.electronDist=${if pkgs.stdenv.hostPlatform.isDarwin then "." else "electron-dist"} \
-      -c.electronVersion=${pkgs.electron.version}
+      -c.electronVersion=${electron.version}
 
     runHook postBuild
   '';
@@ -81,7 +82,7 @@ pkgs.mkPnpmPackage {
   '';
 
   postFixup = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-    makeWrapper ${pkgs.electron}/bin/electron $out/bin/tomate-launcher \
+    makeWrapper ${electron}/bin/electron $out/bin/tomate-launcher \
       --prefix PATH : ${
         lib.makeBinPath (
           with pkgs;
