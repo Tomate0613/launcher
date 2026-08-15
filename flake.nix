@@ -83,13 +83,7 @@
               }))
             ];
 
-            nativeBuildInputs = with pkgs; [
-              # libseccomp
-              # libseccomp.dev
-            ];
-
             env = {
-              # PKG_CONFIG_PATH = "${pkgs.gtk4}/lib/pkgconfig:${pkgs.json-glib}/lib/pkgconfig:${pkgs.}";
               TOMATE_LAUNCHER_JDKS = lib.makeBinPath (
                 with pkgs;
                 [
