@@ -17,10 +17,32 @@ export default defineConfig({
           decoratorVersion: '2022-03',
           optimizer: { simplify: true },
         },
+        minifyOptions: {
+          compress: true,
+          mangle: {
+            keep_classnames: true,
+            keep_fnames: true,
+          },
+          format: {
+            comments: false,
+          },
+        },
       }),
     ],
     build: {
       externalizeDeps: false,
+
+      minify: true,
+
+      rollupOptions: {
+        output: {
+          manualChunks(id, _meta): string | void {
+            if (id.includes('tomate-launcher-core')) {
+              return 'tomate-launcher-core';
+            }
+          },
+        },
+      },
     },
   },
   preload: {

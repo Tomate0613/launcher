@@ -51,7 +51,7 @@
     "dotenv": "^17.4.2",
     "electron": "^43.4.0",
     "electron-builder": "^26.15.3",
-    "electron-vite": "6.0.0-beta.1",
+    "electron-vite": "file:../electron-vite",
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vue-tsc": "^3.3.10"
