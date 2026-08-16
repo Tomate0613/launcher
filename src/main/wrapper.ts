@@ -13,7 +13,7 @@ import fsSync from 'node:fs';
 import path, { dirname } from 'node:path';
 import { runOnClose, withPlatformExtension } from './utils';
 import { is } from '@electron-toolkit/utils';
-import { Launcher, LaunchOptions } from 'tomate-launcher-core';
+import { Launcher, type LaunchOptions } from 'tomate-launcher-core';
 import { ProcessContext } from './process';
 import { getSettings } from './data';
 import { fileURLToPath } from 'node:url';

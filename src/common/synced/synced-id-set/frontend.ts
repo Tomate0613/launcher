@@ -1,4 +1,4 @@
-import { Reactive, reactive } from 'vue';
+import { type Reactive, reactive } from 'vue';
 
 export type SyncedItem = { id: string };
 

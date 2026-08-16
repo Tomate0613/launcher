@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { LoaderInfo, ModpackImporter, ProgressListener } from '.';
+import type { LoaderInfo, ModpackImporter, ProgressListener } from '.';
 import fs from 'node:fs';
 import {
   downloadFileFromUrl,

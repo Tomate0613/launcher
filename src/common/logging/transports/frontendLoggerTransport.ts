@@ -1,4 +1,4 @@
-import { LogLevel } from '../log';
+import type { LogLevel } from '../log';
 
 export function frontendLoggerTransport(
   level: LogLevel,

@@ -1,4 +1,4 @@
-import { LoaderInfo, ModpackImporter, ProgressListener } from '.';
+import type { LoaderInfo, ModpackImporter, ProgressListener } from '.';
 import ConfigParser from 'configparser';
 
 import fs from 'node:fs';

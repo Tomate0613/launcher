@@ -11,10 +11,10 @@ import {
   stashesPath,
 } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
-import { liner, loader, type LoaderId, ModdedLoaderId } from 'tomate-loaders';
+import { liner, loader, type LoaderId, type ModdedLoaderId } from 'tomate-loaders';
 import { randomUUID } from 'node:crypto';
 import {
-  LaunchOptions,
+  type LaunchOptions,
   Launcher,
   isMinecraftVersionAfter,
 } from 'tomate-launcher-core';
@@ -24,11 +24,11 @@ import {
   FoundJavaInstallations,
 } from '@doublekekse/find-java';
 import fs from 'fs-extra';
-import {
-  type Provider,
-  ImplementedProvider,
-  ProjectType,
-  SearchResult,
+import type {
+    Provider,
+    ImplementedProvider,
+    ProjectType,
+    SearchResult
 } from 'tomate-mods';
 import { Account } from './account';
 import { invoke } from '../api';
@@ -45,17 +45,17 @@ import {
 import { log, type Logger } from '../../common/logging/log';
 import { app, shell } from 'electron';
 import { ModsContent } from './content/mods';
-import { GeneralModpackOptions } from './settings';
+import type { GeneralModpackOptions } from './settings';
 import { tomateMods } from './content/lib';
-import { ContentType, ResourceSource } from './content/content';
+import type { ContentType, ResourceSource } from './content/content';
 import { ShaderpacksContent } from './content/shaderpacks';
 import { ResourcepacksContent } from './content/resourcepacks';
 import { downloadManager } from './downloads';
 import { error, FrontendError, showError } from '../error';
-import { Process, ProcessContext } from '../process';
+import { type Process, ProcessContext } from '../process';
 import { spawnWrapper } from '../wrapper';
 import { safeClose } from '../close';
-import { InstanceSyncOptions } from './sync/types';
+import type { InstanceSyncOptions } from './sync/types';
 import { syncModpack } from './sync';
 import { javaTasks } from './java';
 import { platform } from 'node:os';

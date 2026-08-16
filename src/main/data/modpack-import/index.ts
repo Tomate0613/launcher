@@ -1,4 +1,4 @@
-import { LoaderId } from 'tomate-loaders';
+import type { LoaderId } from 'tomate-loaders';
 import { Modpack } from '../modpack';
 
 export type LoaderInfo = { id: LoaderId; version: string };

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { LogLevel } from '../log';
+import type { LogLevel } from '../log';
 import fs, { WriteStream } from 'node:fs';
 import { logsPath } from '../../../main/paths';
 import { inspect } from 'util';

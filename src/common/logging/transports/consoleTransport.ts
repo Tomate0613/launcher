@@ -1,4 +1,4 @@
-import { LogLevel } from '../log';
+import type { LogLevel } from '../log';
 import c from 'ansi-colors';
 
 // TODO no ansi on frotend, it doesn't make sense and theres a propper way to do it anyways

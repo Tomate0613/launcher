@@ -1,4 +1,4 @@
-import { Content, ContentItem } from './content';
+import { Content, type ContentItem } from './content';
 import path from 'node:path';
 import { Modpack } from '../modpack';
 import { tomateMods } from './lib';

@@ -2,7 +2,7 @@ import { AxiosError, isAxiosError } from 'axios';
 import { log } from '../common/logging/log';
 import { TasksError } from 'tomate-launcher-core';
 import { invoke } from './api';
-import { ImplementedProvider } from 'tomate-mods';
+import type { ImplementedProvider } from 'tomate-mods';
 import { is } from '@electron-toolkit/utils';
 
 const logger = log('error');

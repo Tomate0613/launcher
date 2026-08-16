@@ -9,11 +9,11 @@ import AdmZip from 'adm-zip';
 import { log } from '../../common/logging/log';
 import { Mrpack } from './modpack-import/mrpack';
 import { MultiMc } from './modpack-import/multi-mc';
-import { ModpackImporter } from './modpack-import';
+import type { ModpackImporter } from './modpack-import';
 import { Cursepack } from './modpack-import/cursepack';
 import { fileBufferPath } from '../utils';
 import { error, FrontendError, ProviderError } from '../error';
-import { ImplementedProvider } from 'tomate-mods';
+import type { ImplementedProvider } from 'tomate-mods';
 
 const logger = log('modpack-import');
 

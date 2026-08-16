@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import { consoleTransport } from './transports/consoleTransport';
-import { LogLevel, configureTransports, log } from './log';
+import { type LogLevel, configureTransports, log } from './log';
 import { ipcMainTransport } from './transports/ipcMainTransport';
 import { fileTransport } from './transports/fileTransport';
 import { is } from '@electron-toolkit/utils';

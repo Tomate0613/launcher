@@ -1,8 +1,8 @@
 import { ipcMain, shell } from 'electron';
 import {
-  LoaderInfo,
+  type LoaderInfo,
   Modpack,
-  ModpackFrontendData,
+  type ModpackFrontendData,
   VanillaError,
 } from './data/modpack';
 import {
@@ -16,13 +16,13 @@ import {
 import { loader, type LoaderId } from 'tomate-loaders';
 import { Account } from './data/account';
 import { is } from '@electron-toolkit/utils';
-import { ImplementedProvider, Version } from 'tomate-mods';
-import { defaultGeneralModpackOptions, SettingsFrontendData } from './data/settings';
+import type { ImplementedProvider, Version } from 'tomate-mods';
+import { defaultGeneralModpackOptions, type SettingsFrontendData } from './data/settings';
 import { log } from '../common/logging/log';
 import * as ModpackImporter from './data/modpack-importer';
 import { mainWindow } from './windows';
 import { basePath } from './paths';
-import { ContentType } from './data/content/content';
+import type { ContentType } from './data/content/content';
 import { fileBufferPath } from './utils';
 import {
   clearDefaultFile,
@@ -42,7 +42,7 @@ import {
 import path from 'node:path';
 import { applyDefaults } from '../common/utils';
 import { error, FrontendError, ProviderError } from './error';
-import { LaunchOptions } from 'tomate-launcher-core';
+import type { LaunchOptions } from 'tomate-launcher-core';
 import { tomateMods } from './data/content/lib';
 import { gcStore, validateStore } from './data/content/store';
 

@@ -1,9 +1,9 @@
-import { Content, ContentItem } from './content';
+import { Content, type ContentItem } from './content';
 import path from 'node:path';
 import { Modpack } from '../modpack';
 import { loader } from 'tomate-loaders';
 import { tomateMods } from './lib';
-import { ImplementedProvider } from 'tomate-mods';
+import type { ImplementedProvider } from 'tomate-mods';
 
 export class ModsContent extends Content {
   constructor(modpack: Modpack, items: ContentItem[]) {

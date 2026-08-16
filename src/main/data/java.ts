@@ -5,7 +5,7 @@ import {
 } from '@doublekekse/find-java';
 import { log } from '../../common/logging/log';
 import {
-  JavaVersion,
+  type JavaVersion,
   Launcher,
 } from 'tomate-launcher-core';
 import { error, FrontendError } from '../error';
