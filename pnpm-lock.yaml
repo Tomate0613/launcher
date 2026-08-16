@@ -17,12 +17,6 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^4.0.0
         version: 4.0.0(electron@43.4.0(supports-color@7.2.0))
-      '@mdi/js':
-        specifier: ^7.4.47
-        version: 7.4.47
-      '@vueuse/core':
-        specifier: ^14.4.0
-        version: 14.4.0(vue@3.5.41(typescript@7.0.2))
       adm-zip:
         specifier: ^0.6.0
         version: 0.6.0
@@ -53,9 +47,6 @@ importers:
       prismarine-nbt:
         specifier: ^2.8.0
         version: 2.8.0
-      skinview3d:
-        specifier: ^3.4.2
-        version: 3.4.2
       tomate-launcher-core:
         specifier: github:Tomate0613/launcher-core
         version: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/827af32acaec43e0ffde279e3e322db5ccfb79d2(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
@@ -65,12 +56,6 @@ importers:
       tomate-mods:
         specifier: github:Tomate0613/tomate-mods
         version: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/17b065c61ad4f7842abb30c4116cfa1a3c4cca88(@xmcl/yauzl@2.10.0)(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-      vue:
-        specifier: ^3.5.41
-        version: 3.5.41(typescript@7.0.2)
-      vue-router:
-        specifier: ^5.2.0
-        version: 5.2.0(@vue/compiler-sfc@3.5.41)(rolldown@1.2.4)(vite@8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.41(typescript@7.0.2))
       yargs:
         specifier: ^18.1.0
         version: 18.1.0
@@ -78,6 +63,9 @@ importers:
       '@electron-toolkit/tsconfig':
         specifier: ^2.0.0
         version: 2.0.0(@types/node@26.2.0)
+      '@mdi/js':
+        specifier: ^7.4.47
+        version: 7.4.47
       '@swc/core':
         specifier: ^1.16.0
         version: 1.16.0
@@ -96,6 +84,9 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^6.0.8
         version: 6.0.8(vite@8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.41(typescript@7.0.2))
+      '@vueuse/core':
+        specifier: ^14.4.0
+        version: 14.4.0(vue@3.5.41(typescript@7.0.2))
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -108,12 +99,21 @@ importers:
       electron-vite:
         specifier: 6.0.0-beta.1
         version: 6.0.0-beta.1(@swc/core@1.16.0)(supports-color@7.2.0)(vite@8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0))
+      skinview3d:
+        specifier: ^3.4.2
+        version: 3.4.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
       vite:
         specifier: ^8.2.1
         version: 8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0)
+      vue:
+        specifier: ^3.5.41
+        version: 3.5.41(typescript@7.0.2)
+      vue-router:
+        specifier: ^5.2.0
+        version: 5.2.0(@vue/compiler-sfc@3.5.41)(rolldown@1.2.4)(vite@8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.41(typescript@7.0.2))
       vue-tsc:
         specifier: ^3.3.10
         version: 3.3.10(typescript@7.0.2)
