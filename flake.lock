@@ -18,11 +18,11 @@
     },
     "pnpm2nix": {
       "locked": {
-        "lastModified": 1784655608,
-        "narHash": "sha256-cOFd2YvlyXOmPuyc2j7kgfbUvXkATzzIOyfxsmg9+mE=",
+        "lastModified": 1786888112,
+        "narHash": "sha256-GqxDaYgpmDWQNgf92E6L4+IEuOcDOzJvvNyYUzrvT9Y=",
         "owner": "Tomate0613",
         "repo": "nix-flakes",
-        "rev": "c434cb3a31ef199d264535c4527cab3472b64a42",
+        "rev": "c7faaf76781f3cce994922414844947d38d434d9",
         "type": "github"
       },
       "original": {
