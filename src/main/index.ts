@@ -38,6 +38,7 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
+      // TODO enable once sandboxed esm imports are allowed https://www.electronjs.org/docs/latest/tutorial/esm
       sandbox: false,
     },
   });
