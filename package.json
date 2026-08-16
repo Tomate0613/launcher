@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",
-    "@swc/core": "^1.15.46",
+    "@swc/core": "^1.16.0",
     "@types/adm-zip": "^0.5.8",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^26.2.0",
