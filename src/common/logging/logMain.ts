@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import { consoleTransport } from './transports/consoleTransport';
+import { consoleTransport } from './transports/nodeConsoleTransport';
 import { type LogLevel, configureTransports, log } from './log';
 import { ipcMainTransport } from './transports/ipcMainTransport';
 import { fileTransport } from './transports/fileTransport';

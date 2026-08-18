@@ -1,5 +1,5 @@
 import { type LogLevel, configureTransports, log } from './log';
-import { consoleTransport } from './transports/consoleTransport';
+import { consoleTransport } from './transports/webConsoleTransport';
 import { frontendLoggerTransport } from './transports/frontendLoggerTransport';
 import { ipcRendererTransport } from './transports/ipcRendererTransport';
 
