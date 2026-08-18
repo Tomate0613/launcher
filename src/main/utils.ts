@@ -18,15 +18,6 @@ export function ensureDirectoryExistsSync(directoryPath: string) {
 }
 
 /**
- * Removes the directory and its contents if it exists
- */
-export function cleanDirectory(directoryPath: string) {
-  if (fsSync.existsSync(directoryPath)) {
-    fsSync.rmSync(directoryPath, { recursive: true });
-  }
-}
-
-/**
  * Removes the directory if it is empty
  */
 export function deleteDirectoryIfEmpty(directoryPath: string) {
