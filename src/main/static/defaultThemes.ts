@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { themesPath } from '../paths';
+import type { ThemeManifest } from '../theme';
 
 function css(strings: TemplateStringsArray) {
   return strings.raw[0];
@@ -71,10 +72,6 @@ const BLOCK_THEME_CSS = css`
   }
 `;
 
-type ThemeManifest = {
-  name: string;
-};
-
 async function writeTheme(
   themePath: string,
   themeCss: string,
@@ -99,9 +96,11 @@ export async function writeDefaultThemes() {
 
   await writeTheme(lightThemePath, LIGHT_THEME_CSS, {
     name: 'Light',
+    background: '#fafafb',
   });
   await writeTheme(transparentThemePath, TRANSPARENT_THEME_CSS, {
     name: 'Transparent',
+    background: 'transparent',
   });
   await writeTheme(blockThemePath, BLOCK_THEME_CSS, {
     name: 'Block',

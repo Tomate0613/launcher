@@ -2,6 +2,9 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { is } from '@electron-toolkit/utils';
 import { ensureDirectoryExistsSync } from './utils';
+import { log } from '../common/logging/log';
+
+const logger = log('paths');
 
 function getBaseDataPath() {
   if (process.env.XDG_DATA_HOME) {
@@ -62,6 +65,8 @@ export const log4jConfigPath = path.join(basePath, 'log4j.xml');
 export const socketsStatePath = path.join(basePath, 'sockets-state.json');
 
 export function ensureAppDirectoriesExist() {
+  logger.verbose('Creating app directories');
+
   ensureDirectoryExistsSync(modpacksPath);
   ensureDirectoryExistsSync(storePath);
   ensureDirectoryExistsSync(logsPath);

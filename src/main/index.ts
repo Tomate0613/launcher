@@ -16,23 +16,35 @@ import { handleProtocolUrl, registerProtocolHandler } from './protocol';
 import { openInBrowser, safeJoin } from './utils';
 import { storeSchedules } from './data/content/store';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { getThemeManifest } from './theme';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const logger = log('main');
+logger.verbose('Start');
 
 function createWindow(): void {
-  // Create the browser window.
+  logger.verbose('Creating window');
+
   const mainWindow = new BrowserWindow({
-    show: false,
+    show: true,
     center: true,
     width: 1200,
     height: 680,
     minWidth: 960,
     minHeight: 540,
-    transparent: getSettings().transparentWindow,
-    frame: !getSettings().hideFrame,
+    transparent: themeManifest.background === 'transparent',
+    backgroundColor:
+      themeManifest.background === 'transparent'
+        ? undefined
+        : (themeManifest.background ?? '#101010'),
+    frame:
+      !getSettings().hideFrame &&
+      !(
+        process.platform === 'win32' &&
+        themeManifest.background === 'transparent'
+      ),
     autoHideMenuBar: true,
     darkTheme: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -43,10 +55,14 @@ function createWindow(): void {
     },
   });
 
+  logger.verbose('Window created');
+
   let hasMinimized = false;
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
+    logger.verbose('Window ready to show');
+
+    // mainWindow.show();
 
     if (is.dev && !hasMinimized && process.platform !== 'linux') {
       mainWindow.minimize();
@@ -81,6 +97,7 @@ function stripArgs(args: string[]) {
   }
 }
 
+logger.verbose('Requesting single instance lock');
 if (app.requestSingleInstanceLock()) {
   app.on('second-instance', (_event, args) => {
     const { mainWindow } = Windows;
@@ -129,6 +146,7 @@ export function prepare() {
 
 registerProtocolHandler();
 
+logger.verbose('Registering schemes as privileged');
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'local',
@@ -142,14 +160,20 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
+prepare();
+
+const themeManifest = await getThemeManifest();
+
+logger.verbose('Waiting for app to be ready');
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
+  logger.verbose('App ready');
   // Set app user model id for windows
   // TODO
   electronApp.setAppUserModelId('com.electron');
-  prepare();
 
   protocol.handle('local', async (request) => {
     const url = new URL(request.url);

@@ -100,19 +100,6 @@ watchEffect(() => {
         </label>
         <label
           class="settings-option"
-          @contextmenu="settings.transparentWindow = false"
-          :data-changed="settings.transparentWindow"
-        >
-          <div>
-            Transparent Background
-            <div class="settings-description">
-              Only works with specific themes. Requires a restart to apply
-            </div>
-          </div>
-          <Toggle v-model="settings.transparentWindow" />
-        </label>
-        <label
-          class="settings-option"
           @contextmenu="settings.hideFrame = false"
           :data-changed="settings.hideFrame"
         >

@@ -8,7 +8,6 @@ const frontendKeys = [
   'activeAccountId',
   'modpackDefaultOptions',
   'theme',
-  'transparentWindow',
   'hideFrame',
   'wrapper',
   'store',
@@ -63,8 +62,6 @@ export class Settings extends Serializable {
   modpackDefaultOptions: Partial<GeneralModpackOptions> = {};
   @SerializableProperty
   theme: string = 'default';
-  @SerializableProperty
-  transparentWindow: boolean = false;
   @SerializableProperty
   hideFrame: boolean = false;
   @SerializableProperty
