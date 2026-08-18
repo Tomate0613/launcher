@@ -1,6 +1,5 @@
 import { app } from 'electron';
 import { log } from '../common/logging/log';
-import { ModrinthOAuth } from './data/auth/modrinth';
 
 const logger = log('protocol');
 
@@ -23,9 +22,9 @@ export function registerProtocolHandler() {
   });
 }
 
-export function handleProtocolUrl(url: string) {
+export async function handleProtocolUrl(url: string) {
   const parsed = new URL(url);
   if (parsed.host === 'modrinth-oauth-callback') {
-    ModrinthOAuth.onCallback(parsed);
+    (await import('./data/auth/modrinth')).ModrinthOAuth.onCallback(parsed);
   }
 }

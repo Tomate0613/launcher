@@ -2,7 +2,6 @@ import fsSync, { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { basePath, tempPaths } from './paths';
 import { shell } from 'electron';
-import { downloadManager } from './data/downloads';
 import { log } from '../common/logging/log';
 
 const logger = log('utils');
@@ -95,7 +94,7 @@ export async function downloadFileFromUrl(
   filePath: string,
   sha1hash?: string,
 ): Promise<void> {
-  return downloadManager.download({
+  return (await import('./data/downloads')).downloadManager.download({
     url,
     outputPath: filePath,
     hash: sha1hash,

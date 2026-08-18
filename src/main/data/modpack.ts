@@ -11,13 +11,9 @@ import {
   stashesPath,
 } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
-import { liner, loader, type LoaderId, type ModdedLoaderId } from 'tomate-loaders';
+import { loader, type LoaderId, type ModdedLoaderId } from 'tomate-loaders';
 import { randomUUID } from 'node:crypto';
-import {
-  type LaunchOptions,
-  Launcher,
-  isMinecraftVersionAfter,
-} from 'tomate-launcher-core';
+import { liner, type LaunchOptions, type Launcher } from 'tomate-launcher-core';
 import {
   checkDefaults as checkJavaFinderDefaults,
   checkPath as checkJavaFinderPath,
@@ -50,7 +46,6 @@ import { tomateMods } from './content/lib';
 import type { ContentType, ResourceSource } from './content/content';
 import { ShaderpacksContent } from './content/shaderpacks';
 import { ResourcepacksContent } from './content/resourcepacks';
-import { downloadManager } from './downloads';
 import { error, FrontendError, showError } from '../error';
 import { type Process, ProcessContext } from '../process';
 import { spawnWrapper } from '../wrapper';
@@ -59,7 +54,6 @@ import type { InstanceSyncOptions } from './sync/types';
 import { syncModpack } from './sync';
 import { javaTasks } from './java';
 import { platform } from 'node:os';
-import pngToIco from 'png-to-ico';
 
 export type LoaderInfo = { id: LoaderId; version?: string };
 
@@ -183,7 +177,6 @@ export class Modpack extends Serializable implements ModpackData {
 
     try {
       ensureDirectoryExists(this.dir);
-      this.symlinks();
       this.defaults();
 
       this.save();
@@ -224,7 +217,6 @@ export class Modpack extends Serializable implements ModpackData {
             id: item.filename ?? item.id,
           }),
         ) as never;
-        this.symlinks();
         this['__version'] = '5';
       }
       case '5': {
@@ -290,30 +282,6 @@ export class Modpack extends Serializable implements ModpackData {
     this.resourcepacksContent.setupDirectory();
   }
 
-  symlinks() {
-    const links = ['cache'];
-
-    for (const link of links) {
-      const target = paths.join(minecraftRootPath, link);
-      const path = paths.join(this.dir, link);
-
-      if (fs.existsSync(path)) {
-        if (
-          fs.lstatSync(path).isDirectory() &&
-          fs.readdirSync(path).length === 0
-        ) {
-          continue;
-        } else {
-          fs.rmSync(path, { recursive: true, force: true });
-        }
-      }
-
-      ensureDirectoryExists(target);
-
-      fs.symlinkSync(target, path, 'junction');
-    }
-  }
-
   defaults() {
     if (!fs.existsSync(defaultsPath)) {
       return;
@@ -342,6 +310,9 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   async launcher() {
+    const { isMinecraftVersionAfter, Launcher } =
+      await import('tomate-launcher-core');
+
     this.logger.log('Getting launch config');
     const modLoader = loader(this.loader.id);
 
@@ -393,7 +364,7 @@ export class Modpack extends Serializable implements ModpackData {
     const launcher = new Launcher({
       ...this.launchConfig,
       root: this.dir,
-      downloadManager,
+      downloadManager: (await import('./downloads')).downloadManager,
 
       log4jConfigurationFile: supportLog4jConfigurationFile
         ? paths.resolve(log4jConfigPath)
@@ -888,7 +859,8 @@ export class Modpack extends Serializable implements ModpackData {
 
       let windowsIconPath: string | undefined = undefined;
       if (this.iconPath) {
-        const ico = await pngToIco(this.iconPath);
+        // TODO Only include png-to-ico in windows builds
+        const ico = await (await import('png-to-ico')).default(this.iconPath);
         windowsIconPath = paths.join(this.dir, 'icon.ico');
         fs.writeFileSync(windowsIconPath, ico);
       }

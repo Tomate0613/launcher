@@ -6,7 +6,9 @@ import {
   useTemplateRef,
   watch,
 } from 'vue';
-import { SkinViewer, type SkinViewerOptions } from 'skinview3d';
+import type { SkinViewer, SkinViewerOptions } from 'skinview3d';
+
+const lib = await import('skinview3d');
 
 const props = defineProps<{
   options: SkinViewerOptions;
@@ -18,7 +20,7 @@ const canvasRef = useTemplateRef('canvas-ref');
 let skinViewer: SkinViewer;
 
 onMounted(() => {
-  skinViewer = new SkinViewer({
+  skinViewer = new lib.SkinViewer({
     canvas: canvasRef.value!,
     ...props.options,
   });

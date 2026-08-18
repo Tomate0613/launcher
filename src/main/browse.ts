@@ -6,7 +6,6 @@ import {
   themesPath,
 } from './paths';
 import fs from 'node:fs/promises';
-import nbt from 'prismarine-nbt';
 import { log } from '../common/logging/log';
 import { localFile, localFileUnchecked, pathFileBuffer } from './utils';
 import { clipboard, nativeImage, shell } from 'electron';
@@ -15,6 +14,10 @@ import { FrontendError } from './error';
 import { lookup } from './server';
 
 const logger = log('browse');
+
+function nbt() {
+  return import('prismarine-nbt');
+}
 
 export async function getSkins() {
   const skins = await fs.readdir(skinCachePath);
@@ -183,7 +186,7 @@ export async function getWorlds() {
                 const levelDatPath = path.join(savePath, 'level.dat');
 
                 const buffer = await fs.readFile(levelDatPath);
-                const { parsed } = await nbt
+                const { parsed } = await (await nbt())
                   .parse(buffer)
                   .catch(() => ({ parsed: { value: { Data: undefined } } }));
 
@@ -227,7 +230,7 @@ export async function getServers() {
         const serversPath = path.join(modpack.dir, 'servers.dat');
         const buffer = await fs.readFile(serversPath);
 
-        const { parsed } = await nbt.parse(buffer);
+        const { parsed } = await (await nbt()).parse(buffer);
 
         const servers = (
           parsed.value.servers!.value as never as {

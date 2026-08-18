@@ -1,4 +1,4 @@
-import { AxiosError, isAxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 import { log } from '../common/logging/log';
 import { TasksError } from 'tomate-launcher-core';
 import { invoke } from './api';
@@ -6,6 +6,10 @@ import type { ImplementedProvider } from 'tomate-mods';
 import { is } from '@electron-toolkit/utils';
 
 const logger = log('error');
+
+function isAxiosError(payload: any): payload is AxiosError {
+  return typeof payload === "object" && payload.isAxiosError === true;
+}
 
 export class FrontendError extends Error {
   constructor(
@@ -81,7 +85,7 @@ export class HttpError extends NetworkError {
 export function error(context: string, err: unknown): FrontendError {
   if (err instanceof TasksError) {
     const reason = err.failedTasks.map((task) =>
-      !(task.error instanceof AxiosError)
+      !isAxiosError(task.error)
         ? 'not-axios'
         : classifyNetworkError(task.error),
     );

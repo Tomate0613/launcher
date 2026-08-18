@@ -5,7 +5,6 @@ import { modpacks } from '../data';
 import { tempPaths } from '../paths';
 import { randomUUID } from 'node:crypto';
 import fs from 'fs-extra';
-import AdmZip from 'adm-zip';
 import { log } from '../../common/logging/log';
 import { Mrpack } from './modpack-import/mrpack';
 import { MultiMc } from './modpack-import/multi-mc';
@@ -48,7 +47,6 @@ export async function fromFile(file: string, modpack?: Modpack) {
     if (importer.overrides && fs.existsSync(importer.overrides)) {
       fs.rmSync(modpack.dir, { recursive: true });
       fs.cpSync(importer.overrides, modpack.dir, { recursive: true });
-      modpack.symlinks();
       modpack.setupContentDirectories();
     }
 
@@ -73,7 +71,7 @@ async function extractToTempPath(filePath: string) {
 
   const tempPath = path.join(tempPaths, randomUUID());
 
-  const zip = new AdmZip(filePath);
+  const zip = new (await import('adm-zip')).default(filePath);
   zip.extractAllTo(tempPath, true);
 
   return tempPath;
@@ -95,7 +93,7 @@ async function getHandler(filePath: string): Promise<ModpackImporter> {
   }
 
   if (fs.existsSync(path.join(filePath, 'instance.cfg'))) {
-    return new MultiMc(filePath);
+    return MultiMc.create(filePath);
   }
 
   if (fs.existsSync(path.join(filePath, 'modrinth.index.json'))) {

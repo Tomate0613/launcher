@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computedAsync } from '@vueuse/core';
-import { LoaderId } from 'tomate-loaders';
+import type { LoaderId } from 'tomate-loaders';
 import { watch } from 'vue';
 
 const { loader, gameVersion } = defineProps<{

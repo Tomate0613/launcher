@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoaderId } from 'tomate-loaders';
+import type { LoaderId } from 'tomate-loaders';
 
 const value = defineModel<LoaderId>();
 </script>

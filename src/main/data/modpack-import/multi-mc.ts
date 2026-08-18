@@ -1,5 +1,5 @@
 import type { LoaderInfo, ModpackImporter, ProgressListener } from '.';
-import ConfigParser from 'configparser';
+import type ConfigParser from 'configparser';
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,15 +19,20 @@ type MMC = {
 };
 
 export class MultiMc implements ModpackImporter {
-  instance: ConfigParser;
   mmc: MMC;
 
-  constructor(public filePath: string) {
-    this.instance = new ConfigParser();
+  constructor(
+    public filePath: string,
+    private instance: ConfigParser,
+  ) {
     this.instance.read(path.join(filePath, 'instance.cfg'));
     this.mmc = JSON.parse(
       fs.readFileSync(path.join(filePath, 'mmc-pack.json'), 'utf8'),
     );
+  }
+
+  static async create(filePath: string) {
+    return new MultiMc(filePath, new (await import('configparser')).default());
   }
 
   join(file: string) {

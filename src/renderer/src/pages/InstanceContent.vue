@@ -13,7 +13,7 @@ import type {
   ContentState,
   ContentType,
 } from '../../../main/data/content/content';
-import { ImplementedProvider, SearchResult, Version } from 'tomate-mods';
+import type { ImplementedProvider, SearchResult, Version } from 'tomate-mods';
 import ContentItemCard from '../components/ContentItemCard.vue';
 import SplitButton from '../components/SplitButton.vue';
 import ContentVersionPicker from '../components/ContentVersionPicker.vue';

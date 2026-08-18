@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoaderId } from 'tomate-loaders';
+import type { LoaderId } from 'tomate-loaders';
 import Popup from '../Popup.vue';
 import GameVersionSelect from '../select/GameVersionSelect.vue';
 import LoaderSelect from '../select/LoaderSelect.vue';
@@ -39,7 +39,7 @@ function closeMenu() {
 
 defineExpose({
   openMenu,
-  closeMenu
+  closeMenu,
 });
 
 defineOptions({

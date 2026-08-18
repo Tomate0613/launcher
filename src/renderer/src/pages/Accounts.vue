@@ -11,7 +11,6 @@ import {
   mdiAccountLockOpen,
   mdiDeleteOutline,
 } from '@mdi/js';
-import { IdleAnimation } from 'skinview3d';
 import image from '../assets/pack.png';
 import steve from '../assets/steve.png';
 import Icon from '../components/Icon.vue';
@@ -20,6 +19,8 @@ import { computed, ref, useTemplateRef } from 'vue';
 import Popup from '../components/Popup.vue';
 import PlayerHead from '../components/PlayerHead.vue';
 import { useContextMenu } from '../composables/contextMenu';
+
+const animations = await import('skinview3d/libs/animation');
 
 const appState = await useAppState();
 const contextMenu = useContextMenu();
@@ -140,7 +141,7 @@ async function deleteSkin() {
             width: 680,
             height: 240,
             skin: activeSkin,
-            animation: new IdleAnimation(),
+            animation: new animations.IdleAnimation(),
             cape: activeCape,
           }"
         />
@@ -221,7 +222,7 @@ async function deleteSkin() {
               width: 100,
               height: 100,
               skin: skin.url,
-              animation: new IdleAnimation(),
+              animation: new animations.IdleAnimation(),
             }"
             @contextmenu="
               (event: MouseEvent) =>
@@ -270,7 +271,7 @@ async function deleteSkin() {
               height: 100,
               skin: activeSkin,
               cape: cape.url,
-              animation: new IdleAnimation(),
+              animation: new animations.IdleAnimation(),
             }"
             :camera-pos="[0, 0, -1]"
             :adjust-camera-distance="true"
@@ -310,7 +311,7 @@ async function deleteSkin() {
         width: 100,
         height: 100,
         skin: changeSkinPreviewUrl,
-        animation: new IdleAnimation(),
+        animation: new animations.IdleAnimation(),
       }"
     />
 

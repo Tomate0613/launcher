@@ -73,6 +73,14 @@ function createWindow(): void {
   Windows.setMainWindow(mainWindow);
 }
 
+function stripArgs(args: string[]) {
+  if (args.some((a) => a.endsWith('dist/electron'))) {
+    return args.slice(args.findIndex((a) => a === '.') + 1);
+  } else {
+    return hideBin(args);
+  }
+}
+
 if (app.requestSingleInstanceLock()) {
   app.on('second-instance', (_event, args) => {
     const { mainWindow } = Windows;
@@ -89,11 +97,7 @@ if (app.requestSingleInstanceLock()) {
         handleProtocolUrl(arg);
       });
 
-    if (args.some((a) => a.endsWith('dist/electron'))) {
-      parseArgs(args.slice(args.findIndex((a) => a === '.') + 1));
-    } else {
-      parseArgs(hideBin(args));
-    }
+    parseArgs(stripArgs(args));
 
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow && !mainWindow.isDestroyed()) {
@@ -106,7 +110,11 @@ if (app.requestSingleInstanceLock()) {
   });
 
   if (!process.argv.includes('--skip-cli')) {
-    parseArgs(hideBin(process.argv));
+    const stripped = stripArgs(process.argv);
+
+    if (stripped.length) {
+      parseArgs(stripped);
+    }
   }
 } else {
   logger.log('Already open. Exiting');

@@ -44,7 +44,7 @@ export function findJava(version: JavaVersion) {
 }
 
 export async function javaTasks(version: JavaVersion, launcher: Launcher) {
-  logger.log('Getting java version');
+  logger.log('Getting java version', version);
 
   const j = findJava(version);
   if (j) {

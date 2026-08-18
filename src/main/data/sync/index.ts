@@ -1,8 +1,7 @@
-import { liner } from 'tomate-loaders';
 import { Modpack } from '../modpack';
 import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import { log } from '../../../common/logging/log';
-import { Launcher } from 'tomate-launcher-core';
+import { type Launcher, liner } from 'tomate-launcher-core';
 import { javaTasks } from '../java';
 import { unsupPath } from '../../paths';
 import path from 'node:path';

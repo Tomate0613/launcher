@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref, useTemplateRef } from 'vue';
 import ContentItemCard from '../components/ContentItemCard.vue';
-import { ImplementedProvider, SearchResult } from 'tomate-mods';
+import type { ImplementedProvider, SearchResult } from 'tomate-mods';
 import ContentItemCardShimmer from '../components/ContentItemCardShimmer.vue';
 import { useDebounceFn } from '@vueuse/core';
 

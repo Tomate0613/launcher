@@ -1,4 +1,4 @@
-import yargs, { type Argv } from 'yargs';
+import type { Argv } from 'yargs';
 import { log } from '../common/logging/log';
 import { getAccount, getSettings, modpacks } from './data';
 import { Modpack } from './data/modpack';
@@ -10,8 +10,8 @@ import { ProviderError } from './error';
 
 const logger = log('cli');
 
-export function parseArgs(argv: string[]) {
-  args(yargs(argv)).parse();
+export async function parseArgs(argv: string[]) {
+  args((await import('yargs')).default(argv)).parse();
 }
 
 function args(yargs: Argv) {

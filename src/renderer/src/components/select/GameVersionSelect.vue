@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computedAsync } from '@vueuse/core';
-import { LoaderId } from 'tomate-loaders';
+import type { LoaderId } from 'tomate-loaders';
 import { computed, ref } from 'vue';
 import { log } from '../../../../common/logging/log';
 

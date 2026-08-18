@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImplementedProvider, Version } from 'tomate-mods';
+import type { ImplementedProvider, Version } from 'tomate-mods';
 import { ContentType } from '../../../main/data/content/content';
 import { tryMountInvoke } from '../composables/mountInvoke';
 import { toRaw } from 'vue';

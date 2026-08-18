@@ -1,4 +1,4 @@
-import { Auth, Minecraft, Xbox } from 'msmc';
+import type { Minecraft, Xbox } from 'msmc';
 import { Serializable, SerializableProperty } from './serialization';
 import { randomUUID } from 'node:crypto';
 import { accounts } from '../data';
@@ -6,7 +6,6 @@ import { log } from '../../common/logging/log';
 import path from 'node:path';
 import { skinCachePath } from '../paths';
 import fs from 'node:fs/promises';
-import axios from 'axios';
 import crypto from 'node:crypto';
 import { FrontendError } from '../error';
 
@@ -86,14 +85,14 @@ export class Account extends Serializable {
   async loadExisting() {
     if (!this.refreshToken) throw new Error('Refresh token is missing');
 
-    const auth = new Auth('select_account');
+    const auth = new (await import('msmc')).Auth('select_account');
 
     const xbox = await auth.refresh(this.refreshToken);
     return this.setData(xbox);
   }
 
   static async login() {
-    const auth = new Auth('select_account');
+    const auth = new (await import('msmc')).Auth('select_account');
     const xbox = await auth.launch('electron');
     const social = await xbox.getSocial();
     const profile = await social.getProfile();
@@ -144,7 +143,7 @@ export class Account extends Serializable {
       for (const skin of skins) {
         logger.log(`Caching skin ${skin.id}`);
         try {
-          const response = await axios.get(skin.url, {
+          const response = await (await import ('axios')).default.get(skin.url, {
             responseType: 'arraybuffer',
           });
           const fileBuffer = Buffer.from(response.data);

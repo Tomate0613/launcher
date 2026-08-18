@@ -44,6 +44,7 @@ pkgs.mkPnpmPackage {
     "tomate-launcher-core"
     "tomate-mods"
     "tomate-loaders"
+    "electron-vite"
   ];
 
   outDir = "dist";
