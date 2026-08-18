@@ -20,7 +20,7 @@ export function ensureDirectoryExistsSync(directoryPath: string) {
 /**
  * Removes the directory if it is empty
  */
-export function deleteDirectoryIfEmpty(directoryPath: string) {
+export function deleteDirectoryIfEmptySync(directoryPath: string) {
   if (
     fsSync.existsSync(directoryPath) &&
     fsSync.statSync(directoryPath).isDirectory() &&
@@ -34,7 +34,7 @@ export function deleteDirectoryIfEmpty(directoryPath: string) {
  * Copy all files from first directory to second directory
  * In case of duplicates will be renamed automatically
  */
-export function copyFilesWithRename(srcDir: string, destDir: string) {
+export function copyFilesWithRenameSync(srcDir: string, destDir: string) {
   ensureDirectoryExistsSync(destDir);
 
   if (!fsSync.existsSync(srcDir)) {
@@ -93,7 +93,7 @@ export async function downloadFileFromUrl(
   });
 }
 
-export function tempPath(name = 'tmp') {
+export function tempPathSync(name = 'tmp') {
   ensureDirectoryExistsSync(tempPaths);
 
   let prefix = 1;
@@ -123,8 +123,8 @@ export async function retry<T>(
   throw new Error();
 }
 
-export function fileBufferPath(buffer: ArrayBuffer, name = 'tmp') {
-  const tempFilePath = tempPath(name);
+export function fileBufferPathSync(buffer: ArrayBuffer, name = 'tmp') {
+  const tempFilePath = tempPathSync(name);
 
   const nodeBuffer = Buffer.from(buffer);
   fsSync.writeFileSync(tempFilePath, nodeBuffer);

@@ -23,7 +23,7 @@ import * as ModpackImporter from './data/modpack-importer';
 import { mainWindow } from './windows';
 import { basePath } from './paths';
 import type { ContentType } from './data/content/content';
-import { fileBufferPath } from './utils';
+import { fileBufferPathSync } from './utils';
 import {
   clearDefaultFile,
   copyScreenshot,
@@ -111,7 +111,7 @@ export const routes = {
     return getModpack(modpackId).setIcon(iconPath);
   },
   setModpackIconFromFile(modpackId: string, buffer: ArrayBuffer) {
-    return getModpack(modpackId).setIcon(fileBufferPath(buffer));
+    return getModpack(modpackId).setIcon(fileBufferPathSync(buffer));
     //
   },
   setModpackIconSpecial(modpackId: string, variant: 'default') {
@@ -274,7 +274,7 @@ export const routes = {
   ) {
     return getModpack(modpackId)
       .content(contentType)
-      .import(fileBufferPath(buffer, filename));
+      .import(fileBufferPathSync(buffer, filename));
   },
   removeContent(modpackId: string, contentType: ContentType, id: string) {
     return getModpack(modpackId).content(contentType).delete(id);

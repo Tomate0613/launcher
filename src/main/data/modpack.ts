@@ -30,7 +30,7 @@ import { Account } from './account';
 import { invoke } from '../api';
 import { getSettings, modpacks } from '../data';
 import {
-  copyFilesWithRename,
+  copyFilesWithRenameSync,
   downloadFileFromUrl,
   ensureDirectoryExistsSync,
   localFileSync,
@@ -640,7 +640,7 @@ export class Modpack extends Serializable implements ModpackData {
   write() {
     if (this.isDeleted && fs.existsSync(this.dir)) {
       // Copy screenshots to global screenshots directory
-      copyFilesWithRename(this.screenshotsPath, screenshotsPath);
+      copyFilesWithRenameSync(this.screenshotsPath, screenshotsPath);
 
       fs.rmSync(this.dir, { recursive: true, force: true });
       return;

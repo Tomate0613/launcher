@@ -11,7 +11,7 @@ import { identity } from '@vueuse/core';
 import fs from 'node:fs';
 import { Modpack } from '../modpack';
 import {
-  deleteDirectoryIfEmpty,
+  deleteDirectoryIfEmptySync,
   ensureDirectoryExistsSync,
   noop,
 } from '../../utils';
@@ -369,7 +369,7 @@ export abstract class Content {
   async enable(item: ContentItem) {
     await fs.promises.rename(this.getItemPath(item), this.getPath(item.id));
 
-    deleteDirectoryIfEmpty(this.getDisabledPath());
+    deleteDirectoryIfEmptySync(this.getDisabledPath());
 
     item.disabled = false;
     this.items.invalidate(item);

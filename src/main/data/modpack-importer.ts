@@ -10,14 +10,14 @@ import { Mrpack } from './modpack-import/mrpack';
 import { MultiMc } from './modpack-import/multi-mc';
 import type { ModpackImporter } from './modpack-import';
 import { Cursepack } from './modpack-import/cursepack';
-import { fileBufferPath } from '../utils';
+import { fileBufferPathSync } from '../utils';
 import { error, FrontendError, ProviderError } from '../error';
 import type { ImplementedProvider } from 'tomate-mods';
 
 const logger = log('modpack-import');
 
 export async function fromFileBuffer(name: string, buffer: ArrayBuffer) {
-  return fromFile(fileBufferPath(buffer, name));
+  return fromFile(fileBufferPathSync(buffer, name));
 }
 
 export async function fromFile(file: string, modpack?: Modpack) {
