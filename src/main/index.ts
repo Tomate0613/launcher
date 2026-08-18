@@ -28,7 +28,7 @@ function createWindow(): void {
   logger.verbose('Creating window');
 
   const mainWindow = new BrowserWindow({
-    show: true,
+    show: !!process.env.SHOW_WINDOW_EARLY,
     center: true,
     width: 1200,
     height: 680,
@@ -62,7 +62,9 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     logger.verbose('Window ready to show');
 
-    // mainWindow.show();
+    if (!process.env.SHOW_WINDOW_EARLY) {
+      mainWindow.show();
+    }
 
     if (is.dev && !hasMinimized && process.platform !== 'linux') {
       mainWindow.minimize();
