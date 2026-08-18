@@ -3,7 +3,7 @@ import type { LoaderInfo, ModpackImporter, ProgressListener } from '.';
 import fs from 'node:fs';
 import {
   downloadFileFromUrl,
-  ensureDirectoryExists,
+  ensureDirectoryExistsSync,
   safeJoin,
 } from '../../utils';
 import { log } from '../../../common/logging/log';
@@ -109,7 +109,7 @@ export class Mrpack implements ModpackImporter {
           const filePath = safeJoin(modpack.dir, file.path);
 
           try {
-            ensureDirectoryExists(path.dirname(filePath));
+            ensureDirectoryExistsSync(path.dirname(filePath));
 
             await wrapDownload(file.hashes.sha1, filePath, async (path) => {
               await downloadFileFromUrl(downloadUrl, path, file.hashes.sha1);

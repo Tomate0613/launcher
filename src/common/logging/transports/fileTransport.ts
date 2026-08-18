@@ -4,7 +4,7 @@ import fs, { WriteStream } from 'node:fs';
 import { logsPath } from '../../../main/paths';
 import { inspect } from 'util';
 import { accounts } from '../../../main/data';
-import { ensureDirectoryExists } from '../../../main/utils';
+import { ensureDirectoryExistsSync } from '../../../main/utils';
 
 let file: WriteStream;
 
@@ -33,7 +33,7 @@ export function fileTransport(
 }
 
 function createFile() {
-  ensureDirectoryExists(logsPath);
+  ensureDirectoryExistsSync(logsPath);
 
   var filePath = path.join(logsPath, 'latest.log');
   return fs.createWriteStream(filePath);

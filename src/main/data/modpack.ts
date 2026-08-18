@@ -32,7 +32,7 @@ import { getSettings, modpacks } from '../data';
 import {
   copyFilesWithRename,
   downloadFileFromUrl,
-  ensureDirectoryExists,
+  ensureDirectoryExistsSync,
   localFileSync,
   noop,
   safeFilename,
@@ -176,7 +176,7 @@ export class Modpack extends Serializable implements ModpackData {
     this.logger = log(this.name);
 
     try {
-      ensureDirectoryExists(this.dir);
+      ensureDirectoryExistsSync(this.dir);
       this.defaults();
 
       this.save();

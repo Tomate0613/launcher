@@ -12,7 +12,7 @@ import fs from 'node:fs';
 import { Modpack } from '../modpack';
 import {
   deleteDirectoryIfEmpty,
-  ensureDirectoryExists,
+  ensureDirectoryExistsSync,
   noop,
 } from '../../utils';
 import { log } from '../../../common/logging/log';
@@ -83,7 +83,7 @@ export abstract class Content {
   }
 
   setupDirectory() {
-    ensureDirectoryExists(this.getPath());
+    ensureDirectoryExistsSync(this.getPath());
   }
 
   private exists(project: Project) {
@@ -356,7 +356,7 @@ export abstract class Content {
   }
 
   async disable(item: ContentItem) {
-    ensureDirectoryExists(this.getDisabledPath());
+    ensureDirectoryExistsSync(this.getDisabledPath());
 
     await fs.promises.rename(
       this.getItemPath(item),

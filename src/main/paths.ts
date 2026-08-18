@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { is } from '@electron-toolkit/utils';
-import { ensureDirectoryExists } from './utils';
+import { ensureDirectoryExistsSync } from './utils';
 
 function getBaseDataPath() {
   if (process.env.XDG_DATA_HOME) {
@@ -62,20 +62,20 @@ export const log4jConfigPath = path.join(basePath, 'log4j.xml');
 export const socketsStatePath = path.join(basePath, 'sockets-state.json');
 
 export function ensureAppDirectoriesExist() {
-  ensureDirectoryExists(modpacksPath);
-  ensureDirectoryExists(storePath);
-  ensureDirectoryExists(logsPath);
-  ensureDirectoryExists(tempPaths);
-  ensureDirectoryExists(minecraftRootPath);
-  ensureDirectoryExists(minecraftLibrariesPath);
-  ensureDirectoryExists(minecraftAssetRootPath);
-  ensureDirectoryExists(minecraftVersionDirectoryPath);
-  ensureDirectoryExists(downloadPath);
-  ensureDirectoryExists(defaultsPath);
-  ensureDirectoryExists(themesPath);
-  ensureDirectoryExists(skinCachePath);
-  ensureDirectoryExists(javaInstallationsPath);
-  ensureDirectoryExists(screenshotsPath);
-  ensureDirectoryExists(sandboxPath);
-  ensureDirectoryExists(toolsPath);
+  ensureDirectoryExistsSync(modpacksPath);
+  ensureDirectoryExistsSync(storePath);
+  ensureDirectoryExistsSync(logsPath);
+  ensureDirectoryExistsSync(tempPaths);
+  ensureDirectoryExistsSync(minecraftRootPath);
+  ensureDirectoryExistsSync(minecraftLibrariesPath);
+  ensureDirectoryExistsSync(minecraftAssetRootPath);
+  ensureDirectoryExistsSync(minecraftVersionDirectoryPath);
+  ensureDirectoryExistsSync(downloadPath);
+  ensureDirectoryExistsSync(defaultsPath);
+  ensureDirectoryExistsSync(themesPath);
+  ensureDirectoryExistsSync(skinCachePath);
+  ensureDirectoryExistsSync(javaInstallationsPath);
+  ensureDirectoryExistsSync(screenshotsPath);
+  ensureDirectoryExistsSync(sandboxPath);
+  ensureDirectoryExistsSync(toolsPath);
 }

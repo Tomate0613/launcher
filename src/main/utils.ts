@@ -11,7 +11,7 @@ export const noop = () => {};
 /**
  * Ensures that a directory exists, creates it if it doesn't
  */
-export function ensureDirectoryExists(directoryPath: string) {
+export function ensureDirectoryExistsSync(directoryPath: string) {
   if (!fsSync.existsSync(directoryPath)) {
     fsSync.mkdirSync(directoryPath, { recursive: true });
   }
@@ -44,7 +44,7 @@ export function deleteDirectoryIfEmpty(directoryPath: string) {
  * In case of duplicates will be renamed automatically
  */
 export function copyFilesWithRename(srcDir: string, destDir: string) {
-  ensureDirectoryExists(destDir);
+  ensureDirectoryExistsSync(destDir);
 
   if (!fsSync.existsSync(srcDir)) {
     return;
@@ -103,7 +103,7 @@ export async function downloadFileFromUrl(
 }
 
 export function tempPath(name = 'tmp') {
-  ensureDirectoryExists(tempPaths);
+  ensureDirectoryExistsSync(tempPaths);
 
   let prefix = 1;
   let filepath = path.join(tempPaths, name);
