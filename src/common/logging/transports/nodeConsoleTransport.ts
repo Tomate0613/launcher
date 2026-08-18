@@ -1,7 +1,7 @@
 import type { LogLevel } from '../log';
 import c from 'ansi-colors';
 
-// TODO no ansi on frotend, it doesn't make sense and theres a propper way to do it anyways
+const startupTime = Date.now();
 
 export function consoleTransport(
   level: LogLevel,
@@ -44,9 +44,7 @@ function formatLevel(level: LogLevel, thread: string) {
 }
 
 export function format(channel: string, level: LogLevel, thread: string) {
-  const date = new Date();
-
-  const cDate = c.blue(`[${date.toLocaleTimeString()}]`);
+  const cDate = c.blue(`[${process.env.LOG_TIME_MS ? (Date.now() - startupTime) : (new Date()).toLocaleTimeString()}]`);
   const cLevel = formatLevel(level, thread);
   const cChannel = c.cyan(`(${channel})`);
 
