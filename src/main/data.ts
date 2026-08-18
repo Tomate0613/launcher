@@ -1,7 +1,8 @@
 import { Modpack } from './data/modpack';
 import { Account } from './data/account';
 import { accountsPath, modpacksPath } from './paths';
-import fs from 'node:fs';
+import fsSync from 'node:fs';
+import fs from 'node:fs/promises';
 import { Settings } from './data/settings';
 import { writeLog4jConfig } from './static/log4jConfig';
 import { log } from '../common/logging/log';
@@ -12,7 +13,7 @@ import { Tokens } from './data/tokens';
 
 const logger = log('data');
 
-export let modpacks: SyncedIdSet<Modpack>;
+export const modpacks = SyncedIdSet.ofClassList<Modpack>('modpacks', []);
 export let accounts: SyncedIdSet<Account>;
 
 let settings: Settings | undefined;
@@ -24,41 +25,35 @@ function unless<Value>(something: Value | false): something is Value {
 
 let isLoaded = false;
 
-export function loadData() {
-  if (isLoaded) {
-    return;
-  }
+async function loadModpacks() {
+  try {
+    const paths = await fs.readdir(modpacksPath);
 
-  isLoaded = true;
-  logger.log('Loading data');
-
-  writeLog4jConfig();
-  writeDefaultThemes();
-
-  const modpackList = fs.existsSync(modpacksPath)
-    ? fs
-        .readdirSync(modpacksPath)
-        .map((path) => {
-          try {
-            return Modpack.load(path);
-          } catch (err) {
+    (
+      await Promise.all(
+        paths.map((path) =>
+          Modpack.load(path).catch((err) => {
             logger.error(`Failed to load modpack ${path} (${err})`);
-            return false;
-          }
-        })
-        .filter(unless)
-    : [];
+            return false as const;
+          }),
+        ),
+      )
+    )
+      .filter(unless)
+      .forEach((modpack) => modpacks.push(modpack));
 
-  modpacks = SyncedIdSet.ofClassList('modpacks', modpackList);
-  if (!fs.existsSync(accountsPath)) {
-    fs.writeFileSync(accountsPath, '[]');
+    logger.log('All modpacks loaded')
+  } catch {
+    logger.warn('Could not read modpacks directory');
+  }
+}
+
+function loadAccounts() {
+  if (!fsSync.existsSync(accountsPath)) {
+    fsSync.writeFileSync(accountsPath, '[]');
   }
 
-  settings = Settings.load();
-  tokens = Tokens.load();
-  tokens.apply();
-
-  const accountData = fs.readFileSync(accountsPath, 'utf8');
+  const accountData = fsSync.readFileSync(accountsPath, 'utf8');
   const accountList = JSON.parse(accountData).map((accountJSON: string) => {
     const account = Account.fromJSON(accountJSON, Account);
     try {
@@ -72,6 +67,26 @@ export function loadData() {
     return account;
   });
   accounts = SyncedIdSet.ofClassList('accounts', accountList);
+}
+
+export function loadData() {
+  if (isLoaded) {
+    return;
+  }
+
+  isLoaded = true;
+  logger.log('Loading data');
+
+  writeLog4jConfig();
+  writeDefaultThemes();
+
+  loadModpacks();
+
+  settings = Settings.load();
+  tokens = Tokens.load();
+  tokens.apply();
+
+  loadAccounts();
 
   logger.log('Done loading data');
 }
@@ -84,7 +99,7 @@ function onClose() {
 
   const data = accounts.values().map((account) => JSON.stringify(account));
 
-  fs.writeFileSync(accountsPath, JSON.stringify(Array.from(data)));
+  fsSync.writeFileSync(accountsPath, JSON.stringify(Array.from(data)));
   logger.log('Closed');
 }
 

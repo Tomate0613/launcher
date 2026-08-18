@@ -21,10 +21,10 @@ import {
 } from '@doublekekse/find-java';
 import fs from 'fs-extra';
 import type {
-    Provider,
-    ImplementedProvider,
-    ProjectType,
-    SearchResult
+  Provider,
+  ImplementedProvider,
+  ProjectType,
+  SearchResult,
 } from 'tomate-mods';
 import { Account } from './account';
 import { invoke } from '../api';
@@ -657,17 +657,29 @@ export class Modpack extends Serializable implements ModpackData {
     fs.writeFileSync(this.dataPath, JSON.stringify(this));
   }
 
-  static load(dir: string) {
+  static loadSync(dir: string) {
     const modpackDataPath = paths.join(modpacksPath, dir, 'data.json');
 
     if (!fs.existsSync(modpackDataPath)) return false;
 
-    const modpack = Modpack.fromJSON(
+    return Modpack.fromJSON(
       fs.readFileSync(modpackDataPath, 'utf8'),
       Modpack,
       dir,
     );
-    return modpack;
+  }
+
+  static async load(dir: string) {
+    const modpackDataPath = paths.join(modpacksPath, dir, 'data.json');
+
+    let json: string;
+    try {
+      json = await fs.readFile(modpackDataPath, 'utf8');
+    } catch {
+      return false;
+    }
+
+    return Modpack.fromJSON(json, Modpack, dir);
   }
 
   isProcessing(id: string) {
