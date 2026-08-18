@@ -1,6 +1,6 @@
 import { ref } from 'vue';
-import { ContentType } from '../../../main/data/content/content';
-import { ModpackData } from '../../../main/data/modpack';
+import type { ContentType } from '../../../main/data/content/content';
+import type { ModpackData } from '../../../main/data/modpack';
 
 type CommandPalette = {
   setModpackIconFromContentType(

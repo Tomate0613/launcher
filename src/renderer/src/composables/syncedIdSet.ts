@@ -1,5 +1,5 @@
 import {
-  MaybeRefOrGetter,
+  type MaybeRefOrGetter,
   onScopeDispose,
   ref,
   toValue,

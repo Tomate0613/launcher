@@ -3,7 +3,7 @@ import { useMagicKeys, whenever } from '@vueuse/core';
 import CommandPaletteContent from './CommandPaletteContent.vue';
 import {
   computed,
-  ComputedRef,
+  type ComputedRef,
   effectScope,
   type EffectScope,
   onMounted,
@@ -12,7 +12,7 @@ import {
   watchEffect,
 } from 'vue';
 import type { Action, Option } from './types';
-import { AppState, useAppState } from '../../composables/appState';
+import { type AppState, useAppState } from '../../composables/appState';
 import { useRouter } from 'vue-router';
 import type {
   ContentItem,
@@ -29,7 +29,7 @@ import {
   mdiPlay,
 } from '@mdi/js';
 import { useSyncedIdSet } from '../../composables/syncedIdSet';
-import { ModpackFrontendData } from '../../../../main/data/modpack';
+import type { ModpackFrontendData } from '../../../../main/data/modpack';
 import { setCommandPaletteInstance } from '../../composables/commandPalette';
 import { log } from '../../../../common/logging/log';
 

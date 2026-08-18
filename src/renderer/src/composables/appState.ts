@@ -2,7 +2,7 @@ import type { AccountFrontendData } from '../../../main/data/account';
 import { computed, reactive, ref, watch } from 'vue';
 import { createGlobalState } from '@vueuse/core';
 import { SyncedIdSet } from '../../../common/synced/synced-id-set/frontend';
-import { ModpackFrontendData } from '../../../main/data/modpack';
+import type { ModpackFrontendData } from '../../../main/data/modpack';
 import { log } from '../../../common/logging/log';
 import { syncedSettings } from './settings';
 

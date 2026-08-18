@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ContentState } from '../../../main/data/content/content';
+import type { ContentState } from '../../../main/data/content/content';
 import ImageIcon from './ImageIcon.vue';
 
 defineProps<{

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, useTemplateRef, watch } from 'vue';
-import { GeneralModpackOptions } from '../../../main/data/settings';
+import type { GeneralModpackOptions } from '../../../main/data/settings';
 import Toggle from '../components/Toggle.vue';
 import { log } from '../../../common/logging/log';
 import { applyDefaults, clone } from '../../../common/utils';

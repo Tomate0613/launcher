@@ -14,7 +14,7 @@ import { useIntervalFn } from '@vueuse/core';
 import {
   logs as rawLogs,
   clearLogs as clearRawLogs,
-  FrontendLogData,
+  type FrontendLogData,
 } from '../../../common/logging/transports/frontendLoggerTransport';
 import { mdiChevronDown, mdiCloseCircleOutline } from '@mdi/js';
 import Icon from '../components/Icon.vue';

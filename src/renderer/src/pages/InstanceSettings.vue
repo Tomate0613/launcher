@@ -14,7 +14,7 @@ import InstanceSyncOptionsPopup from '../components/popup/InstanceSyncOptionsPop
 import { log } from '../../../common/logging/log';
 import { useAppState } from '../composables/appState';
 import { useDebounceFn } from '@vueuse/core';
-import { ModpackData } from '../../../main/data/modpack';
+import type { ModpackData } from '../../../main/data/modpack';
 
 const logger = log('instance-settings');
 
