@@ -27,7 +27,7 @@
     "configparser": "^0.3.10",
     "fs-extra": "^11.4.0",
     "msmc": "^5.0.5",
-    "openid-client": "^6.8.5",
+    "openid-client": "^6.8.6",
     "png-to-ico": "^3.0.2",
     "prismarine-nbt": "^2.8.0",
     "tomate-launcher-core": "github:Tomate0613/launcher-core",
