@@ -150,7 +150,7 @@
                 lockFile = ./mc-wrapper/Cargo.lock;
 
                 outputHashes = {
-                  "command-5.2.2" = "sha256-nCC06XdZrcwK9blnB4sbDLHcSk6ce+yUf7lqC9+iBiA=";
+                  "command-5.3.1" = "sha256-swHHrnvURLFHQOxRwV9pB+oVVMg1qW9tmpkrsHgCjDM=";
                 };
               };
             });

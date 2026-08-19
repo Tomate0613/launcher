@@ -141,8 +141,8 @@ checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
 
 [[package]]
 name = "command"
-version = "5.2.2"
-source = "git+https://github.com/Tomate0613/pandora-launcher.git?branch=testing#ade2e036d4fed0fec6d1d7db5a73108dcac5516b"
+version = "5.3.1"
+source = "git+https://github.com/Tomate0613/pandora-launcher.git?branch=testing#4e9a5b149e0f92acf2ac2b27f0670ff7441c3b11"
 dependencies = [
  "directories",
  "junction",
