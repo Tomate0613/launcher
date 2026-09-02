@@ -124,7 +124,15 @@
             inherit
               runtimeLibs
               ;
+
             mc-wrapper = self.packages.${system}.mc-wrapper;
+
+            electron = pkgs.electron_44;
+
+            jdks = with pkgs; [
+              jdk21
+              jdk25
+            ];
           };
 
           mc-wrapper =

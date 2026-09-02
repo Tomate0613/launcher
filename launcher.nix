@@ -3,11 +3,8 @@
   lib,
   mc-wrapper,
   runtimeLibs,
-  jdks ? with pkgs; [
-    jdk21
-    jdk25
-  ],
-  electron ? pkgs.electron_44
+  jdks,
+  electron,
 }:
 let
   pname = (lib.fromJSON (lib.readFile ./package.json)).name;
