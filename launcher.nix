@@ -7,7 +7,7 @@
     jdk21
     jdk25
   ],
-  electron ? pkgs.electron_43
+  electron ? pkgs.electron_44
 }:
 let
   pname = (lib.fromJSON (lib.readFile ./package.json)).name;

@@ -8,7 +8,7 @@ import {
 import fs from 'node:fs/promises';
 import { log } from '../common/logging/log';
 import { localFile, localFileUnchecked, pathFileBuffer } from './utils';
-import { clipboard, nativeImage, shell } from 'electron';
+import { clipboard, ClipboardItem, shell } from 'electron';
 import { getModpack, getVisibleModpacks, modpacks } from './data';
 import { FrontendError } from './error';
 import { lookup } from './server';
@@ -158,10 +158,13 @@ export async function copyScreenshot(
   modpack: string | null,
   screenshot: string,
 ) {
-  const image = nativeImage.createFromPath(
-    getScreenshotPath(modpack, screenshot),
-  );
-  clipboard.writeImage(image);
+  const image = await fs.readFile(getScreenshotPath(modpack, screenshot));
+
+  const item = new ClipboardItem({
+    'image/png': new Blob([image]),
+  });
+
+  clipboard.write([item]);
 }
 
 export function showScreenshotInFileManager(
