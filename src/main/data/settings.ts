@@ -1,4 +1,4 @@
-import { basePath, settingsPath } from '../paths';
+import { settingsPath } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
 import fs from 'node:fs/promises';
 
