@@ -140,9 +140,9 @@ if (app.requestSingleInstanceLock()) {
   app.exit(0);
 }
 
-export function prepare() {
+export async function prepare() {
   ensureAppDirectoriesExist();
-  loadData();
+  await loadData();
   storeSchedules();
 }
 
@@ -162,7 +162,7 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
-prepare();
+await prepare();
 
 const themeManifest = await getThemeManifest();
 

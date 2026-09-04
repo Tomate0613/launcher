@@ -60,6 +60,7 @@ export const toolsPath = path.join(basePath, 'tools/');
 export const unsupPath = path.join(toolsPath, 'unsup/');
 export const accountsPath = path.join(basePath, 'accounts.json');
 export const settingsPath = path.join(basePath, 'settings.json');
+export const statePath = path.join(basePath, 'state.json');
 export const tokensPath = path.join(basePath, 'tokens.json');
 export const log4jConfigPath = path.join(basePath, 'log4j.xml');
 export const socketsStatePath = path.join(basePath, 'sockets-state.json');
@@ -67,6 +68,7 @@ export const socketsStatePath = path.join(basePath, 'sockets-state.json');
 export function ensureAppDirectoriesExist() {
   logger.verbose('Creating app directories');
 
+  ensureDirectoryExistsSync(basePath);
   ensureDirectoryExistsSync(modpacksPath);
   ensureDirectoryExistsSync(storePath);
   ensureDirectoryExistsSync(logsPath);

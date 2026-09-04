@@ -3,7 +3,7 @@ import { storePath } from '../../paths';
 import path from 'node:path';
 import { log } from '../../../common/logging/log';
 import crypto from 'node:crypto';
-import { getSettings } from '../../data';
+import { getSettings, getState } from '../../data';
 
 const logger = log('content-store');
 const locks: Map<string, Promise<unknown>> = new Map();
@@ -74,14 +74,14 @@ export async function registerInStore(filePath: string) {
     await fs.access(storeItemPath);
     await fs.rm(filePath, { force: true });
     return fs.link(path.resolve(storeItemPath), path.resolve(filePath));
-  } catch {}
+  } catch { }
 
   return fs.link(path.resolve(filePath), path.resolve(storeItemPath));
 }
 
 export async function gcStore() {
   logger.log('Running gc');
-  getSettings().storeGcLastRunDate = Date.now();
+  getState().storeGcLastRunDate = Date.now();
 
   const storeItems = await fs.readdir(storePath);
 
@@ -136,7 +136,7 @@ export async function storeSchedules() {
   const now = Date.now();
 
   if (
-    now - getSettings().storeGcLastRunDate > ONE_WEEK &&
+    now - getState().storeGcLastRunDate > ONE_WEEK &&
     getSettings().store.gcSchedule === 'weekly'
   ) {
     await gcStore();

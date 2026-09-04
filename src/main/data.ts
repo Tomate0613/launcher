@@ -10,6 +10,7 @@ import { SyncedIdSet } from '../common/synced/synced-id-set/backend';
 import { writeDefaultThemes } from './static/defaultThemes';
 import { runOnClose } from './utils';
 import { Tokens } from './data/tokens';
+import { State } from './data/state';
 
 const logger = log('data');
 
@@ -18,6 +19,7 @@ export let accounts: SyncedIdSet<Account>;
 
 let settings: Settings | undefined;
 let tokens: Tokens | undefined;
+let state: State | undefined;
 
 function unless<Value>(something: Value | false): something is Value {
   return something !== false;
@@ -69,7 +71,7 @@ function loadAccounts() {
   accounts = SyncedIdSet.ofClassList('accounts', accountList);
 }
 
-export function loadData() {
+export async function loadData() {
   if (isLoaded) {
     return;
   }
@@ -85,6 +87,7 @@ export function loadData() {
   settings = Settings.load();
   tokens = Tokens.load();
   tokens.apply();
+  state = await State.load();
 
   loadAccounts();
 
@@ -121,15 +124,23 @@ export function getAccount(accountId: string) {
 
 export function getSettings() {
   if (!settings) {
-    throw new Error('Settings have not been initialized yet');
+    throw new Error('Settings have not been loaded yet');
   }
 
   return settings;
 }
 
+export function getState() {
+  if (!state) {
+    throw new Error('State has not been loaded yet');
+  }
+
+  return state;
+}
+
 export function getTokens() {
   if (!tokens) {
-    throw new Error('Tokens have not been initialized yet');
+    throw new Error('Tokens have not been loaded yet');
   }
 
   return tokens;

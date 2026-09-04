@@ -28,7 +28,7 @@ import type {
 } from 'tomate-mods';
 import { Account } from './account';
 import { invoke } from '../api';
-import { getSettings, modpacks } from '../data';
+import { getSettings, getState, modpacks } from '../data';
 import {
   copyFilesWithRenameSync,
   downloadFileFromUrl,
@@ -323,7 +323,7 @@ export class Modpack extends Serializable implements ModpackData {
         rootPath: minecraftRootPath,
       });
 
-      getSettings().cacheLaunchConfig(
+      getState().cacheLaunchConfig(
         this.loader.id,
         this.loader.version,
         this.gameVersion,
@@ -335,7 +335,7 @@ export class Modpack extends Serializable implements ModpackData {
       this.logger.warn(error('Failed to fetch launch config', e));
 
       if (!this.launchConfig) {
-        this.launchConfig = getSettings().getCachedLaunchConfig(
+        this.launchConfig = getState().getCachedLaunchConfig(
           this.loader.id,
           this.loader.version,
           this.gameVersion,
@@ -457,14 +457,12 @@ export class Modpack extends Serializable implements ModpackData {
           authorization: auth as never,
           javaPath,
           memory: {
-            min: `${
-              this.modpackOptions?.minRam ??
+            min: `${this.modpackOptions?.minRam ??
               getSettings().getModpackDefaultOption('minRam')
-            }M`,
-            max: `${
-              this.modpackOptions?.maxRam ??
+              }M`,
+            max: `${this.modpackOptions?.maxRam ??
               getSettings().getModpackDefaultOption('maxRam')
-            }M`,
+              }M`,
           },
           customLaunchArgs:
             this.modpackOptions?.customLaunchArgs ??
@@ -756,7 +754,7 @@ export class Modpack extends Serializable implements ModpackData {
         const searchResult = await provider.search(queryParams);
 
         searchResults.push(searchResult);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     return tomateMods.mergeSearch({}, ...searchResults);
@@ -797,7 +795,7 @@ export class Modpack extends Serializable implements ModpackData {
 
       readyForOfflineUse:
         !!this.launchConfig ||
-        !!getSettings().getCachedLaunchConfig(
+        !!getState().getCachedLaunchConfig(
           this.loader.id,
           this.loader.version,
           this.gameVersion,

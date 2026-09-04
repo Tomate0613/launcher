@@ -10,6 +10,7 @@ import {
   getAccount,
   getModpack,
   getSettings,
+  getState,
   getTokens,
   modpacks,
 } from './data';
@@ -157,7 +158,7 @@ export const routes = {
         ),
       );
 
-      const cachedGameVersions = getSettings().getCachedGameVersions(loaderId);
+      const cachedGameVersions = getState().getCachedGameVersions(loaderId);
       return cachedGameVersions.map((gameVersion) => ({
         version: gameVersion,
         stable: true,
@@ -179,7 +180,7 @@ export const routes = {
         ),
       );
 
-      return getSettings()
+      return getState()
         .getCachedLoaderVersions(loaderId, gameVersion)
         .filter((a) => a != 'undefined');
     }
