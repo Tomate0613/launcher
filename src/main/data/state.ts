@@ -53,8 +53,8 @@ export class State extends Serializable {
       .map((config) => config.split(':')[1]);
   }
 
-  async save() {
-    await fs.writeFile(statePath, JSON.stringify(this));
+  save() {
+    return fs.writeFile(statePath, JSON.stringify(this));
   }
 
   static async load() {

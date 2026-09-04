@@ -1,6 +1,6 @@
 import { basePath, settingsPath } from '../paths';
 import { Serializable, SerializableProperty } from './serialization';
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 
 const frontendKeys = [
   'activeAccountId',
@@ -95,11 +95,7 @@ export class Settings extends Serializable {
   }
 
   save() {
-    if (!fs.existsSync(basePath)) {
-      fs.mkdirSync(basePath, { recursive: true });
-    }
-
-    fs.writeFileSync(settingsPath, JSON.stringify(this));
+    return fs.writeFile(settingsPath, JSON.stringify(this));
   }
 
   frontendData(): SettingsFrontendData {
@@ -112,10 +108,10 @@ export class Settings extends Serializable {
     return result;
   }
 
-  static load() {
-    if (fs.existsSync(settingsPath)) {
-      return Settings.fromJSON(fs.readFileSync(settingsPath, 'utf8'), Settings);
-    } else {
+  static async load() {
+    try {
+      return Settings.fromJSON(await fs.readFile(settingsPath, 'utf8'), Settings);
+    } catch {
       return new Settings();
     }
   }

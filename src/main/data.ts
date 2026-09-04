@@ -45,17 +45,17 @@ async function loadModpacks() {
       .forEach((modpack) => modpacks.push(modpack));
 
     logger.log('All modpacks loaded')
-  } catch {
-    logger.warn('Could not read modpacks directory');
+  } catch (e) {
+    logger.error('Could not read modpacks directory', e);
   }
 }
 
-function loadAccounts() {
+async function loadAccounts() {
   if (!fsSync.existsSync(accountsPath)) {
     fsSync.writeFileSync(accountsPath, '[]');
   }
 
-  const accountData = fsSync.readFileSync(accountsPath, 'utf8');
+  const accountData = await fs.readFile(accountsPath, 'utf8');
   const accountList = JSON.parse(accountData).map((accountJSON: string) => {
     const account = Account.fromJSON(accountJSON, Account);
     try {
@@ -82,14 +82,15 @@ export async function loadData() {
   writeLog4jConfig();
   writeDefaultThemes();
 
-  loadModpacks();
 
-  settings = Settings.load();
-  tokens = Tokens.load();
-  tokens.apply();
+  settings = await Settings.load();
+  tokens = await Tokens.load();
   state = await State.load();
 
-  loadAccounts();
+  loadModpacks();
+  await loadAccounts();
+
+  tokens.apply();
 
   logger.log('Done loading data');
 }

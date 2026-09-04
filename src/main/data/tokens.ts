@@ -1,8 +1,8 @@
+import fs from 'node:fs/promises';
 import { CurseforgeProvider, ModrinthProvider } from 'tomate-mods';
-import { basePath, tokensPath } from '../paths';
+import { tokensPath } from '../paths';
 import { tomateMods, userAgent } from './content/lib';
 import { Serializable, SerializableProperty } from './serialization';
-import fs from 'node:fs';
 import { FrontendError } from '../error';
 
 export type TokensFrontendData = {
@@ -48,14 +48,6 @@ export class Tokens extends Serializable {
     this.apply();
   }
 
-  save() {
-    if (!fs.existsSync(basePath)) {
-      fs.mkdirSync(basePath, { recursive: true });
-    }
-
-    fs.writeFileSync(tokensPath, JSON.stringify(this));
-  }
-
   apply() {
     tomateMods.removeProvider('curseforge');
 
@@ -74,10 +66,14 @@ export class Tokens extends Serializable {
     }
   }
 
-  static load() {
-    if (fs.existsSync(tokensPath)) {
-      return Tokens.fromJSON(fs.readFileSync(tokensPath, 'utf8'), Tokens);
-    } else {
+  save() {
+    return fs.writeFile(tokensPath, JSON.stringify(this));
+  }
+
+  static async load() {
+    try {
+      return Tokens.fromJSON(await fs.readFile(tokensPath, 'utf8'), Tokens);
+    } catch {
       return new Tokens();
     }
   }
