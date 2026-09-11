@@ -24,3 +24,5 @@ allowBuilds:
   tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/557aa97655fc1f2379863a5bb2e561a10cc14d3f: true
   tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/5dc77cfd0c787b177f26616d5c6087a563dea35a: true
   tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/bab02e01bcb5c60814bb962cc4d2d2c317354214: true
+minimumReleaseAgeExclude:
+  - adm-zip@0.6.1
