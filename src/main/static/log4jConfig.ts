@@ -18,14 +18,6 @@ const CONFIG = `<?xml version="1.0" encoding="UTF-8"?>
 				<OnStartupTriggeringPolicy />
 			</Policies>
 		</RollingRandomAccessFile>
-		<RollingRandomAccessFile name="File2" fileName="logs/latest.html"
-			filePattern="logs/%d{yyyy-MM-dd}-%i.html.gz">
-			<HtmlLayout />
-			<Policies>
-				<TimeBasedTriggeringPolicy />
-				<OnStartupTriggeringPolicy />
-			</Policies>
-		</RollingRandomAccessFile>
 	</Appenders>
 	<Loggers>
 		<Root level="info">
@@ -34,7 +26,6 @@ const CONFIG = `<?xml version="1.0" encoding="UTF-8"?>
 			</filters>
 			<AppenderRef ref="SysOut" />
 			<AppenderRef ref="File" />
-			<AppenderRef ref="File2" />
 			<AppenderRef ref="ServerGuiConsole" />
 		</Root>
 	</Loggers>
