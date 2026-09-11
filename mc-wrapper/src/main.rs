@@ -16,7 +16,7 @@ use std::collections::VecDeque;
 #[cfg(windows)]
 use std::ffi::OsStr;
 use std::io::{BufRead, BufReader, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Arc, Mutex};
 use std::thread::{self};
@@ -112,6 +112,11 @@ async fn main() {
                 .long("launcher-java-dir")
                 .num_args(1),
         )
+        .arg(
+            Arg::new("additional-read-dirs")
+                .long("additional-read-dirs")
+                .num_args(1),
+        )
         .arg(Arg::new("sandbox-dir").long("sandbox-dir").num_args(1))
         .get_matches();
 
@@ -133,6 +138,10 @@ async fn main() {
     let minecraft_dir = matches.get_one::<String>("minecraft-dir").unwrap();
     let launcher_java_dir = matches.get_one::<String>("launcher-java-dir");
     let sandbox_dir = matches.get_one::<String>("sandbox-dir");
+    let additional_read_dirs: Vec<String> = matches
+        .get_one::<String>("additional-read-dirs")
+        .map(|x| serde_json::from_str(x).expect("Invalid JSON for additional-read-dirs"))
+        .unwrap_or_default();
 
     let shared_buffer: SharedBuffer = Arc::new(Mutex::new(VecDeque::with_capacity(MAX_LINES)));
     let shared_stream: SharedStream = Arc::new(Mutex::new(None));
@@ -144,6 +153,7 @@ async fn main() {
         Path::new(minecraft_dir),
         launcher_java_dir.map(Path::new),
         sandbox_dir.map(Path::new),
+        additional_read_dirs.iter().map(PathBuf::from).collect(),
         Arc::clone(&shared_stream),
         Arc::clone(&shared_buffer),
         move || {
@@ -227,6 +237,7 @@ async fn spawn_game<F>(
     minecraft_dir: &Path,
     launcher_java_dir: Option<&Path>,
     sandbox_dir: Option<&Path>,
+    additional_read_dirs: Vec<PathBuf>,
     stream: Arc<Mutex<Option<LocalSocketStream>>>,
     shared_buffer: SharedBuffer,
     on_exit: F,
@@ -259,6 +270,8 @@ async fn spawn_game<F>(
     if let Some(dir) = launcher_java_dir {
         allow_read.push(dir.into());
     }
+
+    allow_read.extend(additional_read_dirs.into_iter().map(Arc::from));
 
     let mut child = match sandbox_dir {
         None => c.spawn().await.expect("Failed to spawn"),
@@ -312,7 +325,7 @@ async fn spawn_game<F>(
                     stream.flush().unwrap();
                 }
 
-                println!("{}", line);
+                println!("stdout: {}", line);
 
                 push_to_ringbuffer(&stdout_buffer, LineType::Stdout, line);
             }
@@ -335,7 +348,7 @@ async fn spawn_game<F>(
                     stream.flush().unwrap();
                 }
 
-                println!("{}", line);
+                println!("stderr: {}", line);
 
                 push_to_ringbuffer(&stderr_buffer, LineType::Stderr, line);
             }

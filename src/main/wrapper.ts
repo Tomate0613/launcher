@@ -4,6 +4,7 @@ import { log } from '../common/logging/log';
 import { randomUUID } from 'node:crypto';
 import {
   javaInstallationsPath,
+  log4jConfigPath,
   minecraftRootPath,
   sandboxPath,
   socketsStatePath,
@@ -139,6 +140,13 @@ export async function spawnWrapper(
 
   if (getSettings().wrapper.sandbox) {
     wrapperArgs.push('--sandbox-dir', sandboxPath);
+  }
+
+  if (launcher.options.log4jConfigurationFile) {
+    wrapperArgs.push(
+      '--additional-read-dirs',
+      JSON.stringify([log4jConfigPath]),
+    );
   }
 
   const wrapper = getWrapperExecutable();
