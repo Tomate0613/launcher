@@ -19,7 +19,7 @@ function args(yargs: Argv) {
     .scriptName(withPlatformExtension('tomate-launcher'))
     .command(
       'launch <modpack-id>',
-      'launch a modpack',
+      'Launch a modpack',
       (yargs) => {
         return yargs.positional('modpack-id', {
           describe: 'Id of the modpack to launch',
