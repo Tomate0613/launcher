@@ -7,16 +7,24 @@ import { app } from 'electron';
 import { noop, withPlatformExtension } from './utils';
 import { tomateMods } from './data/content/lib';
 import { ProviderError } from './error';
+import { overrides } from './overrides';
 
 const logger = log('cli');
 
 export async function parseArgs(argv: string[]) {
-  args((await import('yargs')).default(argv)).parse();
+  const res = await args((await import('yargs')).default(argv)).parse();
+
+  overrides.closeAfterLaunch = res.closeAfterLaunch;
 }
 
 function args(yargs: Argv) {
   return yargs
     .scriptName(withPlatformExtension('tomate-launcher'))
+    .option('close-after-launch', {
+      describe: 'Close the launcher after the game opens',
+      type: 'boolean',
+      default: false,
+    })
     .command(
       'launch <modpack-id>',
       'Launch a modpack',

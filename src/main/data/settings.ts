@@ -1,4 +1,5 @@
 import { settingsPath } from '../paths';
+import { overrides } from '../overrides';
 import { Serializable, SerializableProperty } from './serialization';
 import fs from 'node:fs/promises';
 
@@ -90,6 +91,10 @@ export class Settings extends Serializable {
     this.__version = '4';
   }
 
+  closeAfterLaunch(): boolean {
+    return overrides.closeAfterLaunch ?? this.wrapper.autoClose;
+  }
+
   getModpackDefaultOption<Key extends keyof GeneralModpackOptions>(key: Key) {
     return this.modpackDefaultOptions[key] ?? defaultGeneralModpackOptions[key];
   }
@@ -110,7 +115,10 @@ export class Settings extends Serializable {
 
   static async load() {
     try {
-      return Settings.fromJSON(await fs.readFile(settingsPath, 'utf8'), Settings);
+      return Settings.fromJSON(
+        await fs.readFile(settingsPath, 'utf8'),
+        Settings,
+      );
     } catch {
       return new Settings();
     }

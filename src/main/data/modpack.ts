@@ -457,12 +457,14 @@ export class Modpack extends Serializable implements ModpackData {
           authorization: auth as never,
           javaPath,
           memory: {
-            min: `${this.modpackOptions?.minRam ??
+            min: `${
+              this.modpackOptions?.minRam ??
               getSettings().getModpackDefaultOption('minRam')
-              }M`,
-            max: `${this.modpackOptions?.maxRam ??
+            }M`,
+            max: `${
+              this.modpackOptions?.maxRam ??
               getSettings().getModpackDefaultOption('maxRam')
-              }M`,
+            }M`,
           },
           customLaunchArgs:
             this.modpackOptions?.customLaunchArgs ??
@@ -492,7 +494,7 @@ export class Modpack extends Serializable implements ModpackData {
         throw error('Failed to launch wrapper', e);
       }
 
-      if (getSettings().wrapper.autoClose) {
+      if (getSettings().closeAfterLaunch() && !this.isDeleted) {
         ctx.on('done', () => {
           safeClose();
         });
@@ -754,7 +756,7 @@ export class Modpack extends Serializable implements ModpackData {
         const searchResult = await provider.search(queryParams);
 
         searchResults.push(searchResult);
-      } catch (e) { }
+      } catch (e) {}
     }
 
     return tomateMods.mergeSearch({}, ...searchResults);
