@@ -1,1 +1,4 @@
-export const overrides: Partial<{ closeAfterLaunch: boolean }> = {};
+export const overrides: Partial<{
+  closeAfterLaunch: boolean;
+  reopenAfterGameClose: boolean;
+}> = {};

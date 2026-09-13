@@ -95,6 +95,10 @@ export class Settings extends Serializable {
     return overrides.closeAfterLaunch ?? this.wrapper.autoClose;
   }
 
+  reopenAfterGameClose(): boolean {
+    return overrides.reopenAfterGameClose ?? this.wrapper.reopen;
+  }
+
   getModpackDefaultOption<Key extends keyof GeneralModpackOptions>(key: Key) {
     return this.modpackDefaultOptions[key] ?? defaultGeneralModpackOptions[key];
   }

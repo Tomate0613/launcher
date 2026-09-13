@@ -15,6 +15,7 @@ export async function parseArgs(argv: string[]) {
   const res = await args((await import('yargs')).default(argv)).parse();
 
   overrides.closeAfterLaunch = res.closeAfterLaunch;
+  overrides.reopenAfterGameClose = res.reopenAfterGameClose;
 }
 
 function args(yargs: Argv) {
@@ -23,7 +24,10 @@ function args(yargs: Argv) {
     .option('close-after-launch', {
       describe: 'Close the launcher after the game opens',
       type: 'boolean',
-      default: false,
+    })
+    .option('reopen-after-game-close', {
+      describe: 'Reopen and focus launcher when game exits',
+      type: 'boolean',
     })
     .command(
       'launch <modpack-id>',

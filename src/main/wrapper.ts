@@ -129,7 +129,7 @@ export async function spawnWrapper(
     wrapperArgs.push('--launcher-java-dir', javaInstallationsPath);
   }
 
-  if (getSettings().wrapper.reopen) {
+  if (getSettings().reopenAfterGameClose()) {
     wrapperArgs.push(
       '--launcher-executable',
       process.execPath,
