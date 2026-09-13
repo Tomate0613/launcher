@@ -108,7 +108,14 @@ export class VanillaError extends Error {
 export class Modpack extends Serializable implements ModpackData {
   __version = '7';
   dir: string;
-  isDeleted = false;
+
+  hasBeenLaunchedThisSession = false;
+
+  /**
+   * We serialize this so that if we mark a modpack as deleted theres no way for it to come back in case of a crash
+   */
+  @SerializableProperty('optional')
+  isDeleted?: boolean;
 
   @SerializableProperty
   id: string;
@@ -401,6 +408,8 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   async launch(account: Account, quickPlay?: LaunchOptions['quickPlay']) {
+    this.hasBeenLaunchedThisSession = true;
+
     const ctx = this.process('launch', noop);
     invoke('progress', 0);
 
@@ -493,12 +502,6 @@ export class Modpack extends Serializable implements ModpackData {
         ctx.cancel();
         throw error('Failed to launch wrapper', e);
       }
-
-      if (getSettings().closeAfterLaunch() && !this.isDeleted) {
-        ctx.on('done', () => {
-          safeClose();
-        });
-      }
     } else {
       await launcher.launch(launchOptions);
     }
@@ -524,6 +527,12 @@ export class Modpack extends Serializable implements ModpackData {
       liner((data) => {
         if (data.includes('Reloading ResourceManager')) {
           ctx.done();
+
+          if (getSettings().closeAfterLaunch()) {
+            ctx.on('done', () => {
+              safeClose();
+            });
+          }
         }
 
         this.logger.mcLog(data);
@@ -638,7 +647,11 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   write() {
-    if (this.isDeleted && fs.existsSync(this.dir)) {
+    if (
+      this.isDeleted &&
+      fs.existsSync(this.dir) &&
+      !this.hasBeenLaunchedThisSession
+    ) {
       // Copy screenshots to global screenshots directory
       copyFilesWithRenameSync(this.screenshotsPath, screenshotsPath);
 
@@ -792,7 +805,7 @@ export class Modpack extends Serializable implements ModpackData {
       processes: this.frontendProcesses(),
       lastUsed: this.lastUsed,
       icon: this.getIcon(),
-      isDeleted: this.isDeleted,
+      isDeleted: this.isDeleted ?? false,
       sync: this.sync,
 
       readyForOfflineUse:
