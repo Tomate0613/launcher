@@ -1,6 +1,6 @@
 import type { Argv } from 'yargs';
 import { log } from '../common/logging/log';
-import { getAccount, getSettings, modpacks } from './data';
+import { everythingLoaded, getAccount, getSettings, modpacks } from './data';
 import { Modpack } from './data/modpack';
 import { prepare } from '.';
 import { app } from 'electron';
@@ -16,6 +16,7 @@ export async function parseArgs(argv: string[]) {
 
   overrides.closeAfterLaunch = res.closeAfterLaunch;
   overrides.reopenAfterGameClose = res.reopenAfterGameClose;
+  overrides.silent = res.silent;
 }
 
 function args(yargs: Argv) {
@@ -29,6 +30,10 @@ function args(yargs: Argv) {
       describe: 'Reopen and focus launcher when game exits',
       type: 'boolean',
     })
+    .option('silent', {
+      describe: 'Do not open launcher window',
+      type: 'boolean',
+    })
     .command(
       'launch <modpack-id>',
       'Launch a modpack',
@@ -39,8 +44,8 @@ function args(yargs: Argv) {
           type: 'string',
         });
       },
-      (argv) => {
-        prepare();
+      async (argv) => {
+        await everythingLoaded;
 
         const modpack = modpacks.get(argv.modpackId);
 
@@ -51,9 +56,12 @@ function args(yargs: Argv) {
         launch(modpack);
       },
     )
-    .command('list-modpacks', 'List all modpacks', noop, () => {
-      prepare();
+    .command('list-modpacks', 'List all modpacks', noop, async () => {
+      overrides.silent = true;
 
+      await everythingLoaded;
+
+      logger.log('Modpacks:');
       modpacks.forEach((modpack) => {
         logger.log(modpack.name, modpack.id);
       });
@@ -86,9 +94,9 @@ function args(yargs: Argv) {
           .option('file', { type: 'string', array: true, default: [] });
       },
       async (argv) => {
-        prepare();
+        overrides.silent = true;
 
-        logger.log(argv);
+        await everythingLoaded;
 
         const modpack = await create(argv, argv.name);
         logger.log('Created modpack', `"${modpack.name}"`);

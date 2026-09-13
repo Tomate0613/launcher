@@ -19,7 +19,7 @@ import { ProcessContext } from './process';
 import { getSettings } from './data';
 import { fileURLToPath } from 'node:url';
 
-let socketsState: string[];
+let socketsState: string[] = [];
 
 const logger = log('wrapper');
 
@@ -187,14 +187,13 @@ function tryReattach(id: string) {
 
 export async function tryReattachSockets() {
   try {
-    socketsState = JSON.parse(await fs.readFile(socketsStatePath, 'utf8'));
+    socketsState.push(
+      ...JSON.parse(await fs.readFile(socketsStatePath, 'utf8')),
+    );
     if (!Array.isArray(socketsState)) {
       logger.warn('sockets state is not an array: "', socketsState, '"');
-      socketsState = [];
     }
-  } catch {
-    socketsState = [];
-  }
+  } catch {}
 
   for (const socket of socketsState) {
     tryReattach(socket);
@@ -210,5 +209,9 @@ function mcLog(lineData: any) {
 }
 
 runOnClose(() => {
+  if (!socketsState) {
+    return;
+  }
+
   fsSync.writeFileSync(socketsStatePath, JSON.stringify(socketsState));
 });

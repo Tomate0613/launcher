@@ -17,6 +17,7 @@ import { openInBrowser, safeJoin } from './utils';
 import { storeSchedules } from './data/content/store';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { getThemeManifest } from './theme';
+import { overrides } from './overrides';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -99,6 +100,8 @@ function stripArgs(args: string[]) {
   }
 }
 
+let argsParsed: Promise<void> | undefined = undefined;
+
 logger.verbose('Requesting single instance lock');
 if (app.requestSingleInstanceLock()) {
   app.on('second-instance', (_event, args) => {
@@ -132,7 +135,7 @@ if (app.requestSingleInstanceLock()) {
     const stripped = stripArgs(process.argv);
 
     if (stripped.length) {
-      parseArgs(stripped);
+      argsParsed = parseArgs(stripped);
     }
   }
 } else {
@@ -163,6 +166,8 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 await prepare();
+
+await argsParsed;
 
 const themeManifest = await getThemeManifest();
 
@@ -212,7 +217,9 @@ app.whenReady().then(async () => {
     });
   });
 
-  createWindow();
+  if (!overrides.silent) {
+    createWindow();
+  }
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the

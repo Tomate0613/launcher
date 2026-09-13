@@ -21,6 +21,11 @@ let settings: Settings | undefined;
 let tokens: Tokens | undefined;
 let state: State | undefined;
 
+let markEverythingLoaded: () => void;
+export const everythingLoaded: Promise<void> = new Promise((r) => {
+  markEverythingLoaded = r;
+});
+
 function unless<Value>(something: Value | false): something is Value {
   return something !== false;
 }
@@ -44,10 +49,12 @@ async function loadModpacks() {
       .filter(unless)
       .forEach((modpack) => modpacks.push(modpack));
 
-    logger.log('All modpacks loaded')
+    logger.log('All modpacks loaded');
   } catch (e) {
     logger.error('Could not read modpacks directory', e);
   }
+
+  markEverythingLoaded();
 }
 
 async function loadAccounts() {
@@ -81,7 +88,6 @@ export async function loadData() {
 
   writeLog4jConfig();
   writeDefaultThemes();
-
 
   settings = await Settings.load();
   tokens = await Tokens.load();
