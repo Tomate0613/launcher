@@ -148,6 +148,7 @@ async function deleteSkin() {
       </div>
 
       <h2>Accounts</h2>
+
       <div class="action-row">
         <button class="icon-btn" @click="addMsaAccount()">
           <Icon :path="mdiAccountPlus" size="2rem" />
@@ -173,10 +174,12 @@ async function deleteSkin() {
         </template>
       </div>
 
-      <!-- TODO remove div wrapping -->
-      <div v-for="account of appState.accounts.values()" :key="account.id">
+      <div class="accounts action-row">
         <button
+          v-for="account of appState.accounts.values()"
+          :key="account.id"
           class="account"
+          :class="{ active: account.id === appState.accountId }"
           @click="useAccount(account.id)"
           @contextmenu="
             (event) =>
@@ -210,7 +213,6 @@ async function deleteSkin() {
             size="2"
           />
           {{ account.profile?.name ?? account.name ?? 'Player' }}
-          {{ account.id === appState.accountId ? '(Active)' : '' }}
         </button>
       </div>
 
@@ -362,6 +364,9 @@ async function deleteSkin() {
 </template>
 
 <style scoped>
+h2 {
+  margin: 0;
+}
 .offline-account-name-input {
   width: 100%;
 }
@@ -369,6 +374,7 @@ async function deleteSkin() {
 .capes {
   display: flex;
 }
+
 .player {
   position: relative;
   overflow: clip;
@@ -405,13 +411,16 @@ async function deleteSkin() {
   }
 }
 
-.account {
-  display: inline-flex;
-  gap: 1rem;
-  align-items: center;
-  /* background: var(--color-ui-layer); */
-  /* padding: 1rem; */
-  /* border-radius: var(--border-radius); */
+.accounts {
+  & .account {
+    display: inline-flex;
+    gap: 1rem;
+    align-items: center;
+
+    &.active {
+      background: var(--color-ui-layer-light);
+    }
+  }
 }
 
 .spinner-container {
