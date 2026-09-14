@@ -96,7 +96,7 @@ useNavigationInput((action) => {
             )
         "
       >
-        <img :src="screenshot.data" />
+        <img :src="screenshot.data" loading="lazy" alt=""/>
       </button>
     </CardGridPage>
   </div>
