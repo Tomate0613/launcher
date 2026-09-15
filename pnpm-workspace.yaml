@@ -1,40 +1,10 @@
 allowBuilds:
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/ff7e56d30d1b24da72223abb1a84b0bc6b78b232': true
-  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/a361d6e8d8f40016027324cc5b87bcc2e80b59c4': true
   "@swc/core": true
   electron: true
   electron-winstaller: true
   esbuild: true
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/f4c6226cdd67533eee2550e0e88969d50199ac5d: true
-  tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/681c60c017b9f8cdf38c135edb10f22761836646: true
-  tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/4471f78e2d465cd199208d92aa1771e8d400f4d1: true
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/39af8724b942f22fd4800eeff33221b5dc6c672e: true
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/fdca0dae1fe6e617484bb3405ad2e00f6992e20d: true
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/d3f6ea837a316509505a37011f348d9ad4d67c52: true
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/17b065c61ad4f7842abb30c4116cfa1a3c4cca88: true
-  tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/6ea2ff1f4798670d867311ca9f21f1d527d11484: true
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/c37826374f55b8eb19770daed72ca6e88ffda9b7: true
-  tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/23e3cc0fa545fcd6548998763170f929e52b8282: true
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/cb57e5b6973d9082e5b79ef55630ad3ab96db05f: true
+  '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/a361d6e8d8f40016027324cc5b87bcc2e80b59c4': true
   tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/1d96009546147862373c7d8f435dfd7993ac67a7: true
-  tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/97f93649febb15eff4b474bf7956d415c848b4e7: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/591d62d559113b3b1e4fa165f0bb40bfaa988122: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/58dc2c9a91132c151de25867eb469474bf7016af: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/d56129eada180aabff3acd7e6fcc292df0bb9e11: true
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/557aa97655fc1f2379863a5bb2e561a10cc14d3f: true
   tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/5dc77cfd0c787b177f26616d5c6087a563dea35a: true
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/bab02e01bcb5c60814bb962cc4d2d2c317354214: true
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/6911096dfd30388219451c5095e0ccbde8be8719: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/5309a4863840f3811a133ecb4da40e58ceabd6fa: true
   tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/26c3b2441cd58d6d3fa0a51eb24e6d8b44644d9b: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/04f0b561ed03f8001d09df49e376f32cf5b4ca41: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/11cefeef95d1dc35375ac61dbcefd1341e03c80e: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/54ba7eba7d433b5d39915eaebd7bbfd565eaddd7: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/98e1886b9e4487a12236ae1293aa9c9afa1dadd2: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/ca45ba7664268334f596166bb044d0c9fce58e7b: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/cccddb2f9647ef5d89af7e39085a6027591615d4: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/2809c66422d67801f3f339d1a94239b537bb685d: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/cd3d54a1de5e575e83c80ffb6ad099ab682ece89: true
   electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/0a0f6e5afa223ca43981bf6943706faf97c4f721: true
-minimumReleaseAgeExclude:
-  - adm-zip@0.6.1
