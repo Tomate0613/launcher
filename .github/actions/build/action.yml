@@ -26,17 +26,6 @@ runs:
       run: pnpm i --frozen-lockfile
       shell: bash
 
-    - name: debug
-      run: |
-        echo "index.d.ts:"
-        cat node_modules/electron-vite/dist/index.d.ts
-
-        echo "index.js:"
-        cat node_modules/electron-vite/dist/index.js
-
-        tree node_modules/electron-vite/dist
-      shell: bash
-
     - name: setup rust
       if: steps.mc-wrapper-cache.outputs.cache-hit != 'true'
       uses: dtolnay/rust-toolchain@stable
