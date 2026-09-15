@@ -2,6 +2,18 @@ import { contextBridge } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 import type { LogLevel } from '../common/logging/log';
 
+function getRuntimeEnvironment() {
+  if (process.env.FLATPAK_ID) {
+    return 'flatpak';
+  }
+
+  if (process.env.APPIMAGE) {
+    return 'appimage';
+  }
+
+  return 'native';
+}
+
 try {
   contextBridge.exposeInMainWorld('api', {
     async invoke(route: string, ...args: unknown[]) {
@@ -21,9 +33,13 @@ try {
 
       return ret;
     },
+
     on: electronAPI.ipcRenderer.on,
-    versions: electronAPI.process.versions,
-    platform: electronAPI.process.platform,
+
+    versions: process.versions,
+    platform: process.platform,
+
+    runtimeEnvironment: getRuntimeEnvironment(),
   });
 
   contextBridge.exposeInMainWorld(

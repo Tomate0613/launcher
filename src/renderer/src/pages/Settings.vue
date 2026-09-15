@@ -21,6 +21,9 @@ const storagePopup = useTemplateRef('storage-popup');
 const curseforgeTokenPopup = useTemplateRef('curseforge-token-popup');
 const sidebarPopup = useTemplateRef('sidebar-popup');
 
+// Sandbox should also work on windows and mac but I haven't really tested it yet, so hide the setting for now
+const sandboxSupported = window.api.platform === "linux" && window.api.runtimeEnvironment !== "flatpak";
+
 const sidebarTabs = [
   "instances", "worlds", "screenshots", "servers", "news", "explore", "accounts", "console"
 ];
@@ -169,9 +172,10 @@ watchEffect(() => {
         </label>
 
         <label
+          v-if="settings.wrapper.sandbox || sandboxSupported"
           class="settings-option"
           @contextmenu="settings.wrapper.sandbox = true"
-          :data-changed="!settings.wrapper.sandbox"
+          :data-changed="settings.wrapper.sandbox"
         >
           <div>
             Sandbox
@@ -272,9 +276,6 @@ watchEffect(() => {
   <Popup ref="storage-popup" class="storage-popup">
     <h2>Storage</h2>
     <div class="contents">
-      <!-- <div> -->
-      <!-- </div> -->
-
       <div class="buttons">
         <button @click="validateStore()">Validate</button>
         <button @click="gcStore()">Collect Garbage</button>

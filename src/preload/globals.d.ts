@@ -1,21 +1,50 @@
 import type { ElectronAPI } from '@electron-toolkit/preload';
-import type { Settings } from '../main/data/settings.js';
 import type { LogLevel } from '../common/logging/log.js';
 import type { Routes, RouteArgs, RouteReturn } from './types.ts';
 
+type Platform =
+  | 'aix'
+  | 'android'
+  | 'darwin'
+  | 'freebsd'
+  | 'haiku'
+  | 'linux'
+  | 'openbsd'
+  | 'sunos'
+  | 'win32'
+  | 'cygwin'
+  | 'netbsd';
+
+type ProcessVersions = {
+  [key: string]: string | undefined;
+
+  readonly electron: string;
+  readonly chrome: string;
+
+  readonly http_parser: string;
+  readonly node: string;
+  readonly v8: string;
+  readonly ares: string;
+  readonly uv: string;
+  readonly zlib: string;
+  readonly modules: string;
+  readonly openssl: string;
+};
+
 declare global {
   interface Window {
-    api: {
+    readonly api: {
       invoke<Key extends keyof Routes>(
         route: Key,
         ...args: RouteArgs<Routes[Key]>
       ): RouteReturn<Routes[Key]>;
-      on: ElectronAPI['ipcRenderer']['on'];
-      versions: ElectronAPI['process']['versions'];
-      platform: ElectronAPI['process']['platform'];
+      readonly on: ElectronAPI['ipcRenderer']['on'];
+      readonly versions: ProcessVersions;
+      readonly platform: Platform;
+      readonly runtimeEnvironment: "native" | "flatpak" | "appimage";
     };
 
-    log: (
+    readonly log: (
       level: LogLevel,
       channel: string,
       thread: string,
