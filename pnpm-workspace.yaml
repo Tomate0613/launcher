@@ -31,5 +31,9 @@ allowBuilds:
   electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/11cefeef95d1dc35375ac61dbcefd1341e03c80e: true
   electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/54ba7eba7d433b5d39915eaebd7bbfd565eaddd7: true
   electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/98e1886b9e4487a12236ae1293aa9c9afa1dadd2: true
+  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/ca45ba7664268334f596166bb044d0c9fce58e7b: true
+  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/cccddb2f9647ef5d89af7e39085a6027591615d4: true
+  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/2809c66422d67801f3f339d1a94239b537bb685d: true
+  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/cd3d54a1de5e575e83c80ffb6ad099ab682ece89: true
 minimumReleaseAgeExclude:
   - adm-zip@0.6.1
