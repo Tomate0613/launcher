@@ -98,7 +98,7 @@ importers:
         version: 26.15.3(electron-builder-squirrel-windows@26.15.3)(supports-color@7.2.0)
       electron-vite:
         specifier: github:Tomate0613/electron-vite
-        version: https://codeload.github.com/Tomate0613/electron-vite/tar.gz/11cefeef95d1dc35375ac61dbcefd1341e03c80e(@swc/core@1.16.2)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
+        version: https://codeload.github.com/Tomate0613/electron-vite/tar.gz/54ba7eba7d433b5d39915eaebd7bbfd565eaddd7(@swc/core@1.16.2)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
       skinview3d:
         specifier: ^3.4.2
         version: 3.4.2
@@ -1304,8 +1304,8 @@ packages:
   electron-to-chromium@1.5.426:
     resolution: {integrity: sha512-2Gcq6inCQs/AqfHP3f5ftCzk+pqeW2VlA1LgmPqEj2hfBO8HiZRspNYkD4HzFBe4u6lGqca4BspFr6Ix4Q400g==}
 
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/11cefeef95d1dc35375ac61dbcefd1341e03c80e:
-    resolution: {gitHosted: true, integrity: sha512-YFbt8Cp2gZmOexNc/0E+or5xiGtAevZzRARvtE2OhaABYp979S6woErKvmxuDgGS/Wp66mY2J/4YElPCQmI7rg==, tarball: https://codeload.github.com/Tomate0613/electron-vite/tar.gz/11cefeef95d1dc35375ac61dbcefd1341e03c80e}
+  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/54ba7eba7d433b5d39915eaebd7bbfd565eaddd7:
+    resolution: {gitHosted: true, integrity: sha512-0q4SzfooW3y1XoJvt+Vc1eDh8ebkb/bBGTYoJYr6+GKf2YMjQW6xr8143AuZCD5JmJt1+xp9wLv/NCWTxbZ7Jg==, tarball: https://codeload.github.com/Tomate0613/electron-vite/tar.gz/54ba7eba7d433b5d39915eaebd7bbfd565eaddd7}
     version: 6.0.0-beta.1
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
@@ -3686,7 +3686,7 @@ snapshots:
 
   electron-to-chromium@1.5.426: {}
 
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/11cefeef95d1dc35375ac61dbcefd1341e03c80e(@swc/core@1.16.2)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)):
+  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/54ba7eba7d433b5d39915eaebd7bbfd565eaddd7(@swc/core@1.16.2)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)):
     dependencies:
       '@babel/core': 7.29.7(supports-color@7.2.0)
       '@babel/plugin-transform-arrow-functions': 7.29.7(@babel/core@7.29.7(supports-color@7.2.0))

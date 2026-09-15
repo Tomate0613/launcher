@@ -29,5 +29,6 @@ allowBuilds:
   tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/26c3b2441cd58d6d3fa0a51eb24e6d8b44644d9b: true
   electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/04f0b561ed03f8001d09df49e376f32cf5b4ca41: true
   electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/11cefeef95d1dc35375ac61dbcefd1341e03c80e: true
+  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/54ba7eba7d433b5d39915eaebd7bbfd565eaddd7: true
 minimumReleaseAgeExclude:
   - adm-zip@0.6.1
