@@ -4,3 +4,4 @@ out/
 extra-binaries/
 .env
 electron.vite.config.*.mjs
+*.tmp
