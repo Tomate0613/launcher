@@ -28,11 +28,12 @@ function getBaseDataPath() {
 }
 
 const appData = fs.realpathSync(getBaseDataPath());
-
-export const basePath = path.join(
+const rawBasePath = path.join(
   appData,
   is.dev ? 'tomate-launcher-dev' : 'tomate-launcher',
 );
+
+export const basePath = fs.existsSync(rawBasePath) ? fs.realpathSync(rawBasePath) : rawBasePath;
 
 export const modpacksPath = path.join(basePath, 'modpacks/');
 export const logsPath = path.join(basePath, 'logs/');
