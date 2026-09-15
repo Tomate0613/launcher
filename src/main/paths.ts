@@ -27,12 +27,12 @@ function getBaseDataPath() {
   throw new Error('No suitable data directory found');
 }
 
-const appData = getBaseDataPath();
+const appData = fs.realpathSync(getBaseDataPath());
 
-export const basePath = fs.realpathSync(path.join(
+export const basePath = path.join(
   appData,
   is.dev ? 'tomate-launcher-dev' : 'tomate-launcher',
-));
+);
 
 export const modpacksPath = path.join(basePath, 'modpacks/');
 export const logsPath = path.join(basePath, 'logs/');
