@@ -28,8 +28,13 @@ runs:
 
     - name: debug
       run: |
+        echo "index.d.ts:"
         cat node_modules/electron-vite/dist/index.d.ts
+
+        echo "index.js:"
         cat node_modules/electron-vite/dist/index.js
+
+        tree node_modules/electron-vite/dist
       shell: bash
 
     - name: setup rust
