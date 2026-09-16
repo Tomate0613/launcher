@@ -1,4 +1,10 @@
-name: "build project"
+name: build project
+
+inputs:
+  publish:
+    description: Publish the artifacts to a GitHub release
+    required: false
+    default: "never"
 
 runs:
   using: "composite"
@@ -48,19 +54,19 @@ runs:
 
     - name: build windows
       if: runner.os == 'Windows'
-      run: pnpm build:win
+      run: pnpm build:win --publish ${{ inputs.publish }}
       shell: bash
+
 
     - name: setup flatpak runtime
       if: runner.os == 'Linux'
       run: |
         flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-
         flatpak --user install -y flathub org.freedesktop.Platform//25.08
         flatpak --user install -y flathub org.freedesktop.Sdk//25.08
       shell: bash
 
     - name: build linux
       if: runner.os == 'Linux'
-      run: pnpm build:linux
+      run: pnpm build:linux --publish ${{ inputs.publish }}
       shell: bash
