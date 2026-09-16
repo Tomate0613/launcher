@@ -1,0 +1,5 @@
+owner: Tomate0613
+repo: launcher
+provider: github
+releaseType: draft
+updaterCacheDirName: tomate-launcher-updater

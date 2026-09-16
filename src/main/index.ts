@@ -18,6 +18,7 @@ import { storeSchedules } from './data/content/store';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { getThemeManifest } from './theme';
 import { overrides } from './overrides';
+import { checkForUpdates } from './update';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -147,6 +148,7 @@ export async function prepare() {
   ensureAppDirectoriesExist();
   await loadData();
   storeSchedules();
+  checkForUpdates();
 }
 
 registerProtocolHandler();
