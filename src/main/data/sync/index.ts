@@ -56,8 +56,8 @@ export async function syncModpack(modpack: Modpack, launcher: Launcher) {
 
   if (sync.type === 'unsup') {
     const unsupVersion = {
-      version: '1.2.0',
-      sha1: 'fa0aa0f54fd8d926e86d7243442278e5e7e998f6',
+      version: '1.2.7',
+      sha1: 'd2c4e0b3b86df0c1e55c2224d6ed151395a6b83b',
     };
 
     const java25 = await javaTasks(
