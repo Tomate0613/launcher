@@ -2,7 +2,6 @@ appId: dev.doublekekse.launcher
 productName: Tomate Launcher
 directories:
   buildResources: build
-# TODO
 files:
   - "assets"
   - "out"
@@ -14,8 +13,6 @@ extraResources:
   - from: "extra-binaries/"
     to: "bin"
 asarUnpack:
-  # - assets/**
-  # - "**/*.{node,dll}"
 win:
   executableName: tomate-launcher
 nsis:
@@ -45,5 +42,5 @@ flatpak:
   runtimeVersion: 25.08
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  releaseType: draft
