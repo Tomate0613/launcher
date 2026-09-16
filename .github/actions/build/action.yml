@@ -1,4 +1,4 @@
-name: build project
+name: Build Project
 
 inputs:
   publish:
