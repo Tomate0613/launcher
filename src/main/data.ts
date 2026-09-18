@@ -78,12 +78,22 @@ async function loadAccounts() {
   accounts = SyncedIdSet.ofClassList('accounts', accountList);
 }
 
+let loadLock: Promise<void>;
 export async function loadData() {
   if (isLoaded) {
     return;
   }
 
-  isLoaded = true;
+  if (loadLock) {
+    await loadLock;
+    return;
+  }
+
+  let done: (() => void) | undefined;
+  loadLock = new Promise((resolve) => {
+    done = resolve;
+  });
+
   logger.log('Loading data');
 
   writeLog4jConfig();
@@ -99,9 +109,11 @@ export async function loadData() {
   tokens.apply();
 
   logger.log('Done loading data');
+  isLoaded = true;
+  done?.();
 }
 
-function onClose() {
+async function onClose() {
   logger.log('Saving');
   modpacks.forEach((modpack) => modpack.onLauncherClose());
   settings?.save();
@@ -124,7 +136,9 @@ export function getModpack(modpackId: string) {
 export function getAccount(accountId: string) {
   const account = accounts.get(accountId);
 
-  if (!account) throw new Error(`Account ${accountId} could not be found`);
+  if (!account) {
+    throw new Error(`Account ${accountId} could not be found`);
+  }
 
   return account;
 }
