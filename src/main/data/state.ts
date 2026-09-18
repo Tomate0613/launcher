@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
 import type { LoaderId } from "tomate-loaders";
 import { Serializable, SerializableProperty } from "./serialization";
 import type { Modpack } from "./modpack";
@@ -54,7 +55,7 @@ export class State extends Serializable {
   }
 
   save() {
-    return fs.writeFile(statePath, JSON.stringify(this));
+    return fsSync.writeFileSync(statePath, JSON.stringify(this));
   }
 
   static async load() {

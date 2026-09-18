@@ -118,6 +118,7 @@ async function onClose() {
   modpacks.forEach((modpack) => modpack.onLauncherClose());
   settings?.save();
   tokens?.save();
+  state?.save();
 
   const data = accounts.values().map((account) => JSON.stringify(account));
 
