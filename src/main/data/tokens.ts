@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
 import { CurseforgeProvider, ModrinthProvider } from 'tomate-mods';
 import { tokensPath } from '../paths';
 import { tomateMods, userAgent } from './content/lib';
@@ -67,7 +68,7 @@ export class Tokens extends Serializable {
   }
 
   save() {
-    return fs.writeFile(tokensPath, JSON.stringify(this));
+    return fsSync.writeFileSync(tokensPath, JSON.stringify(this));
   }
 
   static async load() {

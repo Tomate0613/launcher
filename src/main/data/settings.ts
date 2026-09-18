@@ -1,7 +1,9 @@
 import { settingsPath } from '../paths';
 import { overrides } from '../overrides';
 import { Serializable, SerializableProperty } from './serialization';
+import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
+import { app } from 'electron';
 
 const frontendKeys = [
   'activeAccountId',
@@ -104,7 +106,7 @@ export class Settings extends Serializable {
   }
 
   save() {
-    return fs.writeFile(settingsPath, JSON.stringify(this));
+    return fsSync.writeFileSync(settingsPath, JSON.stringify(this));
   }
 
   frontendData(): SettingsFrontendData {
