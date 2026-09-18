@@ -1,7 +1,6 @@
 import type { Argv } from 'yargs';
 import { log } from '../common/logging/log';
 import {
-  accounts,
   everythingLoaded,
   getAccount,
   getSettings,

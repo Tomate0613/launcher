@@ -3,7 +3,6 @@ import { overrides } from '../overrides';
 import { Serializable, SerializableProperty } from './serialization';
 import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
-import { app } from 'electron';
 
 const frontendKeys = [
   'activeAccountId',
