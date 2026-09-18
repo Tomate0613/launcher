@@ -1,6 +1,12 @@
 import type { Argv } from 'yargs';
 import { log } from '../common/logging/log';
-import { everythingLoaded, getAccount, getSettings, modpacks } from './data';
+import {
+  accounts,
+  everythingLoaded,
+  getAccount,
+  getSettings,
+  modpacks,
+} from './data';
 import { Modpack } from './data/modpack';
 import { prepare } from '.';
 import { app } from 'electron';
@@ -125,10 +131,11 @@ function args(yargs: Argv) {
           .option('file', { type: 'string', array: true, default: [] });
       },
       async (argv) => {
-        prepare();
+        await prepare();
 
         const modpack = await create(argv, 'quick-launch');
         modpack.delete(); // Mark as deleted
+        modpack.save();
 
         launch(modpack);
       },
