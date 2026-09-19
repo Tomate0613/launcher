@@ -6,7 +6,11 @@ import {
   analyzer as bundleAnalyzer,
 } from 'vite-bundle-analyzer';
 
-loadEnvFile();
+try {
+  loadEnvFile();
+} catch (e) {
+  console.warn('Failed to load .env:', e);
+}
 
 export default defineConfig({
   main: {
