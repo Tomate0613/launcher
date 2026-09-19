@@ -1,10 +1,12 @@
 import { defineConfig, swcPlugin } from 'electron-vite';
 import vue from '@vitejs/plugin-vue';
-import 'dotenv/config';
+import { loadEnvFile } from 'node:process';
 import {
   unstableRolldownAdapter,
   analyzer as bundleAnalyzer,
 } from 'vite-bundle-analyzer';
+
+loadEnvFile();
 
 export default defineConfig({
   main: {
@@ -53,7 +55,7 @@ export default defineConfig({
               {
                 name: 'launcher-core',
                 test: /launcher-core/,
-              }
+              },
             ],
           },
         },
