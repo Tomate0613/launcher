@@ -41,6 +41,7 @@
           libxext
           libxrandr
           libxxf86vm
+          libdecor
 
           flite # Text to speech (Otherwise minecraft will log an error every time it launches)
 
@@ -93,8 +94,7 @@
               );
 
               __GL_THREADED_OPTIMIZATIONS = 0;
-              LD_LIBRARY_PATH = lib.makeLibraryPath (runtimeLibs pkgs);
-
+              LD_LIBRARY_PATH = "${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)}";
               LIBSECCOMP_LIB_PATH = lib.makeLibraryPath (
                 with pkgs;
                 [
