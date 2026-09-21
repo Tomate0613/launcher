@@ -43,7 +43,7 @@ dialog {
     border-radius: 100%;
   }
 
-  & :global(h2) {
+  & :slotted(h2) {
     text-align: center;
 
     /* Make sure the close button doesn't overlap */
@@ -55,19 +55,14 @@ dialog {
     background: #050505aa;
   }
 
-  & :global(hr) {
+  & :slotted(hr) {
     padding-top: 0.5rem;
     border: none;
     border-bottom: 1px solid var(--color-ui-layer);
   }
 
-  & :global(.action-row) {
+  & :slotted(.action-row) {
     justify-content: space-between;
-  }
-
-  & :global(.settings) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
   }
 
   &.fullscreen {
