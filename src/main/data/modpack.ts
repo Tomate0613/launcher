@@ -365,8 +365,7 @@ export class Modpack extends Serializable implements ModpackData {
     );
 
     const isForge = this.loader.id === 'forge' || this.loader.id === 'neoforge';
-    const requiresOwnLibraries =
-      isForge && getSettings().wrapper.enabled && getSettings().wrapper.sandbox;
+    const requiresOwnLibraries = isForge && getSettings().wrapper.sandbox;
 
     const launcher = new Launcher({
       ...this.launchConfig,
@@ -501,15 +500,11 @@ export class Modpack extends Serializable implements ModpackData {
     },
     ctx: ProcessContext,
   ) {
-    if (getSettings().wrapper.enabled) {
-      try {
-        await spawnWrapper(launcher, launchOptions, ctx);
-      } catch (e) {
-        ctx.cancel();
-        throw error('Failed to launch wrapper', e);
-      }
-    } else {
-      await launcher.launch(launchOptions);
+    try {
+      await spawnWrapper(launcher, launchOptions, ctx);
+    } catch (e) {
+      ctx.cancel();
+      throw error('Failed to launch wrapper', e);
     }
   }
 

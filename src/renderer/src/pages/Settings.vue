@@ -130,21 +130,6 @@ watchEffect(() => {
 
         <label
           class="settings-option"
-          @contextmenu="settings.wrapper.enabled = true"
-          :data-changed="!settings.wrapper.enabled"
-        >
-          <div>
-            Enabled
-            <div class="settings-description">
-              Launch minecraft using wrapper allowing to reconnect to console
-              after launcher closes
-            </div>
-          </div>
-          <Toggle v-model="settings.wrapper.enabled" />
-        </label>
-
-        <label
-          class="settings-option"
           @contextmenu="settings.wrapper.reopen = true"
           :data-changed="!settings.wrapper.reopen"
         >
@@ -154,7 +139,7 @@ watchEffect(() => {
               Reopen and focus launcher when game exits
             </div>
           </div>
-          <Toggle v-model="settings.wrapper.reopen" :disabled="!settings.wrapper.enabled" />
+          <Toggle v-model="settings.wrapper.reopen" />
         </label>
 
         <label
@@ -168,7 +153,7 @@ watchEffect(() => {
               Close launcher when game launches
             </div>
           </div>
-          <Toggle v-model="settings.wrapper.autoClose" :disabled="!settings.wrapper.enabled" />
+          <Toggle v-model="settings.wrapper.autoClose" />
         </label>
 
         <label
@@ -183,7 +168,7 @@ watchEffect(() => {
               Runs modpacks in a more secure environment
             </div>
           </div>
-          <Toggle v-model="settings.wrapper.sandbox" :disabled="!settings.wrapper.enabled" />
+          <Toggle v-model="settings.wrapper.sandbox" />
         </label>
       </section>
 
