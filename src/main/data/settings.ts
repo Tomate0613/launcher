@@ -28,7 +28,6 @@ export type GeneralModpackOptions = {
 };
 
 export type WrapperOptions = {
-  enabled: boolean;
   reopen: boolean;
   autoClose: boolean;
   sandbox: boolean;
@@ -61,7 +60,6 @@ export class Settings extends Serializable {
   hideFrame: boolean = false;
   @SerializableProperty
   wrapper: WrapperOptions = {
-    enabled: true,
     reopen: true,
     autoClose: false,
     sandbox: false,
@@ -77,7 +75,6 @@ export class Settings extends Serializable {
     switch (version) {
       case '1':
         this.wrapper = {
-          enabled: true,
           reopen: true,
           autoClose: false,
           sandbox: false,
