@@ -95,8 +95,7 @@ label.popup-option {
   justify-content: right;
 
   & input,
-  & :global(select) {
-    /* TODO: Figure this out; I want to select stuff in the child component, but :global makes the entire selector global */
+  & :deep(select) {
     width: 20rem;
   }
 }
@@ -105,7 +104,7 @@ label.popup-option.multi-line {
   flex-direction: column;
   align-items: start;
 
-  & select:global(select) {
+  & :deep(select) {
     display: flex;
     width: 100%;
   }
