@@ -143,7 +143,7 @@ defineExpose({
 
   gap: 0.25rem;
 
-  & :global(.fake-btn) {
+  & :deep(.fake-btn) {
     width: 100%;
   }
 }
