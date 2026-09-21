@@ -46,5 +46,13 @@ export function applyDefaults<T extends {}>(
     }
   }
 
+  if (a) {
+    for (const key of Object.keys(a)) {
+      if(b[key] === undefined) {
+        result[key] = a[key];
+      }
+    }
+  }
+
   return result as never;
 }

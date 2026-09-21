@@ -12,7 +12,7 @@ use interprocess::os::unix::local_socket::ListenerOptionsExt;
 use serde::Serialize;
 
 use core::panic;
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 #[cfg(windows)]
 use std::ffi::OsStr;
 use std::io::{BufRead, BufReader, Write};
@@ -117,6 +117,7 @@ async fn main() {
                 .long("additional-read-dirs")
                 .num_args(1),
         )
+        .arg(Arg::new("env").long("env").num_args(1))
         .arg(Arg::new("sandbox-dir").long("sandbox-dir").num_args(1))
         .get_matches();
 
@@ -143,6 +144,11 @@ async fn main() {
         .map(|x| serde_json::from_str(x).expect("Invalid JSON for additional-read-dirs"))
         .unwrap_or_default();
 
+    let env: HashMap<String, String> = matches
+        .get_one::<String>("env")
+        .map(|x| serde_json::from_str(x).expect("Invalid JSON for env"))
+        .unwrap_or_default();
+
     let shared_buffer: SharedBuffer = Arc::new(Mutex::new(VecDeque::with_capacity(MAX_LINES)));
     let shared_stream: SharedStream = Arc::new(Mutex::new(None));
 
@@ -154,6 +160,7 @@ async fn main() {
         launcher_java_dir.map(Path::new),
         sandbox_dir.map(Path::new),
         additional_read_dirs.iter().map(PathBuf::from).collect(),
+        env,
         Arc::clone(&shared_stream),
         Arc::clone(&shared_buffer),
         move || {
@@ -238,6 +245,7 @@ async fn spawn_game<F>(
     launcher_java_dir: Option<&Path>,
     sandbox_dir: Option<&Path>,
     additional_read_dirs: Vec<PathBuf>,
+    env: HashMap<String, String>,
     stream: Arc<Mutex<Option<LocalSocketStream>>>,
     shared_buffer: SharedBuffer,
     on_exit: F,
@@ -255,6 +263,10 @@ async fn spawn_game<F>(
     c.stdout(command::PandoraStdioReadMode::Pipe);
     c.stderr(command::PandoraStdioReadMode::Pipe);
     c.current_dir(&game_dir);
+
+    for (key, value) in &env {
+        c.env(key.to_string(), value.to_string());
+    }
 
     for arg in arguments {
         c.arg(arg.to_string());
