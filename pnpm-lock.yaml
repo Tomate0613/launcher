@@ -55,7 +55,7 @@ importers:
         version: https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/5dc77cfd0c787b177f26616d5c6087a563dea35a
       tomate-mods:
         specifier: github:Tomate0613/tomate-mods
-        version: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/1d96009546147862373c7d8f435dfd7993ac67a7(@xmcl/yauzl@2.10.0)(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        version: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/ca82c5e784e7bfcdbc1a6225a8d3bb4a0b5e07dd(@xmcl/yauzl@2.10.0)(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       yaml:
         specifier: ^2.9.1
         version: 2.9.1
@@ -2268,8 +2268,8 @@ packages:
     resolution: {gitHosted: true, integrity: sha512-VHkADlsw5+84ZtrliIRlMirn0kuVI0WiBYfH4MzaAnfmxDhMtez12+HI1BjlXZAU8dknSMXXrzBiaeinI27gHQ==, tarball: https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/5dc77cfd0c787b177f26616d5c6087a563dea35a}
     version: 2.0.2
 
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/1d96009546147862373c7d8f435dfd7993ac67a7:
-    resolution: {gitHosted: true, integrity: sha512-ILMzGSJm+x6OJ8Tabldb6cQ6M9tjVdHAVKiJmXtkpvLsaNFtTDiPU95v5TOxGjFeLK0DgnN8jeLelTx/tG2ovQ==, tarball: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/1d96009546147862373c7d8f435dfd7993ac67a7}
+  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/ca82c5e784e7bfcdbc1a6225a8d3bb4a0b5e07dd:
+    resolution: {gitHosted: true, integrity: sha512-I/DKMbGFC6lOoTbbUeZ5rqwD29p6ANc8Y7ZtByqS5E+1PNF+qX7fYR2E3SQmtmINJicHG3xrJjr9S1AI2MGiUg==, tarball: https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/ca82c5e784e7bfcdbc1a6225a8d3bb4a0b5e07dd}
     version: 1.0.0
 
   tr46@0.0.3:
@@ -4692,7 +4692,7 @@ snapshots:
     dependencies:
       fast-xml-parser: 5.11.1
 
-  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/1d96009546147862373c7d8f435dfd7993ac67a7(@xmcl/yauzl@2.10.0)(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
+  tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/ca82c5e784e7bfcdbc1a6225a8d3bb4a0b5e07dd(@xmcl/yauzl@2.10.0)(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       '@xmcl/unzip': 2.2.0(@xmcl/yauzl@2.10.0)
       axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
