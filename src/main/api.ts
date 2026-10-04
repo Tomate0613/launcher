@@ -366,7 +366,7 @@ export const routes = {
   getWorlds,
   openWorldFolder(modpackId: string, id: string) {
     shell.showItemInFolder(
-      path.join(getModpack(modpackId).dir, 'saves', id, 'level.dat'),
+      path.join(getModpack(modpackId).gameDir, 'saves', id, 'level.dat'),
     );
   },
   getServers,

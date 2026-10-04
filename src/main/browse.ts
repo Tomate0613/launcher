@@ -230,7 +230,7 @@ export async function getServers() {
   const servers = await Promise.all(
     getVisibleModpacks().map(async (modpack) => {
       try {
-        const serversPath = path.join(modpack.dir, 'servers.dat');
+        const serversPath = path.join(modpack.gameDir, 'servers.dat');
         const buffer = await fs.readFile(serversPath);
 
         const { parsed } = await (await nbt()).parse(buffer);

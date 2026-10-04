@@ -21,7 +21,10 @@ import { error } from '../../error';
 import { registerInStore, wrapDownload } from './store';
 import { tomateMods } from './lib';
 
-export type ContentType = 'mods' | 'shaderpacks' | 'resourcepacks';
+export const contentTypes = ['mods', 'shaderpacks', 'resourcepacks'] as const;
+export const contentDirectories = contentTypes;
+
+export type ContentType = (typeof contentTypes)[number];
 
 export type ContentVersion = {
   id: string;

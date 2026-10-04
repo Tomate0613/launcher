@@ -63,7 +63,9 @@ export async function wrapDownload(
 }
 
 export async function registerInStore(filePath: string) {
-  if ((await fs.stat(filePath)).nlink !== 1) {
+  const stat = await fs.stat(filePath);
+
+  if (!stat.isFile() || stat.nlink !== 1) {
     return;
   }
 
@@ -74,9 +76,17 @@ export async function registerInStore(filePath: string) {
     await fs.access(storeItemPath);
     await fs.rm(filePath, { force: true });
     return fs.link(path.resolve(storeItemPath), path.resolve(filePath));
-  } catch { }
+  } catch {}
 
   return fs.link(path.resolve(filePath), path.resolve(storeItemPath));
+}
+
+export async function registerInStoreFromDirectory(directory: string) {
+  const items = await fs.readdir(directory);
+
+  await Promise.all(
+    items.map((item) => registerInStore(path.join(directory, item))),
+  );
 }
 
 export async function gcStore() {

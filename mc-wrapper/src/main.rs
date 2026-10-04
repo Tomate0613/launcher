@@ -3,6 +3,8 @@ use clap::Arg;
 #[cfg(windows)]
 use command::PandoraArg;
 use command::{PandoraCommand, PandoraSandbox};
+#[cfg(target_os = "linux")]
+use command::{PandoraDirectoryOverlay, PandoraOverlayDirectories};
 use interprocess::TryClone;
 use interprocess::local_socket::{GenericFilePath, ListenerOptions, prelude::*};
 
@@ -102,6 +104,12 @@ async fn main() {
                 .required(true),
         )
         .arg(
+            Arg::new("instance-root-dir")
+                .long("instance-root-dir")
+                .num_args(1)
+                .required(true),
+        )
+        .arg(
             Arg::new("minecraft-dir")
                 .long("minecraft-dir")
                 .num_args(1)
@@ -135,6 +143,7 @@ async fn main() {
         serde_json::from_str(matches.get_one::<String>("game-args").unwrap())
             .expect("Invalid JSON for game-args");
     let game_dir = matches.get_one::<String>("game-dir").unwrap();
+    let instance_root_dir = matches.get_one::<String>("instance-root-dir").unwrap();
     let minecraft_dir = matches.get_one::<String>("minecraft-dir").unwrap();
     let launcher_java_dir = matches.get_one::<String>("launcher-java-dir");
     let sandbox_dir = matches.get_one::<String>("sandbox-dir");
@@ -151,6 +160,7 @@ async fn main() {
         game_args,
         Path::new(game_dir),
         Path::new(minecraft_dir),
+        Path::new(instance_root_dir),
         launcher_java_dir.map(Path::new),
         sandbox_dir.map(Path::new),
         additional_read_dirs.iter().map(PathBuf::from).collect(),
@@ -235,6 +245,7 @@ async fn spawn_game<F>(
     arguments: Vec<String>,
     game_dir: &Path,
     minecraft_dir: &Path,
+    instance_root_dir: &Path,
     launcher_java_dir: Option<&Path>,
     sandbox_dir: Option<&Path>,
     additional_read_dirs: Vec<PathBuf>,
@@ -260,18 +271,26 @@ async fn spawn_game<F>(
         c.arg(arg.to_string());
     }
 
-    let mut allow_read: Vec<Arc<Path>> = vec![
-        minecraft_dir.into(),
-        game_dir.join("mods").into(),
-        game_dir.join("resourcepacks").into(),
-        game_dir.join("shaderpacks").into(),
-    ];
+    let mut allow_read: Vec<Arc<Path>> = vec![minecraft_dir.into()];
 
     if let Some(dir) = launcher_java_dir {
         allow_read.push(dir.into());
     }
 
     allow_read.extend(additional_read_dirs.into_iter().map(Arc::from));
+
+    #[cfg(target_os = "linux")]
+    let overlays = ["mods", "resourcepacks", "shaderpacks"]
+        .into_iter()
+        .map(|name| PandoraDirectoryOverlay {
+            source: instance_root_dir.join(name).into(),
+            target: game_dir.join(name).into(),
+            state: Some(PandoraOverlayDirectories {
+                upper: game_dir.join(name).into(),
+                work: instance_root_dir.join(format!(".{name}_work")).into(),
+            }),
+        })
+        .collect();
 
     let mut child = match sandbox_dir {
         None => c.spawn().await.expect("Failed to spawn"),
@@ -283,6 +302,8 @@ async fn spawn_game<F>(
                 grant_network_access: true,
                 #[cfg(target_os = "linux")]
                 sandbox_dir: sandbox_dir.into(),
+                #[cfg(target_os = "linux")]
+                overlays,
                 #[cfg(windows)]
                 name: Arc::from(OsStr::new("TomateLauncherInstanceSandbox")),
                 #[cfg(windows)]

@@ -9,6 +9,7 @@ import {
 import { log } from '../../../common/logging/log';
 import { Modpack } from '../modpack';
 import { wrapDownload } from '../content/store';
+import { contentDirectories } from '../content/content';
 
 const logger = log('mrpack-importer');
 
@@ -106,14 +107,28 @@ export class Mrpack implements ModpackImporter {
         let downloaded = false;
 
         for (const downloadUrl of file.downloads) {
-          const filePath = safeJoin(modpack.dir, file.path);
+          const isContent = contentDirectories.some((t) =>
+            file.path.startsWith(`${t}/`),
+          );
+          const filePath = safeJoin(
+            isContent ? modpack.dir : modpack.gameDir,
+            file.path,
+          );
 
           try {
             ensureDirectoryExistsSync(path.dirname(filePath));
 
-            await wrapDownload(file.hashes.sha1, filePath, async (path) => {
-              await downloadFileFromUrl(downloadUrl, path, file.hashes.sha1);
-            });
+            if (isContent) {
+              await wrapDownload(file.hashes.sha1, filePath, async (path) => {
+                await downloadFileFromUrl(downloadUrl, path, file.hashes.sha1);
+              });
+            } else {
+              await downloadFileFromUrl(
+                downloadUrl,
+                filePath,
+                file.hashes.sha1,
+              );
+            }
 
             downloaded = true;
             break; // Stop trying further URLs for this file

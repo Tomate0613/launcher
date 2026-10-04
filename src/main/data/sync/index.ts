@@ -48,7 +48,7 @@ export async function syncModpack(modpack: Modpack, launcher: Launcher) {
       return wrapProcess(
         spawn(sync.command, {
           shell: true,
-          cwd: modpack.dir,
+          cwd: modpack.gameDir,
         }),
       );
     };
@@ -86,7 +86,7 @@ export async function syncModpack(modpack: Modpack, launcher: Launcher) {
         spawn(
           java25,
           ['-Dunsup.guiInStandalone=true', '-jar', unsupJarPath, 'client'],
-          { cwd: modpack.dir },
+          { cwd: modpack.gameDir },
         ),
       );
     };

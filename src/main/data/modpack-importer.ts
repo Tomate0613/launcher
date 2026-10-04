@@ -4,7 +4,8 @@ import path from 'node:path';
 import { modpacks } from '../data';
 import { tempPaths } from '../paths';
 import { randomUUID } from 'node:crypto';
-import fs from 'fs-extra';
+import fsExtra from 'fs-extra';
+import fs from 'fs/promises';
 import { log } from '../../common/logging/log';
 import { Mrpack } from './modpack-import/mrpack';
 import { MultiMc } from './modpack-import/multi-mc';
@@ -13,6 +14,8 @@ import { Cursepack } from './modpack-import/cursepack';
 import { fileBufferPathSync } from '../utils';
 import { error, FrontendError, ProviderError } from '../error';
 import type { ImplementedProvider } from 'tomate-mods';
+import { contentDirectories } from './content/content';
+import { registerInStoreFromDirectory } from './content/store';
 
 const logger = log('modpack-import');
 
@@ -44,19 +47,41 @@ export async function fromFile(file: string, modpack?: Modpack) {
 
   try {
     logger.log('Copying overrides');
-    if (importer.overrides && fs.existsSync(importer.overrides)) {
-      fs.rmSync(modpack.dir, { recursive: true });
-      fs.cpSync(importer.overrides, modpack.dir, { recursive: true });
+    if (importer.overrides && fsExtra.existsSync(importer.overrides)) {
+      fsExtra.rmSync(modpack.gameDir, { recursive: true });
+      fsExtra.cpSync(importer.overrides, modpack.gameDir, { recursive: true });
       modpack.setupContentDirectories();
     }
 
     logger.log('Override additional files');
-    await importer.overrideAdditionalFiles(modpack.dir);
+    await importer.overrideAdditionalFiles(modpack.gameDir);
 
     logger.log('Downloading files');
     await importer.downloadFiles(modpack, (progress) => {
       ctx.progress(progress);
     });
+
+    logger.log('Importing content');
+    for (const contentDirectory of contentDirectories) {
+      const source = path.join(modpack.gameDir, contentDirectory);
+      const target = path.join(modpack.dir, contentDirectory);
+
+      if (!fsExtra.existsSync(source)) {
+        continue;
+      }
+
+      await fs.cp(source, target, {
+        recursive: true,
+        force: true,
+      });
+
+      await fs.rm(source, {
+        recursive: true,
+        force: true,
+      });
+
+      registerInStoreFromDirectory(target);
+    }
   } catch (e) {
     ctx.cancel();
     throw error('Failed to import modpack', e);
@@ -78,29 +103,29 @@ async function extractToTempPath(filePath: string) {
 }
 
 async function getHandler(filePath: string): Promise<ModpackImporter> {
-  let fileStat = fs.statSync(filePath);
+  let fileStat = fsExtra.statSync(filePath);
 
   if (
     fileStat.isFile() &&
     (filePath.endsWith('.zip') || filePath.endsWith('.mrpack'))
   ) {
     filePath = await extractToTempPath(filePath);
-    fileStat = fs.statSync(filePath);
+    fileStat = fsExtra.statSync(filePath);
   }
 
   if (!fileStat.isDirectory()) {
     throw new Error('Failed to import modpack. Unsupported file type');
   }
 
-  if (fs.existsSync(path.join(filePath, 'instance.cfg'))) {
+  if (fsExtra.existsSync(path.join(filePath, 'instance.cfg'))) {
     return MultiMc.create(filePath);
   }
 
-  if (fs.existsSync(path.join(filePath, 'modrinth.index.json'))) {
+  if (fsExtra.existsSync(path.join(filePath, 'modrinth.index.json'))) {
     return new Mrpack(filePath);
   }
 
-  if (fs.existsSync(path.join(filePath, 'manifest.json'))) {
+  if (fsExtra.existsSync(path.join(filePath, 'manifest.json'))) {
     if (!tomateMods.hasProvider('curseforge')) {
       throw new ProviderError('curseforge');
     }
@@ -144,7 +169,7 @@ export async function fromResource(
   modpacks.push(modpack);
 
   const tempPath = path.join(tempPaths, randomUUID());
-  fs.mkdirSync(tempPath, { recursive: true });
+  fsExtra.mkdirSync(tempPath, { recursive: true });
 
   logger.log('Downloading modpack');
   const tmpDownloadPath = path.join(tempPath, 'modpack.zip');
@@ -153,7 +178,7 @@ export async function fromResource(
     modpack.delete();
 
     try {
-      fs.unlinkSync(tmpDownloadPath);
+      fsExtra.unlinkSync(tmpDownloadPath);
     } catch (e) {
       logger.error('Failed to download modpack.zip', e);
     }

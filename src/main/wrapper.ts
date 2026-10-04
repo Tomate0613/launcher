@@ -104,6 +104,7 @@ function connectSocket(socketId: string, onResourceManagerLoaded?: () => void) {
 }
 
 export async function spawnWrapper(
+  instanceRoot: string,
   launcher: Launcher,
   launchOptions: LaunchOptions & { javaPath: string },
   ctx: ProcessContext,
@@ -122,6 +123,8 @@ export async function spawnWrapper(
     launcher.options.root,
     '--minecraft-dir',
     minecraftRootPath,
+    '--instance-root-dir',
+    instanceRoot,
   ];
 
   const jdksOverriden = !!process.env.TOMATE_LAUNCHER_JDKS;

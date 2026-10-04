@@ -43,7 +43,11 @@ import { app, shell } from 'electron';
 import { ModsContent } from './content/mods';
 import type { GeneralModpackOptions } from './settings';
 import { tomateMods } from './content/lib';
-import type { ContentType, ResourceSource } from './content/content';
+import {
+  contentTypes,
+  type ContentType,
+  type ResourceSource,
+} from './content/content';
 import { ShaderpacksContent } from './content/shaderpacks';
 import { ResourcepacksContent } from './content/resourcepacks';
 import { error, FrontendError, showError } from '../error';
@@ -184,6 +188,7 @@ export class Modpack extends Serializable implements ModpackData {
 
     try {
       ensureDirectoryExistsSync(this.dir);
+      ensureDirectoryExistsSync(this.gameDir);
       this.defaults();
 
       this.save();
@@ -270,17 +275,24 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   /**
-   * `${this.dir}/screenshots`
+   * `${this.dir}/.minecraft``
    */
-  get screenshotsPath() {
-    return paths.join(this.dir, 'screenshots');
+  get gameDir() {
+    return paths.join(this.dir, 'minecraft');
   }
 
   /**
-   * `${this.dir}/saves`
+   * `${this.gameDir}/screenshots`
+   */
+  get screenshotsPath() {
+    return paths.join(this.gameDir, 'screenshots');
+  }
+
+  /**
+   * `${this.gameDir}/saves`
    */
   get savesPath() {
-    return paths.join(this.dir, 'saves');
+    return paths.join(this.gameDir, 'saves');
   }
 
   setupContentDirectories() {
@@ -294,7 +306,7 @@ export class Modpack extends Serializable implements ModpackData {
       return;
     }
 
-    fs.copySync(defaultsPath, this.dir, {
+    fs.copySync(defaultsPath, this.gameDir, {
       overwrite: false,
       errorOnExist: false,
     });
@@ -352,7 +364,7 @@ export class Modpack extends Serializable implements ModpackData {
           throw error('Failed to get launch config', e);
         }
 
-        this.launchConfig.root = this.dir;
+        this.launchConfig.root = this.gameDir;
         this.logger.log('Using cached launch config instead');
       }
     }
@@ -369,7 +381,7 @@ export class Modpack extends Serializable implements ModpackData {
 
     const launcher = new Launcher({
       ...this.launchConfig,
-      root: this.dir,
+      root: this.gameDir,
       downloadManager: (await import('./downloads')).downloadManager,
 
       log4jConfigurationFile: supportLog4jConfigurationFile
@@ -378,7 +390,7 @@ export class Modpack extends Serializable implements ModpackData {
 
       paths: {
         libraryRoot: requiresOwnLibraries
-          ? paths.join(this.dir, 'libraries')
+          ? paths.join(this.gameDir, 'libraries')
           : minecraftLibrariesPath,
         assetRoot: minecraftAssetRootPath,
         versionRoot: minecraftVersionDirectoryPath,
@@ -495,7 +507,7 @@ export class Modpack extends Serializable implements ModpackData {
     ctx: ProcessContext,
   ) {
     try {
-      await spawnWrapper(launcher, launchOptions, ctx);
+      await spawnWrapper(this.dir, launcher, launchOptions, ctx);
     } catch (e) {
       ctx.cancel();
       throw error('Failed to launch wrapper', e);
@@ -585,11 +597,11 @@ export class Modpack extends Serializable implements ModpackData {
 
         const s = source.replaceAll('\\', '/');
         const includePaths = [
-          'defaultconfigs',
-          'mods',
-          'config',
+          'minecraft/defaultconfigs',
+          'minecraft/mods',
+          'minecraft/config',
+          'minecraft/options.txt',
           'data.json',
-          'options.txt',
         ];
 
         for (let i = 0; i < includePaths.length; i++) {
@@ -743,9 +755,7 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   contents() {
-    const types = ['mods', 'shaderpacks', 'resourcepacks'] as const;
-
-    return types.map((type) => this.content(type));
+    return contentTypes.map((type) => this.content(type));
   }
 
   static async searchModpack(query: string) {
@@ -855,7 +865,7 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   createDefault(file: string) {
-    const source = paths.join(this.dir, file);
+    const source = paths.join(this.gameDir, file);
 
     if (!fs.existsSync(source)) {
       this.logger.warn(source, 'does not exist');
