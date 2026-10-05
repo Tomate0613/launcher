@@ -489,9 +489,14 @@ export class Modpack extends Serializable implements ModpackData {
           customLaunchArgs:
             this.modpackOptions?.customLaunchArgs ??
             getSettings().getModpackDefaultOption('customLaunchArgs'),
-          customJvmArgs:
+          customJvmArgs: (
             this.modpackOptions?.customJvmArgs ??
-            getSettings().getModpackDefaultOption('customJvmArgs'),
+            getSettings().getModpackDefaultOption('customJvmArgs')
+          ).concat(
+            this.loader.id === 'fabric'
+              ? ['-Dfabric.debug.disableModIds=better_log4j_config'] // we have our own better logging so better_log4j_config is incompatible
+              : [],
+          ),
           quickPlay,
         },
         ctx,
