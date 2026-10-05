@@ -72,13 +72,16 @@ export class Logger {
           thread: string;
           level: string;
           message: string;
+          throwable: string;
         };
 
         const level = this.matchMcLevel(json.level);
 
-        transportLog(level, `Minecraft/${json.thread}`, json.logger, [
-          json.message,
-        ]);
+        const message = json.throwable
+          ? `${json.message}\n${json.throwable}`
+          : json.message;
+
+        transportLog(level, `Minecraft/${json.thread}`, json.logger, [message]);
         return;
       } catch {}
     }
