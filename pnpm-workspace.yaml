@@ -6,8 +6,6 @@ allowBuilds:
   '@doublekekse/find-java@https://codeload.github.com/Tomate0613/find-java/tar.gz/a361d6e8d8f40016027324cc5b87bcc2e80b59c4': true
   tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/1d96009546147862373c7d8f435dfd7993ac67a7: true
   tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/5dc77cfd0c787b177f26616d5c6087a563dea35a: true
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/26c3b2441cd58d6d3fa0a51eb24e6d8b44644d9b: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/0a0f6e5afa223ca43981bf6943706faf97c4f721: true
-  electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/1809726f9057526dc776f5e51a4117ccf56da184: true
+  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/79941cfc2d76b1d27156a7435880ef8d6a71f344: true
   electron-vite@https://codeload.github.com/Tomate0613/electron-vite/tar.gz/73e4d38252d303467b934d05396b63fadb8cd732: true
   tomate-mods@https://codeload.github.com/Tomate0613/tomate-mods/tar.gz/ca82c5e784e7bfcdbc1a6225a8d3bb4a0b5e07dd: true
