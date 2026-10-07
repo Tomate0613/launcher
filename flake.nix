@@ -3,12 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-old.url = "github:nixos/nixpkgs/eaad089433ca2bb662274377d33df3d0e51ef28b";
     pnpm2nix.url = "github:Tomate0613/nix-flakes/pnpm";
   };
 
   outputs =
     {
       nixpkgs,
+      nixpkgs-old,
       pnpm2nix,
       self,
     }:
@@ -20,6 +22,7 @@
       forAllSystems = lib.genAttrs systems;
 
       nixpkgsFor = forAllSystems (system: nixpkgs.legacyPackages.${system});
+      nixpkgsOldFor = forAllSystems (system: nixpkgs-old.legacyPackages.${system});
 
       runtimeLibs =
         pkgs: with pkgs; [
@@ -118,11 +121,13 @@
             overlays = [ pnpm2nix.overlays.default ];
           };
           lib = pkgs.lib;
+          pkgsOld = nixpkgsOldFor.${system};
         in
         {
           default = pkgs.callPackage ./launcher.nix {
             inherit
               runtimeLibs
+              pkgsOld
               ;
 
             mc-wrapper = self.packages.${system}.mc-wrapper;
