@@ -476,6 +476,9 @@ export class Modpack extends Serializable implements ModpackData {
         {
           authorization: auth as never,
           javaPath,
+          environmentVariables:
+            this.modpackOptions?.environmentVariables ??
+            getSettings().getModpackDefaultOption('environmentVariables'),
           memory: {
             min: `${
               this.modpackOptions?.minRam ??
@@ -508,7 +511,10 @@ export class Modpack extends Serializable implements ModpackData {
 
   async spawn(
     launcher: Launcher,
-    launchOptions: LaunchOptions & { javaPath: string },
+    launchOptions: LaunchOptions & {
+      javaPath: string;
+      environmentVariables: Record<string, string>;
+    },
     ctx: ProcessContext,
   ) {
     try {

@@ -25,6 +25,7 @@ export type GeneralModpackOptions = {
   stashComplete: boolean;
   customLaunchArgs: string[];
   customJvmArgs: string[];
+  environmentVariables: Record<string, string>;
 };
 
 export type WrapperOptions = {
@@ -46,6 +47,7 @@ export const defaultGeneralModpackOptions: GeneralModpackOptions = {
 
   customLaunchArgs: [],
   customJvmArgs: [],
+  environmentVariables: {},
 };
 
 export class Settings extends Serializable {

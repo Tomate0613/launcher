@@ -7,6 +7,7 @@ import { applyDefaults, clone } from '../../../common/utils';
 import { mdiArrowRight } from '@mdi/js';
 import Icon from './Icon.vue';
 import ArgumentsPopup from './popup/ArgumentsPopup.vue';
+import EnvironmentVariablesPopup from './popup/EnvironmentVariablesPopup.vue';
 
 type Props = {
   defaultSettings: GeneralModpackOptions;
@@ -22,6 +23,7 @@ const settings = reactive(clone(previousSettings));
 
 const customJvmArgsPopup = useTemplateRef('custom-jvm-args-popup');
 const customLaunchArgsPopup = useTemplateRef('custom-launch-args-popup');
+const environmentVariablesPopup = useTemplateRef('environment-variables-popup');
 
 watch(settings, () => {
   for (const key of Object.keys(defaultSettings)) {
@@ -142,6 +144,24 @@ function isChanged(key: keyof GeneralModpackOptions) {
         <Icon :path="mdiArrowRight" />
       </button>
     </label>
+
+    <label
+      class="settings-option settings-option-button"
+      @contextmenu="reset('environmentVariables')"
+      :data-changed="isChanged('environmentVariables')"
+    >
+      <div>Environment Variables</div>
+      <button @click="environmentVariablesPopup?.openMenu()">
+        <span class="ellipsis">
+          {{
+            Object.entries(settings.environmentVariables)
+              .map(([k, v]) => `${k}=${v}`)
+              .join(' ')
+          }}
+        </span>
+        <Icon :path="mdiArrowRight" />
+      </button>
+    </label>
   </section>
 
   <ArgumentsPopup ref="custom-jvm-args-popup" v-model="settings.customJvmArgs">
@@ -153,4 +173,8 @@ function isChanged(key: keyof GeneralModpackOptions) {
   >
     Custom Launch Arguments
   </ArgumentsPopup>
+  <EnvironmentVariablesPopup
+    ref="environment-variables-popup"
+    v-model="settings.environmentVariables"
+  />
 </template>
