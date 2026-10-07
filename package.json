@@ -43,7 +43,7 @@
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",
     "@mdi/js": "^7.4.47",
-    "@swc/core": "^1.16.13",
+    "@swc/core": "1.16.2",
     "@types/adm-zip": "^0.5.8",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^26.6.4",
