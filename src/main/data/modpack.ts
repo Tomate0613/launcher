@@ -19,7 +19,7 @@ import {
   checkPath as checkJavaFinderPath,
   FoundJavaInstallations,
 } from '@doublekekse/find-java';
-import fs from 'fs-extra';
+import fsExtra from 'fs-extra';
 import type {
   Provider,
   ImplementedProvider,
@@ -259,12 +259,13 @@ export class Modpack extends Serializable implements ModpackData {
           'data.json',
         ]);
 
-        fs.mkdirSync(destination, { recursive: true });
+        fsExtra.mkdirSync(destination, { recursive: true });
 
-        for (const entry of fs.readdirSync(this.dir)) {
+        this.logger.log('migrating', this.id);
+        for (const entry of fsExtra.readdirSync(this.dir)) {
           if (excluded.has(entry)) continue;
 
-          fs.cpSync(
+          fsExtra.cpSync(
             paths.join(this.dir, entry),
             paths.join(destination, entry),
             {
@@ -273,6 +274,7 @@ export class Modpack extends Serializable implements ModpackData {
             },
           );
         }
+        this.logger.log('done migrating for', this.id);
 
         this['__version'] = '8';
       }
@@ -335,11 +337,11 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   defaults() {
-    if (!fs.existsSync(defaultsPath)) {
+    if (!fsExtra.existsSync(defaultsPath)) {
       return;
     }
 
-    fs.copySync(defaultsPath, this.gameDir, {
+    fsExtra.copySync(defaultsPath, this.gameDir, {
       overwrite: false,
       errorOnExist: false,
     });
@@ -628,7 +630,7 @@ export class Modpack extends Serializable implements ModpackData {
     const id = name + '-' + randomUUID();
 
     this.save();
-    fs.cpSync(this.dir, paths.join(stashesPath, id), {
+    fsExtra.cpSync(this.dir, paths.join(stashesPath, id), {
       recursive: true,
       filter: (source) => {
         if (
@@ -637,7 +639,7 @@ export class Modpack extends Serializable implements ModpackData {
         )
           return true;
 
-        const stat = fs.statSync(source);
+        const stat = fsExtra.statSync(source);
 
         const s = source.replaceAll('\\', '/');
         const includePaths = [
@@ -671,18 +673,18 @@ export class Modpack extends Serializable implements ModpackData {
   removeStash(id: string) {
     const stashPath = paths.join(stashesPath, id);
 
-    if (!fs.existsSync(stashPath)) {
+    if (!fsExtra.existsSync(stashPath)) {
       throw new Error(
         `Could not delete stash "${id}" because the folder does not exist`,
       );
     }
 
-    fs.rmSync(stashPath, { recursive: true });
+    fsExtra.rmSync(stashPath, { recursive: true });
     this.stashes = this.stashes.filter((stash) => stash.id !== id);
   }
 
   openExplorer() {
-    if (!fs.existsSync(this.dir)) fs.mkdirSync(this.dir);
+    if (!fsExtra.existsSync(this.dir)) fsExtra.mkdirSync(this.dir);
 
     this.save();
 
@@ -700,13 +702,13 @@ export class Modpack extends Serializable implements ModpackData {
   write() {
     if (
       this.isDeleted &&
-      fs.existsSync(this.dir) &&
+      fsExtra.existsSync(this.dir) &&
       !this.hasBeenLaunchedThisSession
     ) {
       // Copy screenshots to global screenshots directory
       copyFilesWithRenameSync(this.screenshotsPath, screenshotsPath);
 
-      fs.rmSync(this.dir, { recursive: true, force: true });
+      fsExtra.rmSync(this.dir, { recursive: true, force: true });
       return;
     }
 
@@ -714,20 +716,20 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   save() {
-    if (!fs.existsSync(this.dir)) {
-      fs.mkdirSync(this.dir, { recursive: true });
+    if (!fsExtra.existsSync(this.dir)) {
+      fsExtra.mkdirSync(this.dir, { recursive: true });
     }
 
-    fs.writeFileSync(this.dataPath, JSON.stringify(this));
+    fsExtra.writeFileSync(this.dataPath, JSON.stringify(this));
   }
 
   static loadSync(dir: string) {
     const modpackDataPath = paths.join(modpacksPath, dir, 'data.json');
 
-    if (!fs.existsSync(modpackDataPath)) return false;
+    if (!fsExtra.existsSync(modpackDataPath)) return false;
 
     return Modpack.fromJSON(
-      fs.readFileSync(modpackDataPath, 'utf8'),
+      fsExtra.readFileSync(modpackDataPath, 'utf8'),
       Modpack,
       dir,
     );
@@ -738,7 +740,7 @@ export class Modpack extends Serializable implements ModpackData {
 
     let json: string;
     try {
-      json = await fs.readFile(modpackDataPath, 'utf8');
+      json = await fsExtra.readFile(modpackDataPath, 'utf8');
     } catch {
       return false;
     }
@@ -874,14 +876,14 @@ export class Modpack extends Serializable implements ModpackData {
   }
 
   setIcon(path: string) {
-    fs.cpSync(path, this.iconPath);
+    fsExtra.cpSync(path, this.iconPath);
     this.invalidate();
   }
 
   setIconFromUrl(url: string) {
     if (url.startsWith('data:')) {
       const base64 = url.replace(/^data:.+;base64,/, '');
-      fs.writeFileSync(this.iconPath, Buffer.from(base64, 'base64'));
+      fsExtra.writeFileSync(this.iconPath, Buffer.from(base64, 'base64'));
       return this.invalidate();
     }
 
@@ -892,8 +894,8 @@ export class Modpack extends Serializable implements ModpackData {
     this.logger.log('reset icon');
     const iconPath = this.iconPath;
 
-    if (fs.existsSync(iconPath)) {
-      fs.rmSync(iconPath);
+    if (fsExtra.existsSync(iconPath)) {
+      fsExtra.rmSync(iconPath);
       this.invalidate();
     }
   }
@@ -911,12 +913,12 @@ export class Modpack extends Serializable implements ModpackData {
   createDefault(file: string) {
     const source = paths.join(this.gameDir, file);
 
-    if (!fs.existsSync(source)) {
+    if (!fsExtra.existsSync(source)) {
       this.logger.warn(source, 'does not exist');
       return;
     }
 
-    return fs.promises.cp(source, paths.join(defaultsPath, file), {
+    return fsExtra.promises.cp(source, paths.join(defaultsPath, file), {
       force: true,
       recursive: true,
     });
@@ -936,7 +938,7 @@ export class Modpack extends Serializable implements ModpackData {
         // TODO Only include png-to-ico in windows builds
         const ico = await (await import('png-to-ico')).default(this.iconPath);
         windowsIconPath = paths.join(this.dir, 'icon.ico');
-        fs.writeFileSync(windowsIconPath, ico);
+        fsExtra.writeFileSync(windowsIconPath, ico);
       }
 
       shell.writeShortcutLink(shortcutPath, {
@@ -964,9 +966,9 @@ Terminal=false
 Categories=Game;
 `;
 
-      await fs.writeFile(filePath, content, 'utf8');
+      await fsExtra.writeFile(filePath, content, 'utf8');
 
-      await fs.chmod(filePath, 0o755);
+      await fsExtra.chmod(filePath, 0o755);
       return;
     }
 
