@@ -32,7 +32,7 @@
           openal
 
           ## openal
-          alsa-lib
+          # alsa-lib TODO
           libjack2
           libpulseaudio
           pipewire
