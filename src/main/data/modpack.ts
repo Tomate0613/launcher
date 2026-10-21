@@ -110,7 +110,7 @@ export class VanillaError extends Error {
 }
 
 export class Modpack extends Serializable implements ModpackData {
-  __version = '7';
+  __version = '8';
   dir: string;
 
   hasBeenLaunchedThisSession = false;
@@ -235,6 +235,7 @@ export class Modpack extends Serializable implements ModpackData {
         if (typeof this.java !== 'string') {
           this.java = undefined;
         }
+        this['__version'] = '6';
       }
       case '6': {
         if (this.externallyManaged) {
@@ -242,6 +243,38 @@ export class Modpack extends Serializable implements ModpackData {
         }
 
         this['__version'] = '7';
+      }
+      case '7': {
+        const destination = paths.join(this.dir, 'minecraft');
+
+        const excluded = new Set([
+          'minecraft',
+          'resourcepacks',
+          'shaderpacks',
+          'mods',
+          '.mods_work',
+          '.resourcepacks_work',
+          '.shaderpacks_work',
+          'icon.png',
+          'data.json',
+        ]);
+
+        fs.mkdirSync(destination, { recursive: true });
+
+        for (const entry of fs.readdirSync(this.dir)) {
+          if (excluded.has(entry)) continue;
+
+          fs.cpSync(
+            paths.join(this.dir, entry),
+            paths.join(destination, entry),
+            {
+              recursive: true,
+              preserveTimestamps: true,
+            },
+          );
+        }
+
+        this['__version'] = '8';
       }
     }
 
