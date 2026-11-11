@@ -9,6 +9,7 @@ interprocess = "2.4.0"
 serde = {version = "1.0.228", features = ["derive"]}
 serde_json = "1.0.149"
 uuid = {version="1.21.0", features=["v4"]}
-command = {package = "command", git = "https://github.com/Tomate0613/pandora-launcher.git", branch = "testing"}
+# command = {package = "command", git = "https://github.com/Tomate0613/pandora-launcher.git", branch = "testing"}
+modrinth-sandbox = {package = "modrinth-sandbox", git = "https://github.com/modrinth/code.git", branch = "boris/sandbox"}
 # command = {package = "command", path = "../../pandora-launcher/crates/command/"}
 tokio = "1.52.3"
