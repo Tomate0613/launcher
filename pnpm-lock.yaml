@@ -13,10 +13,10 @@ importers:
         version: https://codeload.github.com/Tomate0613/find-java/tar.gz/a361d6e8d8f40016027324cc5b87bcc2e80b59c4
       '@electron-toolkit/preload':
         specifier: ^3.0.2
-        version: 3.0.2(electron@44.9.3(supports-color@7.2.0))
+        version: 3.0.2(electron@45.3.1(supports-color@7.2.0))
       '@electron-toolkit/utils':
         specifier: ^4.0.0
-        version: 4.0.0(electron@44.9.3(supports-color@7.2.0))
+        version: 4.0.0(electron@45.3.1(supports-color@7.2.0))
       adm-zip:
         specifier: ^0.6.1
         version: 0.6.1
@@ -88,8 +88,8 @@ importers:
         specifier: ^15.0.0
         version: 15.0.0(vue@3.5.44(typescript@7.0.2))
       electron:
-        specifier: ^44.9.3
-        version: 44.9.3(supports-color@7.2.0)
+        specifier: ^45.3.1
+        version: 45.3.1(supports-color@7.2.0)
       electron-builder:
         specifier: ^26.18.0
         version: 26.18.0(electron-builder-squirrel-windows@26.18.0)(supports-color@7.2.0)
@@ -1330,8 +1330,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@44.9.3:
-    resolution: {integrity: sha512-Cv9/yMnZxNWsMlIe8T4v//NKHdUvbeyoTJoXE3BIcRxus2meeFaO9h/P3zB5d4cBXum51IgAYrT2QjpIDWKpJA==}
+  electron@45.3.1:
+    resolution: {integrity: sha512-1oYau2B4RXF27Df2fzvrFDJoy8AOSVlgS6gklo6wkLZ/QWJemJCJHkY4+uuacvSFUtR8IimiLukLNFoYP0fmjA==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -2668,17 +2668,17 @@ snapshots:
 
   '@electron-internal/extract-zip@1.0.6': {}
 
-  '@electron-toolkit/preload@3.0.2(electron@44.9.3(supports-color@7.2.0))':
+  '@electron-toolkit/preload@3.0.2(electron@45.3.1(supports-color@7.2.0))':
     dependencies:
-      electron: 44.9.3(supports-color@7.2.0)
+      electron: 45.3.1(supports-color@7.2.0)
 
   '@electron-toolkit/tsconfig@2.0.0(@types/node@26.6.5)':
     dependencies:
       '@types/node': 26.6.5
 
-  '@electron-toolkit/utils@4.0.0(electron@44.9.3(supports-color@7.2.0))':
+  '@electron-toolkit/utils@4.0.0(electron@45.3.1(supports-color@7.2.0))':
     dependencies:
-      electron: 44.9.3(supports-color@7.2.0)
+      electron: 45.3.1(supports-color@7.2.0)
 
   '@electron/asar@3.4.1':
     dependencies:
@@ -3740,7 +3740,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@44.9.3(supports-color@7.2.0):
+  electron@45.3.1(supports-color@7.2.0):
     dependencies:
       '@electron-internal/extract-zip': 1.0.6
       '@electron/get': 5.1.0(supports-color@7.2.0)

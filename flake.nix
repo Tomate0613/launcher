@@ -132,7 +132,7 @@
 
             mc-wrapper = self.packages.${system}.mc-wrapper;
 
-            electron = pkgs.electron_44;
+            electron = pkgs.electron_45;
 
             jdks = with pkgs; [
               jdk21
