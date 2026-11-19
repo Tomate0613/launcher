@@ -132,7 +132,7 @@
 
             mc-wrapper = self.packages.${system}.mc-wrapper;
 
-            electron = pkgs.electron_44;
+            electron = pkgs.electron_45;
 
             jdks = with pkgs; [
               jdk21
@@ -163,7 +163,7 @@
                 lockFile = ./mc-wrapper/Cargo.lock;
 
                 outputHashes = {
-                  "command-5.3.1" = "sha256-h/YZtevYWpXI5HC3FBHXt4dizm0tNcf1f+zIngWMzWQ=";
+                  "command-5.3.1" = "sha256-IOtjsnnZM+oHBzqrbAzHGfP6FqqnAEEFw9qgD/2pD8E=";
                 };
               };
             });

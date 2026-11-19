@@ -93,6 +93,7 @@ pkgs.mkPnpmPackage {
       } \
       --add-flags $out/opt/TomateLauncher/app.asar \
       --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
+      --set __GL_THREADED_OPTIMIZATIONS 0 \
       --set MC_WRAPPER_PATH ${mc-wrapper}/bin/${mc-wrapper.pname} \
       --set LD_LIBRARY_PATH ${pkgs.addDriverRunpath.driverLink}/lib:${lib.makeLibraryPath (runtimeLibs pkgs)} \
       --set TOMATE_LAUNCHER_JDKS ${lib.makeBinPath jdks} \
