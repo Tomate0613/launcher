@@ -49,7 +49,7 @@ importers:
         version: 2.8.0
       tomate-launcher-core:
         specifier: github:Tomate0613/launcher-core
-        version: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/79941cfc2d76b1d27156a7435880ef8d6a71f344(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        version: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/9b24e8f102a08cb03cfc16ec8fbe3272f1d855fc(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       tomate-loaders:
         specifier: github:Tomate0613/tomate-loaders
         version: https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/5dc77cfd0c787b177f26616d5c6087a563dea35a
@@ -2262,8 +2262,8 @@ packages:
     resolution: {integrity: sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13ZeIcZnDg/QpSuU2zfZ3rzwY8ukEnaXw==}
     engines: {node: '>=14.14'}
 
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/79941cfc2d76b1d27156a7435880ef8d6a71f344:
-    resolution: {gitHosted: true, integrity: sha512-zImz1T63ZTMAoJ3M7Ff64J20ZP155Dr30FXOX0e3er9Lcv4S7pxvwi+LoIdHhou1NNGSGBAkdgzT8rMlVwnD/Q==, tarball: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/79941cfc2d76b1d27156a7435880ef8d6a71f344}
+  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/9b24e8f102a08cb03cfc16ec8fbe3272f1d855fc:
+    resolution: {gitHosted: true, integrity: sha512-ApXAJdhTu5pdcd4c8iJsRAsm5HAiMSIPObBiKYylPu7KoGqYp+mE9VY6keTjdjChUYR4/kbCk8gvdsy2s33n5g==, tarball: https://codeload.github.com/Tomate0613/launcher-core/tar.gz/9b24e8f102a08cb03cfc16ec8fbe3272f1d855fc}
     version: 1.0.0
 
   tomate-loaders@https://codeload.github.com/Tomate0613/tomate-loaders/tar.gz/5dc77cfd0c787b177f26616d5c6087a563dea35a:
@@ -4671,7 +4671,7 @@ snapshots:
 
   tmp@0.2.7: {}
 
-  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/79941cfc2d76b1d27156a7435880ef8d6a71f344(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
+  tomate-launcher-core@https://codeload.github.com/Tomate0613/launcher-core/tar.gz/9b24e8f102a08cb03cfc16ec8fbe3272f1d855fc(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       adm-zip: 0.6.1
       axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
