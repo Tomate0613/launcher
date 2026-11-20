@@ -553,7 +553,7 @@ export class Modpack extends Serializable implements ModpackData {
     ctx: ProcessContext,
   ) {
     try {
-      await spawnWrapper(this.dir, launcher, launchOptions, ctx);
+      await spawnWrapper(launcher, launchOptions, ctx);
     } catch (e) {
       ctx.cancel();
       throw error('Failed to launch wrapper', e);

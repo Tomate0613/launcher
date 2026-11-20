@@ -1,24 +1,23 @@
+mod minecraft;
+
 use clap::Arg;
 
-#[cfg(windows)]
-use command::PandoraArg;
-use command::{PandoraCommand, PandoraSandbox};
-#[cfg(target_os = "linux")]
-use command::{PandoraDirectoryOverlay, PandoraOverlayDirectories};
+use clap::ArgAction::SetTrue;
+use eyre::{Context, Result};
 use interprocess::TryClone;
 use interprocess::local_socket::{GenericFilePath, ListenerOptions, prelude::*};
 
 #[cfg(unix)]
 use interprocess::os::unix::local_socket::ListenerOptionsExt;
 
-use serde::Serialize;
+use modrinth_sandbox::minecraft::MinecraftCommand;
+use modrinth_sandbox::{SandboxArg, SandboxEnv};
+use serde::{Deserialize, Serialize};
 
 use core::panic;
-use std::collections::{HashMap, VecDeque};
-#[cfg(windows)]
-use std::ffi::OsStr;
+use std::collections::{BTreeMap, HashMap, VecDeque};
 use std::io::{BufRead, BufReader, Write};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::Command;
 use std::sync::{Arc, Mutex};
 use std::thread::{self};
@@ -70,8 +69,27 @@ fn read_buffer(buf: &SharedBuffer) -> Vec<LineData> {
     buffer.iter().cloned().collect()
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[derive(Clone)]
+struct Summary {
+    root_path: String,
+    jre_path: String,
+    classpath: Vec<String>,
+    natives_path: String,
+    assets_path: String,
+    extra_readonly: Vec<String>,
+    jvm_args: Vec<String>,
+    main_class: String,
+    main_class_args: Vec<String>,
+}
+
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
+    if modrinth_sandbox::helper::run_default()? {
+        return Ok(());
+    }
+
     let matches = clap::Command::new("wrapper")
         .arg(
             Arg::new("instance-id")
@@ -86,47 +104,13 @@ async fn main() {
         )
         .arg(Arg::new("launcher-args").long("launcher-args").num_args(1))
         .arg(
-            Arg::new("game-executable")
-                .long("game-executable")
+            Arg::new("summary")
+                .long("summary")
                 .num_args(1)
                 .required(true),
-        )
-        .arg(
-            Arg::new("game-args")
-                .long("game-args")
-                .num_args(1)
-                .required(true),
-        )
-        .arg(
-            Arg::new("game-dir")
-                .long("game-dir")
-                .num_args(1)
-                .required(true),
-        )
-        .arg(
-            Arg::new("instance-root-dir")
-                .long("instance-root-dir")
-                .num_args(1)
-                .required(true),
-        )
-        .arg(
-            Arg::new("minecraft-dir")
-                .long("minecraft-dir")
-                .num_args(1)
-                .required(true),
-        )
-        .arg(
-            Arg::new("launcher-java-dir")
-                .long("launcher-java-dir")
-                .num_args(1),
-        )
-        .arg(
-            Arg::new("additional-read-dirs")
-                .long("additional-read-dirs")
-                .num_args(1),
         )
         .arg(Arg::new("env").long("env").num_args(1))
-        .arg(Arg::new("sandbox-dir").long("sandbox-dir").num_args(1))
+        .arg(Arg::new("sandbox").long("sandbox").action(SetTrue))
         .get_matches();
 
     let instance_id = matches.get_one::<String>("instance-id").unwrap();
@@ -139,38 +123,25 @@ async fn main() {
         panic!("launcher-executable specified but launcher-args missing");
     }
 
-    let game_executable = matches.get_one::<String>("game-executable").unwrap();
-    let game_args: Vec<String> =
-        serde_json::from_str(matches.get_one::<String>("game-args").unwrap())
-            .expect("Invalid JSON for game-args");
-    let game_dir = matches.get_one::<String>("game-dir").unwrap();
-    let instance_root_dir = matches.get_one::<String>("instance-root-dir").unwrap();
-    let minecraft_dir = matches.get_one::<String>("minecraft-dir").unwrap();
-    let launcher_java_dir = matches.get_one::<String>("launcher-java-dir");
-    let sandbox_dir = matches.get_one::<String>("sandbox-dir");
-    let additional_read_dirs: Vec<String> = matches
-        .get_one::<String>("additional-read-dirs")
-        .map(|x| serde_json::from_str(x).expect("Invalid JSON for additional-read-dirs"))
-        .unwrap_or_default();
+    let summary: Summary = matches
+        .get_one::<String>("summary")
+        .map(|x| serde_json::from_str(x).expect("Invalid JSON for summary"))
+        .unwrap();
 
     let env: HashMap<String, String> = matches
         .get_one::<String>("env")
         .map(|x| serde_json::from_str(x).expect("Invalid JSON for env"))
         .unwrap_or_default();
 
+    let sandbox = matches.get_flag("sandbox");
+
     let shared_buffer: SharedBuffer = Arc::new(Mutex::new(VecDeque::with_capacity(MAX_LINES)));
     let shared_stream: SharedStream = Arc::new(Mutex::new(None));
 
     spawn_game(
-        game_executable,
-        game_args,
-        Path::new(game_dir),
-        Path::new(minecraft_dir),
-        Path::new(instance_root_dir),
-        launcher_java_dir.map(Path::new),
-        sandbox_dir.map(Path::new),
-        additional_read_dirs.iter().map(PathBuf::from).collect(),
+        summary,
         env,
+        sandbox,
         Arc::clone(&shared_stream),
         Arc::clone(&shared_buffer),
         move || {
@@ -184,9 +155,12 @@ async fn main() {
             }
         },
     )
-    .await;
+    .await
+    .wrap_err("Failed to spawn game")?;
 
     create_socket(shared_buffer, shared_stream, instance_id).expect("Failed to create socket");
+
+    Ok(())
 }
 
 fn create_socket(
@@ -248,90 +222,83 @@ fn create_socket(
 }
 
 async fn spawn_game<F>(
-    executable: &str,
-    arguments: Vec<String>,
-    game_dir: &Path,
-    minecraft_dir: &Path,
-    instance_root_dir: &Path,
-    launcher_java_dir: Option<&Path>,
-    sandbox_dir: Option<&Path>,
-    additional_read_dirs: Vec<PathBuf>,
+    summary: Summary,
     env: HashMap<String, String>,
+    sandbox: bool,
     stream: Arc<Mutex<Option<LocalSocketStream>>>,
     shared_buffer: SharedBuffer,
     on_exit: F,
-) where
+) -> Result<()>
+where
     F: FnOnce() + Send + 'static,
 {
-    let game_dir = game_dir.canonicalize().unwrap();
-    let minecraft_dir = minecraft_dir.canonicalize().unwrap();
-    let launcher_java_dir = launcher_java_dir.and_then(|dir| dir.canonicalize().ok());
-    let sandbox_dir = sandbox_dir.and_then(|dir| dir.canonicalize().ok());
+    let extra_environment: BTreeMap<SandboxArg, SandboxArg> = env
+        .into_iter()
+        .map(|(key, value)| (SandboxArg::from(key), SandboxArg::from(value)))
+        .collect();
+
+    let command = MinecraftCommand {
+        instance_path: summary.root_path.into(),
+        jre_path: summary.jre_path.into(),
+        classpath: summary.classpath.into_iter().map(String::into).collect(),
+        natives_path: summary.natives_path.into(),
+        assets_path: summary.assets_path.into(),
+        jvm_args: summary.jvm_args.into_iter().map(String::into).collect(),
+        main_class: summary.main_class.into(),
+        main_class_args: summary
+            .main_class_args
+            .into_iter()
+            .map(String::into)
+            .collect(),
+
+        granted_paths: vec![],
+        // TODO
+        persistent_dir: "/home/tomate/Documents/projects/launcher/persistent.tmp".into(),
+
+        sandbox_api_child: None,
+        java_agent: None,
+        logging_config: None,
+        extra_environment,
+
+        stdin: modrinth_sandbox::SandboxStdio::Null,
+        stdout: modrinth_sandbox::SandboxStdio::Pipe,
+        stderr: modrinth_sandbox::SandboxStdio::Pipe,
+    };
 
     println!("Spawning game");
 
-    let mut c = PandoraCommand::new(executable.to_string());
-    c.stdout(command::PandoraStdioReadMode::Pipe);
-    c.stderr(command::PandoraStdioReadMode::Pipe);
-    c.current_dir(&game_dir);
-
-    for (key, value) in &env {
-        c.env(key.to_string(), value.to_string());
-    }
-
-    for arg in arguments {
-        c.arg(arg.to_string());
-    }
-
-    let mut allow_read: Vec<Arc<Path>> = vec![minecraft_dir.into()];
-
-    if let Some(dir) = launcher_java_dir {
-        allow_read.push(dir.into());
-    }
-
-    allow_read.extend(additional_read_dirs.into_iter().map(Arc::from));
-
-    #[cfg(target_os = "linux")]
-    let overlays = ["mods", "resourcepacks", "shaderpacks"]
-        .into_iter()
-        .map(|name| PandoraDirectoryOverlay {
-            source: instance_root_dir.join(name).into(),
-            target: game_dir.join(name).into(),
-            state: Some(PandoraOverlayDirectories {
-                upper: game_dir.join(name).into(),
-                work: instance_root_dir.join(format!(".{name}_work")).into(),
-            }),
-        })
-        .collect();
-
-    let mut child = match sandbox_dir {
-        None => c.spawn().await.expect("Failed to spawn"),
-        Some(sandbox_dir) => c
-            .spawn_sandboxed(PandoraSandbox {
-                allow_read,
-                allow_write: vec![game_dir.into()],
-                is_jvm: true,
-                grant_network_access: true,
-                #[cfg(target_os = "linux")]
-                sandbox_dir: sandbox_dir.into(),
-                #[cfg(target_os = "linux")]
-                overlays,
-                #[cfg(windows)]
-                name: Arc::from(OsStr::new("TomateLauncherInstanceSandbox")),
-                #[cfg(windows)]
-                description: Arc::from(OsStr::new(
-                    "Sandbox for Minecraft instances run by Tomate Launcher",
-                )),
-                #[cfg(windows)]
-                self_elevate_for_acl_arg: Some(PandoraArg::from(OsStr::new(
-                    "--internal-set-traverse-acls",
-                ))),
-                #[cfg(windows)]
-                grant_winsta_writeattributes: true,
-            })
+    let sandbox_env = if sandbox {
+        SandboxEnv::new()
             .await
-            .expect("Failed to spawn sandboxed"),
+            .wrap_err("creating sandbox environment")?
+    } else {
+        SandboxEnv::noop()
     };
+
+    let mut command = if sandbox {
+        modrinth_sandbox::minecraft::setup_minecraft_command(command)
+            .await
+            .wrap_err("creating Minecraft sandbox command")?
+    } else {
+        minecraft::setup_minecraft_command_unsandboxed(command)
+            .await
+            .wrap_err("creating Minecraft unsandboxed command")?
+    };
+
+    command
+        .passthrough_environment
+        .insert(SandboxArg::from("LD_LIBRARY_PATH"));
+    command
+        .read_only_paths
+        .extend(summary.extra_readonly.into_iter().map(PathBuf::from));
+    command
+        .read_only_paths
+        .push(PathBuf::from("/run/opengl-driver"));
+
+    let mut child = sandbox_env
+        .spawn(command)
+        .await
+        .wrap_err("running Minecraft")?;
 
     let stdout = child.stdout.take().expect("Failed to capture stdout");
     let stderr = child.stderr.take().expect("Failed to capture stderr");
@@ -388,15 +355,17 @@ async fn spawn_game<F>(
         }
     });
 
-    println!("Launched '{}' with PID: {}", executable, child.process.id());
+    println!("Launched with PID: {}", child.id().unwrap());
 
-    thread::spawn(move || {
-        let status = child.process.wait().expect("Failed to wait on child");
+    tokio::spawn(async move {
+        let status = child.wait().await.expect("idk?");
         println!("Child exited with: {}", status);
 
         on_exit();
 
-        std::thread::sleep(std::time::Duration::from_millis(1000));
+        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
         std::process::exit(status.code().unwrap_or(0));
     });
+
+    Ok(())
 }

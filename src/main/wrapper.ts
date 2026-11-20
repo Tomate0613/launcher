@@ -104,7 +104,6 @@ function connectSocket(socketId: string, onResourceManagerLoaded?: () => void) {
 }
 
 export async function spawnWrapper(
-  instanceRoot: string,
   launcher: Launcher,
   launchOptions: LaunchOptions & {
     javaPath: string;
@@ -115,27 +114,20 @@ export async function spawnWrapper(
   logger.log('Spawning mc-wrapper');
   const id = randomUUID();
 
+  const summary = await launcher.launchSummary(launchOptions);
+  summary.jrePath = path.dirname(path.dirname(launchOptions.javaPath));
+  if (launcher.options.log4jConfigurationFile) {
+    summary.extraReadonly.push(launcher.options.log4jConfigurationFile);
+  }
+
   const wrapperArgs = [
     '--instance-id',
     id,
-    '--game-executable',
-    launchOptions.javaPath,
-    '--game-args',
-    JSON.stringify(await launcher.getLaunchArguments(launchOptions)),
-    '--game-dir',
-    launcher.options.root,
-    '--minecraft-dir',
-    minecraftRootPath,
-    '--instance-root-dir',
-    instanceRoot,
+    '--summary',
+    JSON.stringify(summary),
     '--env',
     JSON.stringify(launchOptions.environmentVariables ?? []),
   ];
-
-  const jdksOverriden = !!process.env.TOMATE_LAUNCHER_JDKS;
-  if (!jdksOverriden) {
-    wrapperArgs.push('--launcher-java-dir', javaInstallationsPath);
-  }
 
   if (getSettings().reopenAfterGameClose()) {
     wrapperArgs.push(
@@ -147,14 +139,7 @@ export async function spawnWrapper(
   }
 
   if (getSettings().wrapper.sandbox) {
-    wrapperArgs.push('--sandbox-dir', sandboxPath);
-  }
-
-  if (launcher.options.log4jConfigurationFile) {
-    wrapperArgs.push(
-      '--additional-read-dirs',
-      JSON.stringify([log4jConfigPath]),
-    );
+    wrapperArgs.push('--sandbox');
   }
 
   const wrapper = getWrapperExecutable();

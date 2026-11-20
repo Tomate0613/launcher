@@ -13,3 +13,4 @@ uuid = {version="1.21.0", features=["v4"]}
 modrinth-sandbox = {package = "modrinth-sandbox", git = "https://github.com/modrinth/code.git", branch = "boris/sandbox"}
 # command = {package = "command", path = "../../pandora-launcher/crates/command/"}
 tokio = "1.52.3"
+eyre = "0.6.14"
