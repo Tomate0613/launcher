@@ -6,6 +6,7 @@ import {
   javaInstallationsPath,
   log4jConfigPath,
   minecraftRootPath,
+  persistentPath,
   sandboxPath,
   socketsStatePath,
 } from './paths';
@@ -14,7 +15,11 @@ import fsSync from 'node:fs';
 import path, { dirname } from 'node:path';
 import { runOnClose, withPlatformExtension } from './utils';
 import { is } from '@electron-toolkit/utils';
-import { Launcher, type LaunchOptions } from 'tomate-launcher-core';
+import {
+  Launcher,
+  type Authorization,
+  type LaunchOptions,
+} from 'tomate-launcher-core';
 import { ProcessContext } from './process';
 import { getSettings } from './data';
 import { fileURLToPath } from 'node:url';
@@ -105,6 +110,7 @@ function connectSocket(socketId: string, onResourceManagerLoaded?: () => void) {
 
 export async function spawnWrapper(
   launcher: Launcher,
+  auth: Authorization,
   launchOptions: LaunchOptions & {
     javaPath: string;
     environmentVariables: Record<string, string>;
@@ -114,8 +120,14 @@ export async function spawnWrapper(
   logger.log('Spawning mc-wrapper');
   const id = randomUUID();
 
-  const summary = await launcher.launchSummary(launchOptions);
+  const summary = (await launcher.launchSummary(launchOptions)) as any;
+
   summary.jrePath = path.dirname(path.dirname(launchOptions.javaPath));
+  delete summary.javaPath;
+
+  summary.uuid = auth.uuid;
+  summary.token = auth.access_token;
+
   if (launcher.options.log4jConfigurationFile) {
     summary.extraReadonly.push(launcher.options.log4jConfigurationFile);
   }
@@ -127,6 +139,8 @@ export async function spawnWrapper(
     JSON.stringify(summary),
     '--env',
     JSON.stringify(launchOptions.environmentVariables ?? []),
+    '--persistent-dir',
+    persistentPath
   ];
 
   if (getSettings().reopenAfterGameClose()) {

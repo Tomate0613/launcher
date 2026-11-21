@@ -57,6 +57,21 @@ export type AccountFrontendData = {
   type: AccountType;
 };
 
+export function offlineAuth(name?: string) {
+  return {
+    access_token: '123',
+    client_token: 'avc',
+    uuid: randomUUID(),
+    name: name ?? 'Offline',
+    user_properties: {},
+    meta: {
+      type: 'msa',
+      demo: false,
+      refresh: 'abc',
+    },
+  } as const;
+}
+
 export class Account extends Serializable {
   __version = '1';
   minecraft?: Minecraft;
@@ -143,7 +158,9 @@ export class Account extends Serializable {
       for (const skin of skins) {
         logger.log(`Caching skin ${skin.id}`);
         try {
-          const response = await (await import ('axios')).default.get(skin.url, {
+          const response = await (
+            await import('axios')
+          ).default.get(skin.url, {
             responseType: 'arraybuffer',
           });
           const fileBuffer = Buffer.from(response.data);
@@ -179,18 +196,7 @@ export class Account extends Serializable {
     }
 
     if (this.type === 'offline') {
-      return {
-        access_token: '123',
-        client_token: 'avc',
-        uuid: randomUUID(),
-        name: this.name ?? 'Offline',
-        user_properties: {},
-        meta: {
-          type: 'msa',
-          demo: false,
-          refresh: 'abc',
-        },
-      } as const;
+      return offlineAuth(this.name);
     }
 
     if (!this.minecraft) {

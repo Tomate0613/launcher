@@ -13,7 +13,7 @@ import {
 import { Serializable, SerializableProperty } from './serialization';
 import { loader, type LoaderId, type ModdedLoaderId } from 'tomate-loaders';
 import { randomUUID } from 'node:crypto';
-import { liner, type LaunchOptions, type Launcher } from 'tomate-launcher-core';
+import { liner, type Authorization, type LaunchOptions, type Launcher } from 'tomate-launcher-core';
 import {
   checkDefaults as checkJavaFinderDefaults,
   checkPath as checkJavaFinderPath,
@@ -26,7 +26,7 @@ import type {
   ProjectType,
   SearchResult,
 } from 'tomate-mods';
-import { Account } from './account';
+import { Account, offlineAuth } from './account';
 import { invoke } from '../api';
 import { getSettings, getState, modpacks } from '../data';
 import {
@@ -508,8 +508,9 @@ export class Modpack extends Serializable implements ModpackData {
 
       await this.spawn(
         launcher,
+        auth,
         {
-          authorization: auth as never,
+          authorization: getSettings().wrapper.sandbox ? offlineAuth(auth.name) : auth,
           javaPath,
           environmentVariables:
             this.modpackOptions?.environmentVariables ??
@@ -546,6 +547,7 @@ export class Modpack extends Serializable implements ModpackData {
 
   async spawn(
     launcher: Launcher,
+    auth: Authorization,
     launchOptions: LaunchOptions & {
       javaPath: string;
       environmentVariables: Record<string, string>;
@@ -553,7 +555,7 @@ export class Modpack extends Serializable implements ModpackData {
     ctx: ProcessContext,
   ) {
     try {
-      await spawnWrapper(launcher, launchOptions, ctx);
+      await spawnWrapper(launcher, auth, launchOptions, ctx);
     } catch (e) {
       ctx.cancel();
       throw error('Failed to launch wrapper', e);

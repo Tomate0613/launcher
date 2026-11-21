@@ -33,7 +33,9 @@ const rawBasePath = path.join(
   is.dev ? 'tomate-launcher-dev' : 'tomate-launcher',
 );
 
-export const basePath = fs.existsSync(rawBasePath) ? fs.realpathSync(rawBasePath) : rawBasePath;
+export const basePath = fs.existsSync(rawBasePath)
+  ? fs.realpathSync(rawBasePath)
+  : rawBasePath;
 
 export const modpacksPath = path.join(basePath, 'modpacks/');
 export const logsPath = path.join(basePath, 'logs/');
@@ -56,6 +58,7 @@ export const downloadPath = path.join(basePath, 'java/');
 export const defaultsPath = path.join(basePath, 'defaults/');
 export const themesPath = path.join(basePath, 'themes/');
 export const screenshotsPath = path.join(basePath, 'screenshots/');
+export const persistentPath = path.join(basePath, 'persistent/');
 export const sandboxPath = path.join(basePath, 'sandbox/');
 export const toolsPath = path.join(basePath, 'tools/');
 export const unsupPath = path.join(toolsPath, 'unsup/');
@@ -84,6 +87,7 @@ export function ensureAppDirectoriesExist() {
   ensureDirectoryExistsSync(skinCachePath);
   ensureDirectoryExistsSync(javaInstallationsPath);
   ensureDirectoryExistsSync(screenshotsPath);
+  ensureDirectoryExistsSync(persistentPath);
   ensureDirectoryExistsSync(sandboxPath);
   ensureDirectoryExistsSync(toolsPath);
 }

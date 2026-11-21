@@ -10,9 +10,12 @@ use interprocess::local_socket::{GenericFilePath, ListenerOptions, prelude::*};
 #[cfg(unix)]
 use interprocess::os::unix::local_socket::ListenerOptionsExt;
 
+use modrinth_sandbox::api::{SandboxApiLauncher, SandboxApiService};
 use modrinth_sandbox::minecraft::MinecraftCommand;
 use modrinth_sandbox::{SandboxArg, SandboxEnv};
 use serde::{Deserialize, Serialize};
+use tokio::sync::oneshot::Sender;
+use uuid::Uuid;
 
 use core::panic;
 use std::collections::{BTreeMap, HashMap, VecDeque};
@@ -82,6 +85,17 @@ struct Summary {
     jvm_args: Vec<String>,
     main_class: String,
     main_class_args: Vec<String>,
+    uuid: Uuid,
+    token: String,
+}
+
+#[derive(Default)]
+struct SingleAuth(String);
+
+impl SandboxApiLauncher for SingleAuth {
+    fn login(&self, _: Uuid, token: Sender<Arc<str>>) {
+        token.send(self.0.clone().into()).ok();
+    }
 }
 
 #[tokio::main]
@@ -109,6 +123,12 @@ async fn main() -> Result<()> {
                 .num_args(1)
                 .required(true),
         )
+        .arg(
+            Arg::new("persistent-dir")
+                .long("persistent-dir")
+                .num_args(1)
+                .required(true),
+        )
         .arg(Arg::new("env").long("env").num_args(1))
         .arg(Arg::new("sandbox").long("sandbox").action(SetTrue))
         .get_matches();
@@ -128,6 +148,11 @@ async fn main() -> Result<()> {
         .map(|x| serde_json::from_str(x).expect("Invalid JSON for summary"))
         .unwrap();
 
+    let persistent_dir = matches
+        .get_one::<String>("persistent-dir")
+        .map(PathBuf::from)
+        .unwrap();
+
     let env: HashMap<String, String> = matches
         .get_one::<String>("env")
         .map(|x| serde_json::from_str(x).expect("Invalid JSON for env"))
@@ -141,6 +166,7 @@ async fn main() -> Result<()> {
     spawn_game(
         summary,
         env,
+        persistent_dir.to_path_buf(),
         sandbox,
         Arc::clone(&shared_stream),
         Arc::clone(&shared_buffer),
@@ -224,6 +250,7 @@ fn create_socket(
 async fn spawn_game<F>(
     summary: Summary,
     env: HashMap<String, String>,
+    persistent_dir: PathBuf,
     sandbox: bool,
     stream: Arc<Mutex<Option<LocalSocketStream>>>,
     shared_buffer: SharedBuffer,
@@ -236,6 +263,10 @@ where
         .into_iter()
         .map(|(key, value)| (SandboxArg::from(key), SandboxArg::from(value)))
         .collect();
+
+    let login_handler = SingleAuth(summary.token);
+
+    let service = SandboxApiService::new(5175, Arc::new(login_handler));
 
     let command = MinecraftCommand {
         instance_path: summary.root_path.into(),
@@ -252,10 +283,9 @@ where
             .collect(),
 
         granted_paths: vec![],
-        // TODO
-        persistent_dir: "/home/tomate/Documents/projects/launcher/persistent.tmp".into(),
+        persistent_dir,
 
-        sandbox_api_child: None,
+        sandbox_api_child: Some(service.start(summary.uuid)),
         java_agent: None,
         logging_config: None,
         extra_environment,
