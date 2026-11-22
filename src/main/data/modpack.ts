@@ -510,7 +510,7 @@ export class Modpack extends Serializable implements ModpackData {
         launcher,
         auth,
         {
-          authorization: getSettings().wrapper.sandbox ? offlineAuth(auth.name) : auth,
+          authorization: getSettings().wrapper.sandbox ? offlineAuth(auth.name, auth.uuid) : auth,
           javaPath,
           environmentVariables:
             this.modpackOptions?.environmentVariables ??

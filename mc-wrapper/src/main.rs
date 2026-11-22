@@ -267,6 +267,20 @@ where
     let login_handler = SingleAuth(summary.token);
 
     let service = SandboxApiService::new(5175, Arc::new(login_handler));
+    let child = service.start(summary.uuid);
+
+    let main_class_args: Vec<SandboxArg> = summary
+        .main_class_args
+        .into_iter()
+        .map(|x| {
+            if x == "OFFLINE_ACCESS_TOKEN" {
+                child.get_dummy_access_token().to_string()
+            } else {
+                x
+            }
+        })
+        .map(String::into)
+        .collect();
 
     let command = MinecraftCommand {
         instance_path: summary.root_path.into(),
@@ -276,16 +290,12 @@ where
         assets_path: summary.assets_path.into(),
         jvm_args: summary.jvm_args.into_iter().map(String::into).collect(),
         main_class: summary.main_class.into(),
-        main_class_args: summary
-            .main_class_args
-            .into_iter()
-            .map(String::into)
-            .collect(),
+        main_class_args,
 
         granted_paths: vec![],
         persistent_dir,
 
-        sandbox_api_child: Some(service.start(summary.uuid)),
+        sandbox_api_child: Some(child),
         java_agent: None,
         logging_config: None,
         extra_environment,

@@ -57,11 +57,11 @@ export type AccountFrontendData = {
   type: AccountType;
 };
 
-export function offlineAuth(name?: string) {
+export function offlineAuth(name?: string, uuid?: string) {
   return {
-    access_token: '123',
+    access_token: 'OFFLINE_ACCESS_TOKEN',
     client_token: 'avc',
-    uuid: randomUUID(),
+    uuid: uuid ?? randomUUID(),
     name: name ?? 'Offline',
     user_properties: {},
     meta: {
