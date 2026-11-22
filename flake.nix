@@ -155,6 +155,7 @@
               buildInputs = with pkgs; [
                 dbus
                 libseccomp
+                zstd
               ];
 
               src = ./mc-wrapper;
@@ -163,7 +164,7 @@
                 lockFile = ./mc-wrapper/Cargo.lock;
 
                 outputHashes = {
-                  "command-5.3.1" = "sha256-IOtjsnnZM+oHBzqrbAzHGfP6FqqnAEEFw9qgD/2pD8E=";
+                  "modrinth-sandbox-0.1.0" = "sha256-T/AMMmsUrXfJf2UVTaVq0djjyN+9+CjMJhr5fy5n1AQ=";
                 };
               };
             });
